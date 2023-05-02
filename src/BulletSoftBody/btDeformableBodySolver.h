@@ -136,7 +136,7 @@ public:
 	void updateState();
 
 	// set dv = dv + scale * ddv
-	void updateDv(btScalar scale = 1);
+	void updateDv(btScalar scale = (btScalar)1);
 
 	// set temporary position x^* = x_n + dt * v^*
 	void updateTempPosition();

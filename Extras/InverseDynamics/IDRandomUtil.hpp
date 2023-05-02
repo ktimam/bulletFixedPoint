@@ -22,11 +22,11 @@ int randomInt(int low, int high);
 /// \param low is the lower bound (inclusive)
 /// \param high is the lower bound (inclusive)
 /// \return a random number within [\param low, \param high]
-float randomFloat(float low, float high);
+btScalar randomFloat(btScalar low, btScalar high);
 
 /// generate a random valid mass value
 /// \returns random mass
-float randomMass();
+btScalar randomMass();
 /// generate a random valid vector of principal moments of inertia
 vec3 randomInertiaPrincipal();
 /// generate a random valid moment of inertia matrix

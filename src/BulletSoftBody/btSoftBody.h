@@ -35,7 +35,7 @@ subject to the following restrictions:
 //#else
 #define btSoftBodyData btSoftBodyFloatData
 #define btSoftBodyDataName "btSoftBodyFloatData"
-static const btScalar OVERLAP_REDUCTION_FACTOR = 0.1;
+static const btScalar OVERLAP_REDUCTION_FACTOR = (btScalar)0.1;
 static unsigned long seed = 243703;
 //#endif //BT_USE_DOUBLE_PRECISION
 
@@ -532,7 +532,7 @@ public:
 		}
 		const btMatrix3x3& invWorldInertia() const
 		{
-			static const btMatrix3x3 iwi(0, 0, 0, 0, 0, 0, 0, 0, 0);
+			static const btMatrix3x3 iwi((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)0, (btScalar)0, (btScalar)0, (btScalar)0, (btScalar)0, (btScalar)0);
 			if (m_rigid) return (m_rigid->getInvInertiaTensorWorld());
 			if (m_soft) return (m_soft->m_invwi);
 			return (iwi);
@@ -541,7 +541,7 @@ public:
 		{
 			if (m_rigid) return (m_rigid->getInvMass());
 			if (m_soft) return (m_soft->m_imass);
-			return (0);
+			return ((btScalar)0);
 		}
 		const btTransform& xform() const
 		{
@@ -906,7 +906,7 @@ public:
 	/* Append note															*/
 	void appendNote(const char* text,
 					const btVector3& o,
-					const btVector4& c = btVector4(1, 0, 0, 0),
+					const btVector4& c = btVector4((btScalar)1, (btScalar)0, (btScalar)0, (btScalar)0),
 					Node* n0 = 0,
 					Node* n1 = 0,
 					Node* n2 = 0,
@@ -950,8 +950,8 @@ public:
 	void appendDeformableAnchor(int node, btRigidBody* body);
 	void appendDeformableAnchor(int node, btMultiBodyLinkCollider* link);
 	void appendAnchor(int node,
-					  btRigidBody* body, bool disableCollisionBetweenLinkedBodies = false, btScalar influence = 1);
-	void appendAnchor(int node, btRigidBody* body, const btVector3& localPivot, bool disableCollisionBetweenLinkedBodies = false, btScalar influence = 1);
+					  btRigidBody* body, bool disableCollisionBetweenLinkedBodies = false, btScalar influence = (btScalar)1);
+	void appendAnchor(int node, btRigidBody* body, const btVector3& localPivot, bool disableCollisionBetweenLinkedBodies = false, btScalar influence = (btScalar)1);
 	void removeAnchor(int node);
 	/* Append linear joint													*/
 	void appendLinearJoint(const LJoint::Specs& specs, Cluster* body0, Body body1);
@@ -1221,7 +1221,7 @@ public:
 	static psolver_t getSolver(ePSolver::_ solver);
 	static vsolver_t getSolver(eVSolver::_ solver);
 	void geometricCollisionHandler(btSoftBody* psb);
-#define SAFE_EPSILON SIMD_EPSILON * 100.0
+#define SAFE_EPSILON SIMD_EPSILON * (btScalar)100.0
 	void updateNode(btDbvtNode* node, bool use_velocity, bool margin)
 	{
 		if (node->isleaf())
@@ -1349,21 +1349,21 @@ public:
 			if (vn > OVERLAP_REDUCTION_FACTOR * d / timeStep)
 				continue;
 			btVector3 vt = vr - vn * n;
-			btScalar I = 0;
-			btScalar mass = node->m_im == 0 ? 0 : btScalar(1) / node->m_im;
+			btScalar I = (btScalar)0;
+			btScalar mass = node->m_im == (btScalar)0 ? (btScalar)0 : (btScalar)1 / node->m_im;
 			if (applySpringForce)
 				I = -btMin(m_repulsionStiffness * timeStep * d, mass * (OVERLAP_REDUCTION_FACTOR * d / timeStep - vn));
-			if (vn < 0)
-				I += 0.5 * mass * vn;
+			if (vn < (btScalar)0)
+				I += (btScalar)0.5 * mass * vn;
 			int face_penetration = 0, node_penetration = node->m_constrained;
 			for (int i = 0; i < 3; ++i)
 				face_penetration |= face->m_n[i]->m_constrained;
-			btScalar I_tilde = 2.0 * I / (1.0 + w.length2());
+			btScalar I_tilde = (btScalar)2.0 * I / ((btScalar)1.0 + w.length2());
 
 			//             double the impulse if node or face is constrained.
 			if (face_penetration > 0 || node_penetration > 0)
 			{
-				I_tilde *= 2.0;
+				I_tilde *= (btScalar)2.0;
 			}
 			if (face_penetration <= 0)
 			{
@@ -1382,12 +1382,12 @@ public:
 				btScalar delta_vn = -2 * I * node->m_im;
 				btScalar mu = c.m_friction;
 				btScalar vt_new = btMax(btScalar(1) - mu * delta_vn / (vt_norm + SIMD_EPSILON), btScalar(0)) * vt_norm;
-				I = 0.5 * mass * (vt_norm - vt_new);
+				I = (btScalar)0.5 * mass * (vt_norm - vt_new);
 				vt.safeNormalize();
-				I_tilde = 2.0 * I / (1.0 + w.length2());
+				I_tilde = (btScalar)2.0 * I / ((btScalar)1.0 + w.length2());
 				//                 double the impulse if node or face is constrained.
 				if (face_penetration > 0 || node_penetration > 0)
-					I_tilde *= 2.0;
+					I_tilde *= (btScalar)2.0;
 				if (face_penetration <= 0)
 				{
 					for (int j = 0; j < 3; ++j)

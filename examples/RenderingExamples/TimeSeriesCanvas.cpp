@@ -179,7 +179,7 @@ void TimeSeriesCanvas::grapicalPrintf(const char* str, void* fontData, int raste
 				unsigned char packedColor = (fontPtr[i * 3 + 255 * 256 * 3 - (256 * j) * 3]);
 				//float colorf = packedColor ? 0.f : 1.f;
 				float colorf = packedColor / 255.f;  // ? 0.f : 1.f;
-				btVector4 rgba(colorf, colorf, colorf, 1.f);
+				btVector4 rgba((btScalar)colorf, (btScalar)colorf, (btScalar)colorf, (btScalar)1.f);
 				if (colorf)
 				{
 					if ((rasterposx + x >= 0) && (rasterposx + x < m_internalData->m_width) &&

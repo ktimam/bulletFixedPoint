@@ -31,7 +31,7 @@ public:
 
 	virtual void initPhysics();
 
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 
 	virtual void resetCamera()
 	{
@@ -73,10 +73,10 @@ MultiDofDemo::~MultiDofDemo()
 {
 }
 
-void MultiDofDemo::stepSimulation(float deltaTime)
+void MultiDofDemo::stepSimulation(btScalar deltaTime)
 {
 	//use a smaller internal timestep, there are stability issues
-	float internalTimeStep = 1. / 240.f;
+	btScalar internalTimeStep = (btScalar)1. / (btScalar)240.f;
 	m_dynamicsWorld->stepSimulation(deltaTime, 10, internalTimeStep);
 }
 
@@ -86,7 +86,7 @@ void MultiDofDemo::initPhysics()
 
 	if (g_firstInit)
 	{
-		m_guiHelper->getRenderInterface()->getActiveCamera()->setCameraDistance(btScalar(10. * scaling));
+		m_guiHelper->getRenderInterface()->getActiveCamera()->setCameraDistance((10. * scaling));
 		m_guiHelper->getRenderInterface()->getActiveCamera()->setCameraPitch(50);
 		g_firstInit = false;
 	}
@@ -137,7 +137,7 @@ void MultiDofDemo::initPhysics()
 	//	m_dynamicsWorld->setDebugDrawer(&gDebugDraw);
 	m_guiHelper->createPhysicsDebugDrawer(m_dynamicsWorld);
 	m_dynamicsWorld->setGravity(btVector3(0, -10, 0));
-	m_dynamicsWorld->getSolverInfo().m_globalCfm = 1e-3;
+	m_dynamicsWorld->getSolverInfo().m_globalCfm = (btScalar)1e-3;
 
 	///create a few basic rigid bodies
 	btVector3 groundHalfExtents(50, 50, 50);
@@ -174,13 +174,13 @@ void MultiDofDemo::initPhysics()
 	//
 	if (!damping)
 	{
-		mbC->setLinearDamping(0.f);
-		mbC->setAngularDamping(0.f);
+		mbC->setLinearDamping((btScalar)0.f);
+		mbC->setAngularDamping((btScalar)0.f);
 	}
 	else
 	{
-		mbC->setLinearDamping(0.1f);
-		mbC->setAngularDamping(0.9f);
+		mbC->setLinearDamping((btScalar)0.1f);
+		mbC->setAngularDamping((btScalar)0.9f);
 	}
 	//
 	m_dynamicsWorld->setGravity(btVector3(0, -9.81, 0));
@@ -188,7 +188,7 @@ void MultiDofDemo::initPhysics()
 	//////////////////////////////////////////////
 	if (numLinks > 0)
 	{
-		btScalar q0 = 45.f * SIMD_PI / 180.f;
+		btScalar q0 = (btScalar)45.f * SIMD_PI / (btScalar)180.f;
 		if (!spherical)
 		{
 			mbC->setJointPosMultiDof(0, &q0);
@@ -204,13 +204,13 @@ void MultiDofDemo::initPhysics()
 	addColliders_testMultiDof(mbC, world, baseHalfExtents, linkHalfExtents);
 
 	/////////////////////////////////////////////////////////////////
-	btScalar groundHeight = -51.55;
+	btScalar groundHeight = (btScalar)-51.55;
 	if (!multibodyOnly)
 	{
 		btScalar mass(0.);
 
 		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
+		bool isDynamic = (mass != (btScalar)0.f);
 
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)
@@ -218,7 +218,7 @@ void MultiDofDemo::initPhysics()
 
 		//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
 		groundTransform.setIdentity();
-		groundTransform.setOrigin(btVector3(0, groundHeight, 0));
+		groundTransform.setOrigin(btVector3((btScalar)0, groundHeight, (btScalar)0));
 		btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
 		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
 		btRigidBody* body = new btRigidBody(rbInfo);
@@ -241,7 +241,7 @@ void MultiDofDemo::initPhysics()
 		btScalar mass(1.f);
 
 		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
+		bool isDynamic = (mass != (btScalar)0.f);
 
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)
@@ -249,7 +249,7 @@ void MultiDofDemo::initPhysics()
 
 		startTransform.setOrigin(btVector3(
 			btScalar(0.0),
-			0.0,
+			(btScalar)0.0,
 			btScalar(0.0)));
 
 		//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
@@ -270,7 +270,7 @@ void MultiDofDemo::initPhysics()
 			btVector3 jointAxis(1.0, 0.0, 0.0);
 			//btMultiBodySliderConstraint* p2p = new btMultiBodySliderConstraint(mbC,numLinks-1,body,pointInA,pointInB,frameInA,frameInB,jointAxis);
 			btMultiBodyFixedConstraint* p2p = new btMultiBodyFixedConstraint(mbC, numLinks - 1, mbC, numLinks - 4, pointInA, pointInA, frameInA, frameInB);
-			p2p->setMaxAppliedImpulse(2.0);
+			p2p->setMaxAppliedImpulse((btScalar)2.0);
 			m_dynamicsWorld->addMultiBodyConstraint(p2p);
 		}
 	}
@@ -289,15 +289,15 @@ btMultiBody* MultiDofDemo::createFeatherstoneMultiBody_testMultiDof(btMultiBodyD
 	if (baseMass)
 	{
 		btCollisionShape* pTempBox = new btBoxShape(btVector3(baseHalfExtents[0], baseHalfExtents[1], baseHalfExtents[2]));
-		pTempBox->calculateLocalInertia(baseMass, baseInertiaDiag);
+		pTempBox->calculateLocalInertia((btScalar)baseMass, baseInertiaDiag);
 		delete pTempBox;
 	}
 
 	bool canSleep = false;
 
-	btMultiBody* pMultiBody = new btMultiBody(numLinks, baseMass, baseInertiaDiag, !floating, canSleep);
+	btMultiBody* pMultiBody = new btMultiBody(numLinks, (btScalar)baseMass, baseInertiaDiag, !floating, canSleep);
 
-	btQuaternion baseOriQuat(0.f, 0.f, 0.f, 1.f);
+	btQuaternion baseOriQuat((btScalar)0.f, (btScalar)0.f, (btScalar)0.f, (btScalar)1.f);
 	pMultiBody->setBasePos(basePosition);
 	pMultiBody->setWorldToBaseRot(baseOriQuat);
 	btVector3 vel(0, 0, 0);
@@ -309,16 +309,16 @@ btMultiBody* MultiDofDemo::createFeatherstoneMultiBody_testMultiDof(btMultiBodyD
 	btVector3 linkInertiaDiag(0.f, 0.f, 0.f);
 
 	btCollisionShape* pTempBox = new btBoxShape(btVector3(linkHalfExtents[0], linkHalfExtents[1], linkHalfExtents[2]));
-	pTempBox->calculateLocalInertia(linkMass, linkInertiaDiag);
+	pTempBox->calculateLocalInertia((btScalar)linkMass, linkInertiaDiag);
 	delete pTempBox;
 
 	//y-axis assumed up
-	btVector3 parentComToCurrentCom(0, -linkHalfExtents[1] * 2.f, 0);                      //par body's COM to cur body's COM offset
-	btVector3 currentPivotToCurrentCom(0, -linkHalfExtents[1], 0);                         //cur body's COM to cur body's PIV offset
+	btVector3 parentComToCurrentCom((btScalar)0, -linkHalfExtents[1] * (btScalar)2.f, (btScalar)0);                      //par body's COM to cur body's COM offset
+	btVector3 currentPivotToCurrentCom((btScalar)0, -linkHalfExtents[1], (btScalar)0);                         //cur body's COM to cur body's PIV offset
 	btVector3 parentComToCurrentPivot = parentComToCurrentCom - currentPivotToCurrentCom;  //par body's COM to cur body's PIV offset
 
 	//////
-	btScalar q0 = 0.f * SIMD_PI / 180.f;
+	btScalar q0 = (btScalar)0.f * SIMD_PI / (btScalar)180.f;
 	btQuaternion quat0(btVector3(0, 1, 0).normalized(), q0);
 	quat0.normalize();
 	/////
@@ -326,10 +326,10 @@ btMultiBody* MultiDofDemo::createFeatherstoneMultiBody_testMultiDof(btMultiBodyD
 	for (int i = 0; i < numLinks; ++i)
 	{
 		if (!spherical)
-			pMultiBody->setupRevolute(i, linkMass, linkInertiaDiag, i - 1, btQuaternion(0.f, 0.f, 0.f, 1.f), hingeJointAxis, parentComToCurrentPivot, currentPivotToCurrentCom, true);
+			pMultiBody->setupRevolute(i, (btScalar)linkMass, linkInertiaDiag, i - 1, btQuaternion((btScalar)0.f, (btScalar)0.f, (btScalar)0.f, (btScalar)1.f), hingeJointAxis, parentComToCurrentPivot, currentPivotToCurrentCom, true);
 		else
 			//pMultiBody->setupPlanar(i, linkMass, linkInertiaDiag, i - 1, btQuaternion(0.f, 0.f, 0.f, 1.f)/*quat0*/, btVector3(1, 0, 0), parentComToCurrentPivot*2, false);
-			pMultiBody->setupSpherical(i, linkMass, linkInertiaDiag, i - 1, btQuaternion(0.f, 0.f, 0.f, 1.f), parentComToCurrentPivot, currentPivotToCurrentCom, true);
+			pMultiBody->setupSpherical(i, (btScalar)linkMass, linkInertiaDiag, i - 1, btQuaternion((btScalar)0.f, (btScalar)0.f, (btScalar)0.f, (btScalar)1.f), parentComToCurrentPivot, currentPivotToCurrentCom, true);
 	}
 
 	pMultiBody->finalizeMultiDof();
@@ -368,7 +368,7 @@ void MultiDofDemo::addColliders_testMultiDof(btMultiBody* pMultiBody, btMultiBod
 
 			pWorld->addCollisionObject(col, 2, 1 + 2);
 
-			col->setFriction(friction);
+			col->setFriction((btScalar)friction);
 			pMultiBody->setBaseCollider(col);
 		}
 	}
@@ -396,7 +396,7 @@ void MultiDofDemo::addColliders_testMultiDof(btMultiBody* pMultiBody, btMultiBod
 		tr.setOrigin(posr);
 		tr.setRotation(btQuaternion(quat[0], quat[1], quat[2], quat[3]));
 		col->setWorldTransform(tr);
-		col->setFriction(friction);
+		col->setFriction((btScalar)friction);
 		pWorld->addCollisionObject(col, 2, 1 + 2);
 
 		pMultiBody->getLink(i).m_collider = col;
@@ -419,7 +419,7 @@ void MultiDofDemo::addBoxes_testMultiDof()
 	btScalar mass(1.f);
 
 	//rigidbody is dynamic if and only if mass is non zero, otherwise static
-	bool isDynamic = (mass != 0.f);
+	bool isDynamic = (mass != (btScalar)0.f);
 
 	btVector3 localInertia(0, 0, 0);
 	if (isDynamic)

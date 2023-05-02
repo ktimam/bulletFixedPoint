@@ -56,12 +56,12 @@ struct btMprDistanceInfo
 };
 
 #ifdef __cplusplus
-#define BT_MPR_SQRT sqrtf
+#define BT_MPR_SQRT sqrt
 #else
 #define BT_MPR_SQRT sqrt
 #endif
 #define BT_MPR_FMIN(x, y) ((x) < (y) ? (x) : (y))
-#define BT_MPR_FABS fabs
+#define BT_MPR_FABS abs
 
 #define BT_MPR_TOLERANCE 1E-6f
 #define BT_MPR_MAX_ITERATIONS 1000
@@ -130,29 +130,29 @@ inline void btMprSimplexSwap(btMprSimplex_t *s, size_t pos1, size_t pos2)
 	btMprSupportCopy(&s->ps[pos2], &supp);
 }
 
-inline int btMprIsZero(float val)
+inline int btMprIsZero(btScalar val)
 {
-	return BT_MPR_FABS(val) < FLT_EPSILON;
+	return BT_MPR_FABS(val) < (btScalar)FLT_EPSILON;
 }
 
-inline int btMprEq(float _a, float _b)
+inline int btMprEq(btScalar _a, btScalar _b)
 {
-	float ab;
-	float a, b;
+	btScalar ab;
+	btScalar a, b;
 
 	ab = BT_MPR_FABS(_a - _b);
-	if (BT_MPR_FABS(ab) < FLT_EPSILON)
+	if (BT_MPR_FABS(ab) < (btScalar)FLT_EPSILON)
 		return 1;
 
 	a = BT_MPR_FABS(_a);
 	b = BT_MPR_FABS(_b);
 	if (b > a)
 	{
-		return ab < FLT_EPSILON * b;
+		return ab < (btScalar)FLT_EPSILON * b;
 	}
 	else
 	{
-		return ab < FLT_EPSILON * a;
+		return ab < (btScalar)FLT_EPSILON * a;
 	}
 }
 
@@ -184,27 +184,27 @@ inline void btMprVec3Copy(btVector3 *v, const btVector3 *w)
 	*v = *w;
 }
 
-inline void btMprVec3Scale(btVector3 *d, float k)
+inline void btMprVec3Scale(btVector3 *d, btScalar k)
 {
 	*d *= k;
 }
 
-inline float btMprVec3Dot(const btVector3 *a, const btVector3 *b)
+inline btScalar btMprVec3Dot(const btVector3 *a, const btVector3 *b)
 {
-	float dot;
+	btScalar dot;
 
 	dot = btDot(*a, *b);
 	return dot;
 }
 
-inline float btMprVec3Len2(const btVector3 *v)
+inline btScalar btMprVec3Len2(const btVector3 *v)
 {
 	return btMprVec3Dot(v, v);
 }
 
 inline void btMprVec3Normalize(btVector3 *d)
 {
-	float k = 1.f / BT_MPR_SQRT(btMprVec3Len2(d));
+	btScalar k = (btScalar)1.f / BT_MPR_SQRT(btMprVec3Len2(d));
 	btMprVec3Scale(d, k);
 }
 
@@ -233,17 +233,17 @@ inline void btPortalDir(const btMprSimplex_t *portal, btVector3 *dir)
 inline int portalEncapsulesOrigin(const btMprSimplex_t *portal,
 								  const btVector3 *dir)
 {
-	float dot;
+	btScalar dot;
 	dot = btMprVec3Dot(dir, &btMprSimplexPoint(portal, 1)->v);
-	return btMprIsZero(dot) || dot > 0.f;
+	return btMprIsZero(dot) || dot > (btScalar)0.f;
 }
 
 inline int portalReachTolerance(const btMprSimplex_t *portal,
 								const btMprSupport_t *v4,
 								const btVector3 *dir)
 {
-	float dv1, dv2, dv3, dv4;
-	float dot1, dot2, dot3;
+	btScalar dv1, dv2, dv3, dv4;
+	btScalar dot1, dot2, dot3;
 
 	// find the smallest dot product of dir and {v1-v4, v2-v4, v3-v4}
 
@@ -259,30 +259,30 @@ inline int portalReachTolerance(const btMprSimplex_t *portal,
 	dot1 = BT_MPR_FMIN(dot1, dot2);
 	dot1 = BT_MPR_FMIN(dot1, dot3);
 
-	return btMprEq(dot1, BT_MPR_TOLERANCE) || dot1 < BT_MPR_TOLERANCE;
+	return btMprEq(dot1, (btScalar)BT_MPR_TOLERANCE) || dot1 < (btScalar)BT_MPR_TOLERANCE;
 }
 
 inline int portalCanEncapsuleOrigin(const btMprSimplex_t *portal,
 									const btMprSupport_t *v4,
 									const btVector3 *dir)
 {
-	float dot;
+	btScalar dot;
 	dot = btMprVec3Dot(&v4->v, dir);
-	return btMprIsZero(dot) || dot > 0.f;
+	return btMprIsZero(dot) || dot > (btScalar)0.f;
 }
 
 inline void btExpandPortal(btMprSimplex_t *portal,
 						   const btMprSupport_t *v4)
 {
-	float dot;
+	btScalar dot;
 	btVector3 v4v0;
 
 	btMprVec3Cross(&v4v0, &v4->v, &btMprSimplexPoint(portal, 0)->v);
 	dot = btMprVec3Dot(&btMprSimplexPoint(portal, 1)->v, &v4v0);
-	if (dot > 0.f)
+	if (dot > (btScalar)0.f)
 	{
 		dot = btMprVec3Dot(&btMprSimplexPoint(portal, 2)->v, &v4v0);
-		if (dot > 0.f)
+		if (dot > (btScalar)0.f)
 		{
 			btMprSimplexSet(portal, 1, v4);
 		}
@@ -294,7 +294,7 @@ inline void btExpandPortal(btMprSimplex_t *portal,
 	else
 	{
 		dot = btMprVec3Dot(&btMprSimplexPoint(portal, 3)->v, &v4v0);
-		if (dot > 0.f)
+		if (dot > (btScalar)0.f)
 		{
 			btMprSimplexSet(portal, 2, v4);
 		}
@@ -326,7 +326,7 @@ static int btDiscoverPortal(const btConvexTemplate &a, const btConvexTemplate &b
 							btMprSimplex_t *portal)
 {
 	btVector3 dir, va, vb;
-	float dot;
+	btScalar dot;
 	int cont;
 
 	// vertex 0 is center of portal
@@ -349,7 +349,7 @@ static int btDiscoverPortal(const btConvexTemplate &a, const btConvexTemplate &b
 
 	// vertex 1 = support in direction of origin
 	btMprVec3Copy(&dir, &btMprSimplexPoint(portal, 0)->v);
-	btMprVec3Scale(&dir, -1.f);
+	btMprVec3Scale(&dir, (btScalar)-1.f);
 	btMprVec3Normalize(&dir);
 
 	btMprSupport(a, b, colDesc, dir, btMprSimplexPointW(portal, 1));
@@ -359,7 +359,7 @@ static int btDiscoverPortal(const btConvexTemplate &a, const btConvexTemplate &b
 	// test if origin isn't outside of v1
 	dot = btMprVec3Dot(&btMprSimplexPoint(portal, 1)->v, &dir);
 
-	if (btMprIsZero(dot) || dot < 0.f)
+	if (btMprIsZero(dot) || dot < (btScalar)0.f)
 		return -1;
 
 	// vertex 2
@@ -383,7 +383,7 @@ static int btDiscoverPortal(const btConvexTemplate &a, const btConvexTemplate &b
 	btMprSupport(a, b, colDesc, dir, btMprSimplexPointW(portal, 2));
 
 	dot = btMprVec3Dot(&btMprSimplexPoint(portal, 2)->v, &dir);
-	if (btMprIsZero(dot) || dot < 0.f)
+	if (btMprIsZero(dot) || dot < (btScalar)0.f)
 		return -1;
 
 	btMprSimplexSetSize(portal, 3);
@@ -398,10 +398,10 @@ static int btDiscoverPortal(const btConvexTemplate &a, const btConvexTemplate &b
 
 	// it is better to form portal faces to be oriented "outside" origin
 	dot = btMprVec3Dot(&dir, &btMprSimplexPoint(portal, 0)->v);
-	if (dot > 0.f)
+	if (dot > (btScalar)0.f)
 	{
 		btMprSimplexSwap(portal, 1, 2);
-		btMprVec3Scale(&dir, -1.f);
+		btMprVec3Scale(&dir, (btScalar)-1.f);
 	}
 
 	while (btMprSimplexSize(portal) < 4)
@@ -409,7 +409,7 @@ static int btDiscoverPortal(const btConvexTemplate &a, const btConvexTemplate &b
 		btMprSupport(a, b, colDesc, dir, btMprSimplexPointW(portal, 3));
 
 		dot = btMprVec3Dot(&btMprSimplexPoint(portal, 3)->v, &dir);
-		if (btMprIsZero(dot) || dot < 0.f)
+		if (btMprIsZero(dot) || dot < (btScalar)0.f)
 			return -1;
 
 		cont = 0;
@@ -419,7 +419,7 @@ static int btDiscoverPortal(const btConvexTemplate &a, const btConvexTemplate &b
 		btMprVec3Cross(&va, &btMprSimplexPoint(portal, 1)->v,
 					   &btMprSimplexPoint(portal, 3)->v);
 		dot = btMprVec3Dot(&va, &btMprSimplexPoint(portal, 0)->v);
-		if (dot < 0.f && !btMprIsZero(dot))
+		if (dot < (btScalar)0.f && !btMprIsZero(dot))
 		{
 			btMprSimplexSet(portal, 2, btMprSimplexPoint(portal, 3));
 			cont = 1;
@@ -432,7 +432,7 @@ static int btDiscoverPortal(const btConvexTemplate &a, const btConvexTemplate &b
 			btMprVec3Cross(&va, &btMprSimplexPoint(portal, 3)->v,
 						   &btMprSimplexPoint(portal, 2)->v);
 			dot = btMprVec3Dot(&va, &btMprSimplexPoint(portal, 0)->v);
-			if (dot < 0.f && !btMprIsZero(dot))
+			if (dot < (btScalar)0.f && !btMprIsZero(dot))
 			{
 				btMprSimplexSet(portal, 1, btMprSimplexPoint(portal, 3));
 				cont = 1;
@@ -501,7 +501,7 @@ static void btFindPos(const btMprSimplex_t *portal, btVector3 *pos)
 
 	btVector3 dir;
 	size_t i;
-	float b[4], sum, inv;
+	btScalar b[4], sum, inv;
 	btVector3 vec, p1, p2;
 
 	btPortalDir(portal, &dir);
@@ -525,9 +525,9 @@ static void btFindPos(const btMprSimplex_t *portal, btVector3 *pos)
 
 	sum = b[0] + b[1] + b[2] + b[3];
 
-	if (btMprIsZero(sum) || sum < 0.f)
+	if (btMprIsZero(sum) || sum < (btScalar)0.f)
 	{
-		b[0] = 0.f;
+		b[0] = (btScalar)0.f;
 
 		btMprVec3Cross(&vec, &btMprSimplexPoint(portal, 2)->v,
 					   &btMprSimplexPoint(portal, 3)->v);
@@ -542,7 +542,7 @@ static void btFindPos(const btMprSimplex_t *portal, btVector3 *pos)
 		sum = b[1] + b[2] + b[3];
 	}
 
-	inv = 1.f / sum;
+	inv = (btScalar)1.f / sum;
 
 	btMprVec3Copy(&p1, origin);
 	btMprVec3Copy(&p2, origin);
@@ -567,14 +567,14 @@ static void btFindPos(const btMprSimplex_t *portal, btVector3 *pos)
 #endif  //MPR_AVERAGE_CONTACT_POSITIONS
 }
 
-inline float btMprVec3Dist2(const btVector3 *a, const btVector3 *b)
+inline btScalar btMprVec3Dist2(const btVector3 *a, const btVector3 *b)
 {
 	btVector3 ab;
 	btMprVec3Sub2(&ab, a, b);
 	return btMprVec3Len2(&ab);
 }
 
-inline float _btMprVec3PointSegmentDist2(const btVector3 *P,
+inline btScalar _btMprVec3PointSegmentDist2(const btVector3 *P,
 										 const btVector3 *x0,
 										 const btVector3 *b,
 										 btVector3 *witness)
@@ -594,7 +594,7 @@ inline float _btMprVec3PointSegmentDist2(const btVector3 *P,
 	//
 	// Bonus of this method is witness point for free.
 
-	float dist, t;
+	btScalar dist, t;
 	btVector3 d, a;
 
 	// direction of segment
@@ -603,16 +603,16 @@ inline float _btMprVec3PointSegmentDist2(const btVector3 *P,
 	// precompute vector from P to x0
 	btMprVec3Sub2(&a, x0, P);
 
-	t = -1.f * btMprVec3Dot(&a, &d);
+	t = (btScalar)-1.f * btMprVec3Dot(&a, &d);
 	t /= btMprVec3Len2(&d);
 
-	if (t < 0.f || btMprIsZero(t))
+	if (t < (btScalar)0.f || btMprIsZero(t))
 	{
 		dist = btMprVec3Dist2(x0, P);
 		if (witness)
 			btMprVec3Copy(witness, x0);
 	}
-	else if (t > 1.f || btMprEq(t, 1.f))
+	else if (t > (btScalar)1.f || btMprEq(t, (btScalar)1.f))
 	{
 		dist = btMprVec3Dist2(b, P);
 		if (witness)
@@ -639,7 +639,7 @@ inline float _btMprVec3PointSegmentDist2(const btVector3 *P,
 	return dist;
 }
 
-inline float btMprVec3PointTriDist2(const btVector3 *P,
+inline btScalar btMprVec3PointTriDist2(const btVector3 *P,
 									const btVector3 *x0, const btVector3 *B,
 									const btVector3 *C,
 									btVector3 *witness)
@@ -654,8 +654,8 @@ inline float btMprVec3PointTriDist2(const btVector3 *P,
 	// computed.
 
 	btVector3 d1, d2, a;
-	float u, v, w, p, q, r;
-	float s, t, dist, dist2;
+	btScalar u, v, w, p, q, r;
+	btScalar s, t, dist, dist2;
 	btVector3 witness2;
 
 	btMprVec3Sub2(&d1, B, x0);
@@ -672,7 +672,7 @@ inline float btMprVec3PointTriDist2(const btVector3 *P,
 	btScalar div = (w * v - r * r);
 	if (btMprIsZero(div))
 	{
-		s = -1;
+		s = (btScalar)-1;
 	}
 	else
 	{
@@ -680,7 +680,7 @@ inline float btMprVec3PointTriDist2(const btVector3 *P,
 		t = (-s * r - q) / w;
 	}
 
-	if ((btMprIsZero(s) || s > 0.f) && (btMprEq(s, 1.f) || s < 1.f) && (btMprIsZero(t) || t > 0.f) && (btMprEq(t, 1.f) || t < 1.f) && (btMprEq(t + s, 1.f) || t + s < 1.f))
+	if ((btMprIsZero(s) || s > (btScalar)0.f) && (btMprEq(s, (btScalar)1.f) || s < (btScalar)1.f) && (btMprIsZero(t) || t > (btScalar)0.f) && (btMprEq(t, (btScalar)1.f) || t < (btScalar)1.f) && (btMprEq(t + s, (btScalar)1.f) || t + s < (btScalar)1.f))
 	{
 		if (witness)
 		{
@@ -696,9 +696,9 @@ inline float btMprVec3PointTriDist2(const btVector3 *P,
 		{
 			dist = s * s * v;
 			dist += t * t * w;
-			dist += 2.f * s * t * r;
-			dist += 2.f * s * p;
-			dist += 2.f * t * q;
+			dist += (btScalar)2.f * s * t * r;
+			dist += (btScalar)2.f * s * p;
+			dist += (btScalar)2.f * t * q;
 			dist += u;
 		}
 	}
@@ -730,7 +730,7 @@ template <typename btConvexTemplate>
 static void btFindPenetr(const btConvexTemplate &a, const btConvexTemplate &b,
 						 const btMprCollisionDescription &colDesc,
 						 btMprSimplex_t *portal,
-						 float *depth, btVector3 *pdir, btVector3 *pos)
+						 btScalar *depth, btVector3 *pdir, btVector3 *pos)
 {
 	btVector3 dir;
 	btMprSupport_t v4;
@@ -772,11 +772,11 @@ static void btFindPenetr(const btConvexTemplate &a, const btConvexTemplate &b,
 	}
 }
 
-static void btFindPenetrTouch(btMprSimplex_t *portal, float *depth, btVector3 *dir, btVector3 *pos)
+static void btFindPenetrTouch(btMprSimplex_t *portal, btScalar *depth, btVector3 *dir, btVector3 *pos)
 {
 	// Touching contact on portal's v1 - so depth is zero and direction
 	// is unimportant and pos can be guessed
-	*depth = 0.f;
+	*depth = (btScalar)0.f;
 	btVector3 zero = btVector3(0, 0, 0);
 	btVector3 *origin = &zero;
 
@@ -791,7 +791,7 @@ static void btFindPenetrTouch(btMprSimplex_t *portal, float *depth, btVector3 *d
 }
 
 static void btFindPenetrSegment(btMprSimplex_t *portal,
-								float *depth, btVector3 *dir, btVector3 *pos)
+								btScalar *depth, btVector3 *dir, btVector3 *pos)
 {
 	// Origin lies on v0-v1 segment.
 	// Depth is distance to v1, direction also and position must be
@@ -812,7 +812,7 @@ static void btFindPenetrSegment(btMprSimplex_t *portal,
 template <typename btConvexTemplate>
 inline int btMprPenetration(const btConvexTemplate &a, const btConvexTemplate &b,
 							const btMprCollisionDescription &colDesc,
-							float *depthOut, btVector3 *dirOut, btVector3 *posOut)
+							btScalar *depthOut, btVector3 *dirOut, btVector3 *posOut)
 {
 	btMprSimplex_t portal;
 
@@ -845,7 +845,9 @@ inline int btMprPenetration(const btConvexTemplate &a, const btConvexTemplate &b
 		}
 		case 2:
 		{
-			btFindPenetrSegment(&portal, depthOut, dirOut, posOut);
+			assert(false);
+			//TODO: Fix error
+			//btFindPenetrSegment(&portal, depthOut, dirOut, posOut);
 			result = 0;
 			break;
 		}
@@ -866,12 +868,12 @@ template <typename btConvexTemplate, typename btMprDistanceTemplate>
 inline int btComputeMprPenetration(const btConvexTemplate &a, const btConvexTemplate &b, const btMprCollisionDescription &colDesc, btMprDistanceTemplate *distInfo)
 {
 	btVector3 dir, pos;
-	float depth;
+	btScalar depth;
 
 	int res = btMprPenetration(a, b, colDesc, &depth, &dir, &pos);
 	if (res == 0)
 	{
-		distInfo->m_distance = -depth;
+		distInfo->m_distance = (btScalar)-depth;
 		distInfo->m_pointOnB = pos;
 		distInfo->m_normalBtoA = -dir;
 		distInfo->m_pointOnA = pos - distInfo->m_distance * dir;

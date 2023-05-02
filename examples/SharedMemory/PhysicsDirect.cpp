@@ -646,10 +646,10 @@ bool PhysicsDirect::processMeshData(const struct SharedMemoryCommand& orgCommand
 
 			for (int i = 0; i < args.m_numVerticesCopied; i++)
 			{
-				m_data->m_cachedVertexPositions[i + args.m_startingVertex].x = verticesReceived[i].x();
-				m_data->m_cachedVertexPositions[i + args.m_startingVertex].y = verticesReceived[i].y();
-				m_data->m_cachedVertexPositions[i + args.m_startingVertex].z = verticesReceived[i].z();
-				m_data->m_cachedVertexPositions[i + args.m_startingVertex].w = verticesReceived[i].w();
+				m_data->m_cachedVertexPositions[i + args.m_startingVertex].x = (float)verticesReceived[i].x();
+				m_data->m_cachedVertexPositions[i + args.m_startingVertex].y = (float)verticesReceived[i].y();
+				m_data->m_cachedVertexPositions[i + args.m_startingVertex].z = (float)verticesReceived[i].z();
+				m_data->m_cachedVertexPositions[i + args.m_startingVertex].w = (float)verticesReceived[i].w();
 			}
 
 			if (args.m_numVerticesRemaining > 0 && args.m_numVerticesCopied)

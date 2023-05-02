@@ -4,7 +4,7 @@ namespace btInverseDynamics
 {
 DillCreator::DillCreator(int level)
 	: m_level(level),
-	  m_num_bodies(BT_ID_POW(2, level))
+	  m_num_bodies(BT_ID_POW((btScalar)2, (btScalar)level))
 {
 	m_parent.resize(m_num_bodies);
 	m_parent_r_parent_body_ref.resize(m_num_bodies);
@@ -20,17 +20,17 @@ DillCreator::DillCreator(int level)
 		m_parent[i] = i - 1;
 
 		// all z-axis (DH convention)
-		m_body_axis_of_motion[i](0) = 0.0;
-		m_body_axis_of_motion[i](1) = 0.0;
-		m_body_axis_of_motion[i](2) = 1.0;
+		m_body_axis_of_motion[i](0) = (btScalar)0.0;
+		m_body_axis_of_motion[i](1) = (btScalar)0.0;
+		m_body_axis_of_motion[i](2) = (btScalar)1.0;
 	}
 
 	// recursively build data structures
 	m_current_body = 0;
 	const int parent = -1;
-	const idScalar d_DH = 0.0;
-	const idScalar a_DH = 0.0;
-	const idScalar alpha_DH = 0.0;
+	const idScalar d_DH = (btScalar)0.0;
+	const idScalar a_DH = (btScalar)0.0;
+	const idScalar alpha_DH = (btScalar)0.0;
 
 	if (-1 == recurseDill(m_level, parent, d_DH, a_DH, alpha_DH))
 	{
@@ -87,7 +87,7 @@ int DillCreator::recurseDill(const int level, const int parent, const idScalar d
 		return -1;
 	}
 
-	idScalar size = BT_ID_MAX(level, 1);
+	idScalar size = BT_ID_MAX((btScalar)level, (btScalar)1);
 	const int body = m_current_body;
 	//  length = 0.1 * size;
 	//  with = 2 * 0.01 * size;
@@ -95,38 +95,38 @@ int DillCreator::recurseDill(const int level, const int parent, const idScalar d
 	/// these parameters are from the paper ...
 	/// TODO: add proper citation
 	m_parent[body] = parent;
-	m_mass[body] = 0.1 * BT_ID_POW(size, 3);
-	m_body_r_body_com[body](0) = 0.05 * size;
-	m_body_r_body_com[body](1) = 0;
-	m_body_r_body_com[body](2) = 0;
+	m_mass[body] = (btScalar)0.1 * BT_ID_POW((btScalar)size, (btScalar)3);
+	m_body_r_body_com[body](0) = (btScalar)0.05 * size;
+	m_body_r_body_com[body](1) = (btScalar)0;
+	m_body_r_body_com[body](2) = (btScalar)0;
 	// initialization
 	for (int i = 0; i < 3; i++)
 	{
-		m_parent_r_parent_body_ref[body](i) = 0;
+		m_parent_r_parent_body_ref[body](i) = (btScalar)0;
 		for (int j = 0; j < 3; j++)
 		{
-			m_body_I_body[body](i, j) = 0.0;
-			m_body_T_parent_ref[body](i, j) = 0.0;
+			m_body_I_body[body](i, j) = (btScalar)0.0;
+			m_body_T_parent_ref[body](i, j) = (btScalar)0.0;
 		}
 	}
-        const idScalar size_5 = std::pow(size, 5);
-        m_body_I_body[body](0, 0) = size_5 / 0.2e6;
-        m_body_I_body[body](1, 1) = size_5 * 403 / 1.2e6;
+        const idScalar size_5 = BT_ID_POW((btScalar)size, (btScalar)5);
+        m_body_I_body[body](0, 0) = size_5 / (btScalar)0.2e6;
+        m_body_I_body[body](1, 1) = size_5 * 403 / (btScalar)1.2e6;
 	m_body_I_body[body](2, 2) = m_body_I_body[body](1, 1);
 
-	getVecMatFromDH(0, 0, a_DH_in, alpha_DH_in, &m_parent_r_parent_body_ref[body],
+	getVecMatFromDH((btScalar)0, (btScalar)0, a_DH_in, alpha_DH_in, &m_parent_r_parent_body_ref[body],
 					&m_body_T_parent_ref[body]);
 
 	// attach "level" Dill systems of levels 1...level
 	for (int i = 1; i <= level; i++)
 	{
-		idScalar d_DH = 0.01 * size;
+		idScalar d_DH = (btScalar)0.01 * size;
 		if (i == level)
 		{
-			d_DH = 0.0;
+			d_DH = (btScalar)0.0;
 		}
-		const idScalar a_DH = i * 0.1;
-		const idScalar alpha_DH = i * BT_ID_PI / 3.0;
+		const idScalar a_DH = i * (btScalar)0.1;
+		const idScalar alpha_DH = i * BT_ID_PI / (btScalar)3.0;
 		m_current_body++;
 		recurseDill(i - 1, body, d_DH, a_DH, alpha_DH);
 	}

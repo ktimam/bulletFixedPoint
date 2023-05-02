@@ -174,7 +174,7 @@ void GpuRigidBodyDemo::renderScene()
 	m_guiHelper->getRenderInterface()->renderScene();
 }
 
-void GpuRigidBodyDemo::stepSimulation(float deltaTime)
+void GpuRigidBodyDemo::stepSimulation(btScalar deltaTime)
 {
 	if (!m_instancingRenderer)
 		return;

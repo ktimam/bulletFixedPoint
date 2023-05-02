@@ -26,7 +26,7 @@ public:
 	virtual ~GraphicsClientExample();
 
 	virtual void initPhysics();
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 
 	virtual void resetCamera()
 	{
@@ -262,7 +262,7 @@ void GraphicsClientExample::initPhysics()
 	
 }
 
-void GraphicsClientExample::stepSimulation(float deltaTime)
+void GraphicsClientExample::stepSimulation(btScalar deltaTime)
 {
 	GraphicsSharedMemoryCommand* cmd = getAvailableSharedMemoryCommand();
 	if (cmd)

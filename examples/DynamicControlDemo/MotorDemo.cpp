@@ -33,9 +33,9 @@ class btDefaultCollisionConfiguration;
 
 class MotorDemo : public CommonRigidBodyBase
 {
-	float m_Time;
-	float m_fCyclePeriod;  // in milliseconds
-	float m_fMuscleStrength;
+	btScalar m_Time;
+	btScalar m_fCyclePeriod;  // in milliseconds
+	btScalar m_fMuscleStrength;
 
 	btAlignedObjectArray<class TestRig*> m_rigs;
 
@@ -100,7 +100,7 @@ class TestRig
 
 	btRigidBody* localCreateRigidBody(btScalar mass, const btTransform& startTransform, btCollisionShape* shape)
 	{
-		bool isDynamic = (mass != 0.f);
+		bool isDynamic = (mass != (btScalar)0.f);
 
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)
@@ -124,9 +124,9 @@ public:
 		//
 		// Setup geometry
 		//
-		float fBodySize = 0.25f;
-		float fLegLength = 0.45f;
-		float fForeLegLength = 0.75f;
+		btScalar fBodySize = (btScalar)0.25f;
+		btScalar fLegLength = (btScalar)0.45f;
+		btScalar fForeLegLength = (btScalar)0.75f;
 		m_shapes[0] = new btCapsuleShape(btScalar(fBodySize), btScalar(0.10));
 		int i;
 		for (i = 0; i < NUM_LEGS; i++)
@@ -138,7 +138,7 @@ public:
 		//
 		// Setup rigid bodies
 		//
-		float fHeight = 0.5;
+		btScalar fHeight = (btScalar)0.5;
 		btTransform offset;
 		offset.setIdentity();
 		offset.setOrigin(positionOffset);
@@ -159,33 +159,33 @@ public:
 		// legs
 		for (i = 0; i < NUM_LEGS; i++)
 		{
-			float fAngle = 2 * M_PI * i / NUM_LEGS;
-			float fSin = std::sin(fAngle);
-			float fCos = std::cos(fAngle);
+			btScalar fAngle = (btScalar)2 * (btScalar)M_PI * i / NUM_LEGS;
+			btScalar fSin = sin(fAngle);
+			btScalar fCos = cos(fAngle);
 
 			transform.setIdentity();
-			btVector3 vBoneOrigin = btVector3(btScalar(fCos * (fBodySize + 0.5 * fLegLength)), btScalar(fHeight), btScalar(fSin * (fBodySize + 0.5 * fLegLength)));
+			btVector3 vBoneOrigin = btVector3(btScalar(fCos * (fBodySize + (btScalar)0.5 * fLegLength)), btScalar(fHeight), btScalar(fSin * (fBodySize + (btScalar)0.5 * fLegLength)));
 			transform.setOrigin(vBoneOrigin);
 
 			// thigh
 			btVector3 vToBone = (vBoneOrigin - vRoot).normalize();
 			btVector3 vAxis = vToBone.cross(vUp);
-			transform.setRotation(btQuaternion(vAxis, M_PI_2));
+			transform.setRotation(btQuaternion(vAxis, (btScalar)M_PI_2));
 			m_bodies[1 + 2 * i] = localCreateRigidBody(btScalar(1.), offset * transform, m_shapes[1 + 2 * i]);
 
 			// shin
 			transform.setIdentity();
-			transform.setOrigin(btVector3(btScalar(fCos * (fBodySize + fLegLength)), btScalar(fHeight - 0.5 * fForeLegLength), btScalar(fSin * (fBodySize + fLegLength))));
+			transform.setOrigin(btVector3(btScalar(fCos * (fBodySize + fLegLength)), btScalar(fHeight - (btScalar)0.5 * fForeLegLength), btScalar(fSin * (fBodySize + fLegLength))));
 			m_bodies[2 + 2 * i] = localCreateRigidBody(btScalar(1.), offset * transform, m_shapes[2 + 2 * i]);
 		}
 
 		// Setup some damping on the m_bodies
 		for (i = 0; i < BODYPART_COUNT; ++i)
 		{
-			m_bodies[i]->setDamping(0.05, 0.85);
-			m_bodies[i]->setDeactivationTime(0.8);
+			m_bodies[i]->setDamping((btScalar)0.05, (btScalar)0.85);
+			m_bodies[i]->setDeactivationTime((btScalar)0.8);
 			//m_bodies[i]->setSleepingThresholds(1.6, 2.5);
-			m_bodies[i]->setSleepingThresholds(0.5f, 0.5f);
+			m_bodies[i]->setSleepingThresholds((btScalar)0.5f, (btScalar)0.5f);
 		}
 
 		//
@@ -198,15 +198,15 @@ public:
 
 		for (i = 0; i < NUM_LEGS; i++)
 		{
-			float fAngle = 2 * M_PI * i / NUM_LEGS;
-			float fSin = std::sin(fAngle);
-			float fCos = std::cos(fAngle);
+			btScalar fAngle = (btScalar)2 * (btScalar)M_PI * i / NUM_LEGS;
+			btScalar fSin = sin(fAngle);
+			btScalar fCos = cos(fAngle);
 
 			// hip joints
 			localA.setIdentity();
 			localB.setIdentity();
-			localA.getBasis().setEulerZYX(0, -fAngle, 0);
-			localA.setOrigin(btVector3(btScalar(fCos * fBodySize), btScalar(0.), btScalar(fSin * fBodySize)));
+			localA.getBasis().setEulerZYX((btScalar)0, -fAngle, (btScalar)0);
+			localA.setOrigin(btVector3(btScalar(fCos * (btScalar)fBodySize), btScalar(0.), btScalar(fSin * (btScalar)fBodySize)));
 			localB = m_bodies[1 + 2 * i]->getWorldTransform().inverse() * m_bodies[0]->getWorldTransform() * localA;
 			hingeC = new btHingeConstraint(*m_bodies[0], *m_bodies[1 + 2 * i], localA, localB);
 			hingeC->setLimit(btScalar(-0.75 * M_PI_4), btScalar(M_PI_8));
@@ -218,7 +218,7 @@ public:
 			localA.setIdentity();
 			localB.setIdentity();
 			localC.setIdentity();
-			localA.getBasis().setEulerZYX(0, -fAngle, 0);
+			localA.getBasis().setEulerZYX((btScalar)0, -fAngle, (btScalar)0);
 			localA.setOrigin(btVector3(btScalar(fCos * (fBodySize + fLegLength)), btScalar(0.), btScalar(fSin * (fBodySize + fLegLength))));
 			localB = m_bodies[1 + 2 * i]->getWorldTransform().inverse() * m_bodies[0]->getWorldTransform() * localA;
 			localC = m_bodies[2 + 2 * i]->getWorldTransform().inverse() * m_bodies[0]->getWorldTransform() * localA;
@@ -272,14 +272,14 @@ void MotorDemo::initPhysics()
 
 	// Setup the basic world
 
-	m_Time = 0;
-	m_fCyclePeriod = 2000.f;  // in milliseconds
+	m_Time = (btScalar)0;
+	m_fCyclePeriod = (btScalar)2000.f;  // in milliseconds
 
 	//	m_fMuscleStrength = 0.05f;
 	// new SIMD solver for joints clips accumulated impulse, so the new limits for the motor
 	// should be (numberOfsolverIterations * oldLimits)
 	// currently solver uses 10 iterations, so:
-	m_fMuscleStrength = 0.5f;
+	m_fMuscleStrength = (btScalar)0.5f;
 
 	m_collisionConfiguration = new btDefaultCollisionConfiguration();
 
@@ -327,8 +327,8 @@ void PreStep()
 
 void MotorDemo::setMotorTargets(btScalar deltaTime)
 {
-	float ms = deltaTime * 1000000.;
-	float minFPS = 1000000.f / 60.f;
+	btScalar ms = deltaTime * (btScalar)1000000.;
+	btScalar minFPS = (btScalar)1000000.f / (btScalar)60.f;
 	if (ms > minFPS)
 		ms = minFPS;
 
@@ -345,10 +345,10 @@ void MotorDemo::setMotorTargets(btScalar deltaTime)
 			btScalar fCurAngle = hingeC->getHingeAngle();
 
 			btScalar fTargetPercent = (int(m_Time / 1000) % int(m_fCyclePeriod)) / m_fCyclePeriod;
-			btScalar fTargetAngle = 0.5 * (1 + sin(2 * M_PI * fTargetPercent));
+			btScalar fTargetAngle = (btScalar)0.5 * ((btScalar)1 + sin((btScalar)2 * (btScalar)M_PI * fTargetPercent));
 			btScalar fTargetLimitAngle = hingeC->getLowerLimit() + fTargetAngle * (hingeC->getUpperLimit() - hingeC->getLowerLimit());
 			btScalar fAngleError = fTargetLimitAngle - fCurAngle;
-			btScalar fDesiredAngularVel = 1000000.f * fAngleError / ms;
+			btScalar fDesiredAngularVel = (btScalar)1000000.f * fAngleError / ms;
 			hingeC->enableAngularMotor(true, fDesiredAngularVel, m_fMuscleStrength);
 		}
 	}

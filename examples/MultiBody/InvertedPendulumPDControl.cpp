@@ -8,9 +8,9 @@
 #include "../Utils/b3ResourcePath.h"
 #include "../CommonInterfaces/CommonParameterInterface.h"
 static btScalar radius(0.2);
-static btScalar kp = 100;
-static btScalar kd = 20;
-static btScalar maxForce = 100;
+static btScalar kp = (btScalar)100;
+static btScalar kd = (btScalar)20;
+static btScalar maxForce = (btScalar)100;
 
 struct InvertedPendulumPDControl : public CommonMultiBodyBase
 {
@@ -53,10 +53,10 @@ btMultiBody* createInvertedPendulumMultiBody(btMultiBodyDynamicsWorld* world, GU
 {
 	btVector4 colors[4] =
 		{
-			btVector4(1, 0, 0, 1),
-			btVector4(0, 1, 0, 1),
-			btVector4(0, 1, 1, 1),
-			btVector4(1, 1, 0, 1),
+			btVector4((btScalar)1, (btScalar)0, (btScalar)0, (btScalar)1),
+			btVector4((btScalar)0, (btScalar)1, (btScalar)0, (btScalar)1),
+			btVector4((btScalar)0, (btScalar)1, (btScalar)1, (btScalar)1),
+			btVector4((btScalar)1, (btScalar)1, (btScalar)0, (btScalar)1),
 		};
 	int curColor = 0;
 
@@ -78,11 +78,11 @@ btMultiBody* createInvertedPendulumMultiBody(btMultiBodyDynamicsWorld* world, GU
 	{
 		//btCollisionShape *shape = new btSphereShape(baseHalfExtents[0]);// btBoxShape(btVector3(baseHalfExtents[0], baseHalfExtents[1], baseHalfExtents[2]));
 		btCollisionShape* shape = new btBoxShape(btVector3(baseHalfExtents[0], baseHalfExtents[1], baseHalfExtents[2]));
-		shape->calculateLocalInertia(baseMass, baseInertiaDiag);
+		shape->calculateLocalInertia((btScalar)baseMass, baseInertiaDiag);
 		delete shape;
 	}
 
-	btMultiBody* pMultiBody = new btMultiBody(numLinks, 0, baseInertiaDiag, fixedBase, canSleep);
+	btMultiBody* pMultiBody = new btMultiBody(numLinks, (btScalar)0, baseInertiaDiag, fixedBase, canSleep);
 
 	pMultiBody->setBaseWorldTransform(baseWorldTrans);
 	btVector3 vel(0, 0, 0);
@@ -92,12 +92,12 @@ btMultiBody* createInvertedPendulumMultiBody(btMultiBodyDynamicsWorld* world, GU
 	btVector3 hingeJointAxis(1, 0, 0);
 
 	//y-axis assumed up
-	btVector3 parentComToCurrentCom(0, -linkHalfExtents[1] * 2.f, 0);                      //par body's COM to cur body's COM offset
-	btVector3 currentPivotToCurrentCom(0, -linkHalfExtents[1], 0);                         //cur body's COM to cur body's PIV offset
+	btVector3 parentComToCurrentCom((btScalar)0, -linkHalfExtents[1] * (btScalar)2.f, (btScalar)0);                      //par body's COM to cur body's COM offset
+	btVector3 currentPivotToCurrentCom((btScalar)0, -linkHalfExtents[1], (btScalar)0);                         //cur body's COM to cur body's PIV offset
 	btVector3 parentComToCurrentPivot = parentComToCurrentCom - currentPivotToCurrentCom;  //par body's COM to cur body's PIV offset
 
 	//////
-	btScalar q0 = 1.f * SIMD_PI / 180.f;
+	btScalar q0 = (btScalar)1.f * SIMD_PI / (btScalar)180.f;
 	btQuaternion quat0(btVector3(1, 0, 0).normalized(), q0);
 	quat0.normalize();
 	/////
@@ -118,7 +118,7 @@ btMultiBody* createInvertedPendulumMultiBody(btMultiBodyDynamicsWorld* world, GU
 		{
 			shape = new btSphereShape(radius);
 		}
-		shape->calculateLocalInertia(linkMass, linkInertiaDiag);
+		shape->calculateLocalInertia((btScalar)linkMass, linkInertiaDiag);
 		delete shape;
 
 		if (!spherical)
@@ -127,20 +127,20 @@ btMultiBody* createInvertedPendulumMultiBody(btMultiBodyDynamicsWorld* world, GU
 
 			if (i == 0)
 			{
-				pMultiBody->setupRevolute(i, linkMass, linkInertiaDiag, i - 1,
-										  btQuaternion(0.f, 0.f, 0.f, 1.f),
+				pMultiBody->setupRevolute(i, (btScalar)linkMass, linkInertiaDiag, i - 1,
+										  btQuaternion((btScalar)0.f, (btScalar)0.f, (btScalar)0.f, (btScalar)1.f),
 										  hingeJointAxis,
 										  parentComToCurrentPivot,
 										  currentPivotToCurrentCom, false);
 			}
 			else
 			{
-				btVector3 parentComToCurrentCom(0, -radius * 2.f, 0);                                  //par body's COM to cur body's COM offset
-				btVector3 currentPivotToCurrentCom(0, -radius, 0);                                     //cur body's COM to cur body's PIV offset
+				btVector3 parentComToCurrentCom((btScalar)0, -radius * (btScalar)2.f, (btScalar)0);                                  //par body's COM to cur body's COM offset
+				btVector3 currentPivotToCurrentCom((btScalar)0, -radius, (btScalar)0);                                     //cur body's COM to cur body's PIV offset
 				btVector3 parentComToCurrentPivot = parentComToCurrentCom - currentPivotToCurrentCom;  //par body's COM to cur body's PIV offset
 
-				pMultiBody->setupFixed(i, linkMass, linkInertiaDiag, i - 1,
-									   btQuaternion(0.f, 0.f, 0.f, 1.f),
+				pMultiBody->setupFixed(i, (btScalar)linkMass, linkInertiaDiag, i - 1,
+									   btQuaternion((btScalar)0.f, (btScalar)0.f, (btScalar)0.f, (btScalar)1.f),
 									   parentComToCurrentPivot,
 									   currentPivotToCurrentCom);
 			}
@@ -150,7 +150,7 @@ btMultiBody* createInvertedPendulumMultiBody(btMultiBodyDynamicsWorld* world, GU
 		else
 		{
 			//pMultiBody->setupPlanar(i, linkMass, linkInertiaDiag, i - 1, btQuaternion(0.f, 0.f, 0.f, 1.f)/*quat0*/, btVector3(1, 0, 0), parentComToCurrentPivot*2, false);
-			pMultiBody->setupSpherical(i, linkMass, linkInertiaDiag, i - 1, btQuaternion(0.f, 0.f, 0.f, 1.f), parentComToCurrentPivot, currentPivotToCurrentCom, false);
+			pMultiBody->setupSpherical(i, (btScalar)linkMass, linkInertiaDiag, i - 1, btQuaternion((btScalar)0.f, (btScalar)0.f, (btScalar)0.f, (btScalar)1.f), parentComToCurrentPivot, currentPivotToCurrentCom, false);
 		}
 	}
 
@@ -165,20 +165,20 @@ btMultiBody* createInvertedPendulumMultiBody(btMultiBodyDynamicsWorld* world, GU
 	//
 	if (!damping)
 	{
-		mbC->setLinearDamping(0.f);
-		mbC->setAngularDamping(0.f);
+		mbC->setLinearDamping((btScalar)0.f);
+		mbC->setAngularDamping((btScalar)0.f);
 	}
 	else
 	{
-		mbC->setLinearDamping(0.1f);
-		mbC->setAngularDamping(0.9f);
+		mbC->setLinearDamping((btScalar)0.1f);
+		mbC->setAngularDamping((btScalar)0.9f);
 	}
 	//
 
 	//////////////////////////////////////////////
 	if (numLinks > 0)
 	{
-		btScalar q0 = 180.f * SIMD_PI / 180.f;
+		btScalar q0 = (btScalar)180.f * (btScalar)SIMD_PI / (btScalar)180.f;
 		if (!spherical)
 		{
 			mbC->setJointPosMultiDof(0, &q0);
@@ -218,7 +218,7 @@ btMultiBody* createInvertedPendulumMultiBody(btMultiBodyDynamicsWorld* world, GU
 			//when syncing the btMultiBody link transforms to the btMultiBodyLinkCollider
 
 			tr.setOrigin(local_origin[0]);
-			btQuaternion orn(btVector3(0, 0, 1), 0.25 * 3.1415926538);
+			btQuaternion orn(btVector3((btScalar)0, (btScalar)0, (btScalar)1), (btScalar)0.25 * (btScalar)3.1415926538);
 
 			tr.setRotation(orn);
 			col->setWorldTransform(tr);
@@ -229,7 +229,7 @@ btMultiBody* createInvertedPendulumMultiBody(btMultiBodyDynamicsWorld* world, GU
 
 			world->addCollisionObject(col, collisionFilterGroup, collisionFilterMask);  //, 2,1+2);
 
-			btVector4 color(0.0, 0.0, 0.5, 1);
+			btVector4 color((btScalar)0.0, (btScalar)0.0, (btScalar)0.5, (btScalar)1);
 			guiHelper->createCollisionObjectGraphicsObject(col, color);
 
 			//                col->setFriction(friction);
@@ -347,7 +347,7 @@ char fileName[1024];
 static btAlignedObjectArray<btScalar> qDesiredArray;
 void InvertedPendulumPDControl::stepSimulation(float deltaTime)
 {
-	static btScalar offset = -0.1 * SIMD_PI;
+	static btScalar offset = (btScalar)-0.1 * (btScalar)SIMD_PI;
 
 	m_frameCount++;
 	if ((m_frameCount & 0xff) == 0)
@@ -365,7 +365,7 @@ void InvertedPendulumPDControl::stepSimulation(float deltaTime)
 		btScalar qdActual = m_multiBody->getJointVelMultiDof(joint)[dof1];
 		btScalar positionError = (qDesiredArray[joint] - qActual);
 		double desiredVelocity = 0;
-		btScalar velocityError = (desiredVelocity - qdActual);
+		btScalar velocityError = ((btScalar)desiredVelocity - qdActual);
 		btScalar force = kp * positionError + kd * velocityError;
 		btClamp(force, -maxForce, maxForce);
 		m_multiBody->addJointTorque(joint, force);
@@ -384,7 +384,7 @@ void InvertedPendulumPDControl::stepSimulation(float deltaTime)
 			this->m_guiHelper->getAppInterface()->dumpNextFrameToPng(fileName);
 		}
 	}
-	m_dynamicsWorld->stepSimulation(1. / 60., 0);  //240,0);
+	m_dynamicsWorld->stepSimulation((btScalar)1. / (btScalar)60., 0);  //240,0);
 
 	static int count = 0;
 	if ((count & 0x0f) == 0)

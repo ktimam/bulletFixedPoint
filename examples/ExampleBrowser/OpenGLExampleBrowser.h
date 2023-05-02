@@ -17,7 +17,7 @@ public:
 
 	virtual bool init(int argc, char* argv[]);
 
-	virtual void update(float deltaTime);
+	virtual void update(btScalar deltaTime);
 
 	virtual void updateGraphics();
 

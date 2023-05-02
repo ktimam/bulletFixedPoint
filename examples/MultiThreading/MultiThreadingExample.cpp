@@ -255,7 +255,7 @@ public:
 		m_jobs.clear();
 	}
 
-	virtual void stepSimulation(float deltaTime)
+	virtual void stepSimulation(btScalar deltaTime)
 	{
 	}
 

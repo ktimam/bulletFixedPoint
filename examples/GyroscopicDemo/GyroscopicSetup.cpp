@@ -58,42 +58,42 @@ void GyroscopicSetup::initPhysics()
 	{
 		btCylinderShapeZ* pin = new btCylinderShapeZ(btVector3(0.1, 0.1, 0.2));
 		btBoxShape* box = new btBoxShape(btVector3(1, 0.1, 0.1));
-		box->setMargin(0.01);
-		pin->setMargin(0.01);
+		box->setMargin((btScalar)0.01);
+		pin->setMargin((btScalar)0.01);
 		btCompoundShape* compound = new btCompoundShape();
 		compound->addChildShape(btTransform::getIdentity(), pin);
 		btTransform offsetBox(btMatrix3x3::getIdentity(), btVector3(0, 0, 0.2));
 		compound->addChildShape(offsetBox, box);
-		btScalar masses[2] = {0.3, 0.1};
+		btScalar masses[2] = { (btScalar)0.3, (btScalar)0.1};
 		btVector3 localInertia;
 		btTransform principal;
 		compound->calculatePrincipalAxisTransform(masses, principal, localInertia);
 
-		btRigidBody* body = new btRigidBody(1, 0, compound, localInertia);
+		btRigidBody* body = new btRigidBody((btScalar)1, 0, compound, localInertia);
 		btTransform tr;
 		tr.setIdentity();
 		tr.setOrigin(positions[i]);
 		body->setCenterOfMassTransform(tr);
 		body->setAngularVelocity(btVector3(0, 0.1, 10));  //51));
 		//body->setLinearVelocity(btVector3(3, 0, 0));
-		body->setFriction(btSqrt(1));
+		body->setFriction(btSqrt((btScalar)1));
 		m_dynamicsWorld->addRigidBody(body);
 		body->setFlags(gyroflags[i]);
-		m_dynamicsWorld->getSolverInfo().m_maxGyroscopicForce = 10.f;
-		body->setDamping(0.0000f, 0.000f);
+		m_dynamicsWorld->getSolverInfo().m_maxGyroscopicForce = (btScalar)10.f;
+		body->setDamping((btScalar)0.0000f, (btScalar)0.000f);
 	}
 
 	{
 		//btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.),btScalar(50.),btScalar(0.5)));
-		btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), 0);
+		btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), (btScalar)0);
 
 		m_collisionShapes.push_back(groundShape);
 		btTransform groundTransform;
 		groundTransform.setIdentity();
 		groundTransform.setOrigin(btVector3(0, 0, 0));
 		btRigidBody* groundBody;
-		groundBody = createRigidBody(0, groundTransform, groundShape);
-		groundBody->setFriction(btSqrt(2));
+		groundBody = createRigidBody((btScalar)0, groundTransform, groundShape);
+		groundBody->setFriction(btSqrt((btScalar)2));
 	}
 	m_guiHelper->autogenerateGraphicsObjects(m_dynamicsWorld);
 }
@@ -106,12 +106,12 @@ void GyroscopicSetup::physicsDebugDraw(int debugFlags)
 	for (int i = 0; i < m_dynamicsWorld->getNumCollisionObjects(); i++)
 	{
 		btRigidBody* body = btRigidBody::upcast(m_dynamicsWorld->getCollisionObjectArray()[i]);
-		if (body && body->getInvMass() > 0)
+		if (body && body->getInvMass() > (btScalar)0)
 		{
 			btTransform tr = body->getWorldTransform();
 			btVector3 pos = tr.getOrigin() + btVector3(0, 0, 2);
-			btScalar size = 1;
-			m_guiHelper->drawText3D(gyroNames[i], pos.x(), pos.y(), pos.z(), size);
+			btScalar size = (btScalar)1;
+			m_guiHelper->drawText3D(gyroNames[i], (float)pos.x(), (float)pos.y(), (float)pos.z(), (float)size);
 		}
 	}
 }

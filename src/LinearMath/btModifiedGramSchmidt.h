@@ -63,14 +63,14 @@ public:
             {
                 if (i == j)
                 {
-                    if (std::abs(1.0-m_out[i].dot(m_out[j])) > eps)// && std::abs(m_out[i].dot(m_out[j])) > eps)
+                    if (abs((btScalar)1.0-m_out[i].dot(m_out[j])) > eps)// && std::abs(m_out[i].dot(m_out[j])) > eps)
                     {
                         printf("vec[%d] is not unit, norm squared = %f\n", i,m_out[i].dot(m_out[j]));
                     }
                 }
                 else
                 {
-                    if (std::abs(m_out[i].dot(m_out[j])) > eps)
+                    if (abs(m_out[i].dot(m_out[j])) > eps)
                     {
                         printf("vec[%d] and vec[%d] is not orthogonal, dot product = %f\n", i, j, m_out[i].dot(m_out[j]));
                     }

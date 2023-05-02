@@ -25,7 +25,7 @@ struct TimeSeriesExample : public CommonExampleInterface
 
 	virtual void exitPhysics();
 
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 
 	virtual void physicsDebugDraw(int debugFlags);
 
@@ -82,7 +82,7 @@ void TimeSeriesExample::exitPhysics()
 {
 }
 
-void TimeSeriesExample::stepSimulation(float deltaTime)
+void TimeSeriesExample::stepSimulation(btScalar deltaTime)
 {
 	float time = m_internalData->m_timeSeriesCanvas->getCurrentTime();
 	float v = sinf(time);
@@ -91,7 +91,7 @@ void TimeSeriesExample::stepSimulation(float deltaTime)
 	m_internalData->m_timeSeriesCanvas->insertDataAtCurrentTime(v, 1, true);
 	v = tanf(time);
 	m_internalData->m_timeSeriesCanvas->insertDataAtCurrentTime(v, 3, true);
-	m_internalData->m_timeSeriesCanvas->insertDataAtCurrentTime(deltaTime * 10, 2, true);
+	m_internalData->m_timeSeriesCanvas->insertDataAtCurrentTime((float)deltaTime * 10, 2, true);
 
 	m_internalData->m_timeSeriesCanvas->nextTick();
 }

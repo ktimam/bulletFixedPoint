@@ -1988,6 +1988,12 @@ void GLInstancingRenderer::drawPoints(const float* positions, const float* color
 	glUseProgram(0);
 }
 
+void GLInstancingRenderer::drawLines(const btScalar* positions, const btScalar color[4], int numPoints, int pointStrideInBytes, const unsigned int* indices, int numIndices, float pointDrawSize)
+{
+	float pos[] = { (float)positions[0], (float)positions[1], (float)positions[2] };
+	float colorarr[] = { (float)color[0], (float)color[1], (float)color[2],  (float)color[3] };
+	drawLines(pos, colorarr, numPoints, pointStrideInBytes, indices, numIndices, pointDrawSize);
+}
 void GLInstancingRenderer::drawLines(const float* positions, const float color[4], int numPoints, int pointStrideInBytes, const unsigned int* indices, int numIndices, float lineWidthIn)
 {
 	glActiveTexture(GL_TEXTURE0);
@@ -2049,6 +2055,20 @@ void GLInstancingRenderer::drawLines(const float* positions, const float color[4
 	glUseProgram(0);
 }
 
+//void GLInstancingRenderer::drawPoints(const float* positions, const float color[4], int numPoints, int pointStrideInBytes, float pointDrawSize)
+//{
+//	assert(false);
+//	//TODO Implement
+//}
+
+void GLInstancingRenderer::drawLine(const btVector3 fromIn, const btVector3 toIn, const btVector3 colorIn, double lineWidthIn)
+{
+	float from[4] = { float(fromIn[0]), float(fromIn[1]), float(fromIn[2]), float(fromIn[3]) };
+	float to[4] = { float(toIn[0]), float(toIn[1]), float(toIn[2]), float(toIn[3]) };
+	float color[4] = { float(colorIn[0]), float(colorIn[1]), float(colorIn[2]), float(colorIn[3]) };
+	float lineWidth = float(lineWidthIn);
+	drawLine(from, to, color, lineWidth);
+}
 void GLInstancingRenderer::drawLine(const double fromIn[4], const double toIn[4], const double colorIn[4], double lineWidthIn)
 {
 	float from[4] = {float(fromIn[0]), float(fromIn[1]), float(fromIn[2]), float(fromIn[3])};

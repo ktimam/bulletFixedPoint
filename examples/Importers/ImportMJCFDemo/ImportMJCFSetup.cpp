@@ -32,7 +32,7 @@ public:
 	virtual ~ImportMJCFSetup();
 
 	virtual void initPhysics();
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 
 	void setFileName(const char* mjcfFileName);
 
@@ -269,7 +269,7 @@ void ImportMJCFSetup::initPhysics()
 							char motorName[1024];
 							sprintf(motorName, "%s q ", jointName->c_str());
 							btScalar* motorPos = &m_data->m_motorTargetPositions[m_data->m_numMotors];
-							*motorPos = 0.f;
+							*motorPos = (btScalar)0.f;
 							SliderParams slider(motorName, motorPos);
 							slider.m_minVal = -4;
 							slider.m_maxVal = 4;
@@ -277,8 +277,8 @@ void ImportMJCFSetup::initPhysics()
 							slider.m_clampToNotches = false;
 							m_guiHelper->getParameterInterface()->registerSliderFloatParameter(slider);
 							float maxMotorImpulse = 5.f;
-							btMultiBodyJointMotor* motor = new btMultiBodyJointMotor(mb, mbLinkIndex, 0, 0, maxMotorImpulse);
-							motor->setErp(0.1);
+							btMultiBodyJointMotor* motor = new btMultiBodyJointMotor(mb, mbLinkIndex, 0, (btScalar)0, (btScalar)maxMotorImpulse);
+							motor->setErp((btScalar)0.1);
 							//motor->setMaxAppliedImpulse(0);
 							m_data->m_jointMotors[m_data->m_numMotors] = motor;
 							m_dynamicsWorld->addMultiBodyConstraint(motor);
@@ -310,7 +310,7 @@ void ImportMJCFSetup::initPhysics()
 								sprintf(motorName, "%s q'", jointName.c_str());
 								btScalar* motorVel = &m_data->m_motorTargetPositions[m_data->m_numMotors];
 
-								*motorVel = 0.f;
+								*motorVel = (btScalar)0.f;
 								SliderParams slider(motorName, motorVel);
 								slider.m_minVal = -4;
 								slider.m_maxVal = 4;
@@ -318,8 +318,8 @@ void ImportMJCFSetup::initPhysics()
 								m_data->m_generic6DofJointMotors[m_data->m_numMotors] = c;
 								bool motorOn = true;
 								c->enableMotor(jointInfo->m_jointAxisIndex, motorOn);
-								c->setMaxMotorForce(jointInfo->m_jointAxisIndex, 10000);
-								c->setTargetVelocity(jointInfo->m_jointAxisIndex, 0);
+								c->setMaxMotorForce(jointInfo->m_jointAxisIndex, (btScalar)10000);
+								c->setTargetVelocity(jointInfo->m_jointAxisIndex, (btScalar)0);
 
 								m_data->m_numMotors++;
 							}
@@ -332,7 +332,7 @@ void ImportMJCFSetup::initPhysics()
 	}
 }
 
-void ImportMJCFSetup::stepSimulation(float deltaTime)
+void ImportMJCFSetup::stepSimulation(btScalar deltaTime)
 {
 	if (m_dynamicsWorld)
 	{
@@ -363,7 +363,7 @@ void ImportMJCFSetup::stepSimulation(float deltaTime)
 		}
 
 		//the maximal coordinates/iterative MLCP solver requires a smallish timestep to converge
-		m_dynamicsWorld->stepSimulation(deltaTime, 10, 1. / 240.);
+		m_dynamicsWorld->stepSimulation(deltaTime, 10, (btScalar)1. / (btScalar)240.);
 	}
 }
 

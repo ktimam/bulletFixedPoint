@@ -32,7 +32,7 @@ struct b3RobotSimulatorLoadUrdfFileArgs
 
 	b3RobotSimulatorLoadUrdfFileArgs()
 		: m_startPosition(btVector3(0, 0, 0)),
-		  m_startOrientation(btQuaternion(0, 0, 0, 1)),
+		  m_startOrientation(btQuaternion((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)1)),
 		  m_forceOverrideFixedBase(false),
 		  m_useMultiBody(true),
 		  m_flags(0)
@@ -76,12 +76,12 @@ struct b3RobotSimulatorLoadSoftBodyArgs
 
 	b3RobotSimulatorLoadSoftBodyArgs()
 	{
-		b3RobotSimulatorLoadSoftBodyArgs(btVector3(0, 0, 0), btQuaternion(0, 0, 0, 1));
+		b3RobotSimulatorLoadSoftBodyArgs(btVector3(0, 0, 0), btQuaternion((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)1));
 	}
 
 	b3RobotSimulatorLoadSoftBodyArgs(double scale, double mass, double collisionMargin)
 		: m_startPosition(btVector3(0, 0, 0)),
-		  m_startOrientation(btQuaternion(0, 0, 0, 1)),
+		  m_startOrientation(btQuaternion((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)1)),
 		  m_scale(scale),
 		  m_mass(mass),
 		  m_collisionMargin(collisionMargin)
@@ -133,12 +133,12 @@ struct b3RobotSimulatorLoadDeformableBodyArgs
 
 	b3RobotSimulatorLoadDeformableBodyArgs()
 	{
-		b3RobotSimulatorLoadSoftBodyArgs(btVector3(0, 0, 0), btQuaternion(0, 0, 0, 1));
+		b3RobotSimulatorLoadSoftBodyArgs(btVector3(0, 0, 0), btQuaternion((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)1));
 	}
 
 	b3RobotSimulatorLoadDeformableBodyArgs(double scale, double mass, double collisionMargin)
 	: m_startPosition(btVector3(0, 0, 0)),
-	m_startOrientation(btQuaternion(0, 0, 0, 1)),
+	m_startOrientation(btQuaternion((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)1)),
 	m_scale(scale),
 	m_mass(mass),
 	m_collisionMargin(collisionMargin)
@@ -171,7 +171,7 @@ struct b3RobotSimulatorChangeVisualShapeArgs
 		  m_linkIndex(-1),
 		  m_shapeIndex(-1),
 		  m_textureUniqueId(-2),
-		  m_rgbaColor(0, 0, 0, 1),
+		  m_rgbaColor((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)1),
 		  m_hasRgbaColor(false),
 		  m_specularColor(1, 1, 1),
 		  m_hasSpecularColor(false)
@@ -489,17 +489,17 @@ struct b3RobotSimulatorCreateCollisionShapeArgs
 		  m_numHeightfieldColumns(0),
 		  m_replaceHeightfieldIndex(-1)
 	{
-		m_halfExtents.m_floats[0] = 1;
-		m_halfExtents.m_floats[1] = 1;
-		m_halfExtents.m_floats[2] = 1;
+		m_halfExtents.m_floats[0] = (btScalar)1;
+		m_halfExtents.m_floats[1] = (btScalar)1;
+		m_halfExtents.m_floats[2] = (btScalar)1;
 
-		m_meshScale.m_floats[0] = 1;
-		m_meshScale.m_floats[1] = 1;
-		m_meshScale.m_floats[2] = 1;
+		m_meshScale.m_floats[0] = (btScalar)1;
+		m_meshScale.m_floats[1] = (btScalar)1;
+		m_meshScale.m_floats[2] = (btScalar)1;
 
-		m_planeNormal.m_floats[0] = 0;
-		m_planeNormal.m_floats[1] = 0;
-		m_planeNormal.m_floats[2] = 1;
+		m_planeNormal.m_floats[0] = (btScalar)0;
+		m_planeNormal.m_floats[1] = (btScalar)0;
+		m_planeNormal.m_floats[2] = (btScalar)1;
 	}
 };
 
@@ -521,17 +521,17 @@ struct b3RobotSimulatorCreateVisualShapeArgs
 		m_fileName(NULL),
 		m_flags(0)
 	{
-		m_halfExtents.m_floats[0] = 1;
-		m_halfExtents.m_floats[1] = 1;
-		m_halfExtents.m_floats[2] = 1;
+		m_halfExtents.m_floats[0] = (btScalar)1;
+		m_halfExtents.m_floats[1] = (btScalar)1;
+		m_halfExtents.m_floats[2] = (btScalar)1;
 
-		m_meshScale.m_floats[0] = 1;
-		m_meshScale.m_floats[1] = 1;
-		m_meshScale.m_floats[2] = 1;
+		m_meshScale.m_floats[0] = (btScalar)1;
+		m_meshScale.m_floats[1] = (btScalar)1;
+		m_meshScale.m_floats[2] = (btScalar)1;
 
-		m_planeNormal.m_floats[0] = 0;
-		m_planeNormal.m_floats[1] = 0;
-		m_planeNormal.m_floats[2] = 1;
+		m_planeNormal.m_floats[0] = (btScalar)0;
+		m_planeNormal.m_floats[1] = (btScalar)0;
+		m_planeNormal.m_floats[2] = (btScalar)1;
 	}
 };
 
@@ -563,9 +563,9 @@ struct b3RobotSimulatorCreateMultiBodyArgs
 		: m_baseMass(0), m_baseCollisionShapeIndex(-1), m_baseVisualShapeIndex(-1), m_numLinks(0), m_linkMasses(NULL), m_linkCollisionShapeIndices(NULL), m_linkVisualShapeIndices(NULL), m_linkPositions(NULL), m_linkOrientations(NULL), m_linkInertialFramePositions(NULL), m_linkInertialFrameOrientations(NULL), m_linkParentIndices(NULL), m_linkJointTypes(NULL), m_linkJointAxes(NULL), m_useMaximalCoordinates(0)
 	{
 		m_basePosition.setValue(0, 0, 0);
-		m_baseOrientation.setValue(0, 0, 0, 1);
+		m_baseOrientation.setValue((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)1);
 		m_baseInertialFramePosition.setValue(0, 0, 0);
-		m_baseInertialFrameOrientation.setValue(0, 0, 0, 1);
+		m_baseInertialFrameOrientation.setValue((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)1);
 	}
 };
 

@@ -264,9 +264,9 @@ public:
 			
 		}
 	}
-	virtual void stepSimulation(float deltaTime)
+	virtual void stepSimulation(btScalar deltaTime)
 	{
-		DoUpdateStep(deltaTime, m_ikTree, m_ikJacobian, m_ikMethod);
+		DoUpdateStep((float)deltaTime, m_ikTree, m_ikJacobian, m_ikMethod);
 	}
 	virtual void renderScene()
 	{

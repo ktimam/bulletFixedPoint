@@ -16,8 +16,8 @@
 #include "../RobotSimulator/b3RobotSimulatorClientAPI.h"
 #include "../Utils/b3Clock.h"
 
-static btScalar sGripperVerticalVelocity = 0.f;
-static btScalar sGripperClosingTargetVelocity = -0.7f;
+static btScalar sGripperVerticalVelocity = (btScalar)0.f;
+static btScalar sGripperClosingTargetVelocity = (btScalar)-0.7f;
 
 class GripperGraspExample : public CommonExampleInterface
 {
@@ -86,7 +86,7 @@ public:
 			{
 				b3RobotSimulatorLoadUrdfFileArgs args;
 				args.m_startPosition.setValue(0, 0, .107);
-				args.m_startOrientation.setEulerZYX(0, 0, 0);
+				args.m_startOrientation.setEulerZYX((btScalar)0, (btScalar)0, (btScalar)0);
 				args.m_useMultiBody = true;
 				m_robotSim.loadURDF("cube_small.urdf", args);
 			}
@@ -201,7 +201,7 @@ public:
 			{
 				b3RobotSimulatorLoadUrdfFileArgs args;
 				args.m_startPosition.setValue(0, -0.2, .47);
-				args.m_startOrientation.setEulerZYX(SIMD_HALF_PI, 0, 0);
+				args.m_startOrientation.setEulerZYX(SIMD_HALF_PI, (btScalar)0, (btScalar)0);
 				m_robotSim.loadURDF("dinnerware/pan_tefal.urdf", args);
 			}
 			{
@@ -322,13 +322,13 @@ public:
 			{
 				b3RobotSimulatorLoadUrdfFileArgs args;
 				args.m_startPosition.setValue(0, 0, -0.2);
-				args.m_startOrientation.setEulerZYX(0, 0, 0);
+				args.m_startOrientation.setEulerZYX((btScalar)0, (btScalar)0, (btScalar)0);
 				m_robotSim.loadURDF("plane.urdf", args);
 				}
 				m_robotSim.setGravity(btVector3(0, 0, -10));
 				b3RobotSimulatorLoadSoftBodyArgs args(0.1, 1, 0.02);
 				args.m_startPosition.setValue(0, 0, 5);
-				args.m_startOrientation.setValue(1, 0, 0, 1);
+				args.m_startOrientation.setValue((btScalar)1, (btScalar)0, (btScalar)0, (btScalar)1);
 				m_robotSim.loadSoftBody("bunny.obj", args);
 
 				b3JointInfo revoluteJoint1;
@@ -418,7 +418,7 @@ public:
 			{
 				b3RobotSimulatorLoadUrdfFileArgs args;
 				args.m_startPosition.setValue(0, 0, -0.2);
-				args.m_startOrientation.setEulerZYX(0, 0, 0);
+				args.m_startOrientation.setEulerZYX((btScalar)0, (btScalar)0, (btScalar)0);
 				m_robotSim.loadURDF("plane.urdf", args);
 			}
 			m_robotSim.setGravity(btVector3(0, 0, -10));
@@ -433,7 +433,7 @@ public:
 			args.m_useFaceContact = true;
 			args.m_useBendingSprings = true;
 			args.m_startPosition.setValue(0, 0, 0);
-			args.m_startOrientation.setValue(0, 0, 1, 1);
+			args.m_startOrientation.setValue((btScalar)0, (btScalar)0, (btScalar)1, (btScalar)1);
 			//m_robotSim.loadDeformableBody("flat_napkin.obj", args);
 
 			b3JointInfo revoluteJoint1;
@@ -484,7 +484,7 @@ public:
 			{
 				b3RobotSimulatorLoadUrdfFileArgs args;
 				args.m_startPosition.setValue(-0.5, 0, 0.1);
-				args.m_startOrientation.setEulerZYX(0, 0, 0);
+				args.m_startOrientation.setEulerZYX((btScalar)0, (btScalar)0, (btScalar)0);
 				args.m_forceOverrideFixedBase = true;
 				args.m_useMultiBody = true;
 				int kukaId = m_robotSim.loadURDF("kuka_iiwa/model.urdf", args);
@@ -505,7 +505,7 @@ public:
 			{
 				b3RobotSimulatorLoadUrdfFileArgs args;
 				args.m_startPosition.setValue(0, 0, 0);
-				args.m_startOrientation.setEulerZYX(0, 0, 0);
+				args.m_startOrientation.setEulerZYX((btScalar)0, (btScalar)0, (btScalar)0);
 				args.m_forceOverrideFixedBase = true;
 				args.m_useMultiBody = false;
 				m_robotSim.loadURDF("plane.urdf", args);
@@ -519,19 +519,19 @@ public:
 	{
 		m_robotSim.disconnect();
 	}
-	virtual void stepSimulation(float deltaTime)
+	virtual void stepSimulation(btScalar deltaTime)
 	{
 		if ((m_options & eGRIPPER_GRASP) != 0)
 		{
 			if ((m_gripperIndex >= 0))
 			{
 				int fingerJointIndices[3] = {0, 1, 3};
-				double fingerTargetVelocities[3] = {sGripperVerticalVelocity, sGripperClosingTargetVelocity, -sGripperClosingTargetVelocity};
+				btScalar fingerTargetVelocities[3] = {sGripperVerticalVelocity, sGripperClosingTargetVelocity, -sGripperClosingTargetVelocity};
 				double maxTorqueValues[3] = {40.0, 50.0, 50.0};
 				for (int i = 0; i < 3; i++)
 				{
 					b3RobotSimulatorJointMotorArgs controlArgs(CONTROL_MODE_VELOCITY);
-					controlArgs.m_targetVelocity = fingerTargetVelocities[i];
+					controlArgs.m_targetVelocity = (float)fingerTargetVelocities[i];
 					controlArgs.m_maxTorqueValue = maxTorqueValues[i];
 					controlArgs.m_kd = 1.;
 					m_robotSim.setJointMotorControl(m_gripperIndex, fingerJointIndices[i], controlArgs);
@@ -542,12 +542,12 @@ public:
 		if ((m_options & eONE_MOTOR_GRASP) != 0)
 		{
 			int fingerJointIndices[2] = {0, 1};
-			double fingerTargetVelocities[2] = {sGripperVerticalVelocity, sGripperClosingTargetVelocity};
+			btScalar fingerTargetVelocities[2] = {sGripperVerticalVelocity, sGripperClosingTargetVelocity};
 			double maxTorqueValues[2] = {800.0, 800.0};
 			for (int i = 0; i < 2; i++)
 			{
 				b3RobotSimulatorJointMotorArgs controlArgs(CONTROL_MODE_VELOCITY);
-				controlArgs.m_targetVelocity = fingerTargetVelocities[i];
+				controlArgs.m_targetVelocity = (float)fingerTargetVelocities[i];
 				controlArgs.m_maxTorqueValue = maxTorqueValues[i];
 				controlArgs.m_kd = 1.;
 				m_robotSim.setJointMotorControl(m_gripperIndex, fingerJointIndices[i], controlArgs);
@@ -557,12 +557,12 @@ public:
 		if ((m_options & eGRASP_SOFT_BODY) != 0)
 		{
 			int fingerJointIndices[2] = {0, 1};
-			double fingerTargetVelocities[2] = {sGripperVerticalVelocity, sGripperClosingTargetVelocity};
+			btScalar fingerTargetVelocities[2] = {sGripperVerticalVelocity, sGripperClosingTargetVelocity};
 			double maxTorqueValues[2] = {50.0, 10.0};
 			for (int i = 0; i < 2; i++)
 			{
 				b3RobotSimulatorJointMotorArgs controlArgs(CONTROL_MODE_VELOCITY);
-				controlArgs.m_targetVelocity = fingerTargetVelocities[i];
+				controlArgs.m_targetVelocity = (float)fingerTargetVelocities[i];
 				controlArgs.m_maxTorqueValue = maxTorqueValues[i];
 				controlArgs.m_kd = 1.;
 				m_robotSim.setJointMotorControl(m_gripperIndex, fingerJointIndices[i], controlArgs);
@@ -572,12 +572,12 @@ public:
 		if ((m_options & eGRASP_DEFORMABLE_CLOTH) != 0)
 		{
 			int fingerJointIndices[2] = {0, 1};
-			double fingerTargetVelocities[2] = {sGripperVerticalVelocity, sGripperClosingTargetVelocity};
+			btScalar fingerTargetVelocities[2] = {sGripperVerticalVelocity, sGripperClosingTargetVelocity};
 			double maxTorqueValues[2] = {250.0, 50.0};
 			for (int i = 0; i < 2; i++)
 			{
 				b3RobotSimulatorJointMotorArgs controlArgs(CONTROL_MODE_VELOCITY);
-				controlArgs.m_targetVelocity = fingerTargetVelocities[i];
+				controlArgs.m_targetVelocity = (float)fingerTargetVelocities[i];
 				controlArgs.m_maxTorqueValue = maxTorqueValues[i];
 				controlArgs.m_kd = 1.;
 				m_robotSim.setJointMotorControl(m_gripperIndex, fingerJointIndices[i], controlArgs);
@@ -586,10 +586,10 @@ public:
 
 		if ((m_options & eSOFTBODY_MULTIBODY_COUPLING) != 0)
 		{
-			float dt = deltaTime;
-			btClamp(dt, 0.0001f, 0.01f);
+			btScalar dt = deltaTime;
+			btClamp(dt, (btScalar)0.0001f, (btScalar)0.01f);
 
-			m_time += dt;
+			m_time += (float)dt;
 			m_targetPos.setValue(0, 0, 0.5 + 0.2 * b3Cos(m_time));
 			m_targetOri.setValue(0, 1.0, 0, 0);
 
@@ -675,9 +675,9 @@ public:
 				ikargs.m_restPoses[0] = 0;
 				ikargs.m_restPoses[1] = 0;
 				ikargs.m_restPoses[2] = 0;
-				ikargs.m_restPoses[3] = SIMD_HALF_PI;
+				ikargs.m_restPoses[3] = (float)SIMD_HALF_PI;
 				ikargs.m_restPoses[4] = 0;
-				ikargs.m_restPoses[5] = -SIMD_HALF_PI * 0.66;
+				ikargs.m_restPoses[5] = (float) - SIMD_HALF_PI * 0.66;
 				ikargs.m_restPoses[6] = 0;
 				ikargs.m_numDegreeOfFreedom = numJoints;
 

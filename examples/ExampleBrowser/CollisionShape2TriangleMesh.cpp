@@ -25,7 +25,7 @@ void CollisionShape2TriangleMesh(btCollisionShape* collisionShape, const btTrans
 			btVector3 planeOrigin = planeNormal * planeConst;
 			btVector3 vec0, vec1;
 			btPlaneSpace1(planeNormal, vec0, vec1);
-			btScalar vecLen = 100.f;
+			btScalar vecLen = (btScalar)100.f;
 			btVector3 verts[4];
 
 			verts[0] = planeOrigin + vec0 * vecLen + vec1 * vecLen;
@@ -91,7 +91,7 @@ void CollisionShape2TriangleMesh(btCollisionShape* collisionShape, const btTrans
                                                 }
 						if (type == PHY_FLOAT)
 						{
-							float* graphicsbase = (float*)(vertexbase + graphicsindex * stride);
+							btScalar* graphicsbase = (btScalar*)(vertexbase + graphicsindex * stride);
 							triangleVerts[j] = btVector3(
 								graphicsbase[0] * trimeshScaling.getX(),
 								graphicsbase[1] * trimeshScaling.getY(),
@@ -99,7 +99,7 @@ void CollisionShape2TriangleMesh(btCollisionShape* collisionShape, const btTrans
 						}
 						else
 						{
-							double* graphicsbase = (double*)(vertexbase + graphicsindex * stride);
+							btScalar* graphicsbase = (btScalar*)(vertexbase + graphicsindex * stride);
 							triangleVerts[j] = btVector3(btScalar(graphicsbase[0] * trimeshScaling.getX()),
 														 btScalar(graphicsbase[1] * trimeshScaling.getY()),
 														 btScalar(graphicsbase[2] * trimeshScaling.getZ()));
@@ -168,7 +168,7 @@ void CollisionShape2TriangleMesh(btCollisionShape* collisionShape, const btTrans
 					else
 					{
 						btShapeHull* hull = new btShapeHull(convex);
-						hull->buildHull(0.0, 1);
+						hull->buildHull((btScalar)0.0, 1);
 
 						{
 							//int strideInBytes = 9*sizeof(float);

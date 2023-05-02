@@ -186,7 +186,7 @@ void btConvexConvexMprAlgorithm ::processCollision(const btCollisionObjectWrappe
 				distInfo.m_pointOnB[0], distInfo.m_pointOnB[1], distInfo.m_pointOnB[2]);
 #endif
 
-			if (distInfo.m_distance <= 0)
+			if (distInfo.m_distance <= (btScalar)0)
 			{
 				resultOut->addContactPoint(distInfo.m_normalBtoA, distInfo.m_pointOnB, distInfo.m_distance);
 			}
@@ -264,5 +264,5 @@ btScalar btConvexConvexMprAlgorithm::calculateTimeOfImpact(btCollisionObject* co
 	(void)resultOut;
 	(void)dispatchInfo;
 	btAssert(0);
-	return 0;
+	return (btScalar)0;
 }

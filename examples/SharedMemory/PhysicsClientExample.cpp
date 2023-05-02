@@ -90,7 +90,7 @@ public:
 			}
 		}
 	}
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 
 	virtual void resetCamera()
 	{
@@ -139,12 +139,12 @@ public:
 
 			for (int i = 0; i < numLines; i++)
 			{
-				points[i * 2].m_floats[0] = debugLines.m_linesFrom[i * 3 + 0];
-				points[i * 2].m_floats[1] = debugLines.m_linesFrom[i * 3 + 1];
-				points[i * 2].m_floats[2] = debugLines.m_linesFrom[i * 3 + 2];
-				points[i * 2 + 1].m_floats[0] = debugLines.m_linesTo[i * 3 + 0];
-				points[i * 2 + 1].m_floats[1] = debugLines.m_linesTo[i * 3 + 1];
-				points[i * 2 + 1].m_floats[2] = debugLines.m_linesTo[i * 3 + 2];
+				points[i * 2].m_floats[0] = (btScalar)debugLines.m_linesFrom[i * 3 + 0];
+				points[i * 2].m_floats[1] = (btScalar)debugLines.m_linesFrom[i * 3 + 1];
+				points[i * 2].m_floats[2] = (btScalar)debugLines.m_linesFrom[i * 3 + 2];
+				points[i * 2 + 1].m_floats[0] = (btScalar)debugLines.m_linesTo[i * 3 + 0];
+				points[i * 2 + 1].m_floats[1] = (btScalar)debugLines.m_linesTo[i * 3 + 1];
+				points[i * 2 + 1].m_floats[2] = (btScalar)debugLines.m_linesTo[i * 3 + 2];
 				indices[i * 2] = i * 2;
 				indices[i * 2 + 1] = i * 2 + 1;
 			}
@@ -153,7 +153,8 @@ public:
 
 			if (points.size() && indices.size())
 			{
-				m_guiHelper->getRenderInterface()->drawLines(&points[0].m_floats[0], color, points.size(), sizeof(btVector3FloatData), &indices[0], indices.size(), lineWidth);
+				float pos[] = { (float)points[0].m_floats[0], (float)points[0].m_floats[1], (float)points[0].m_floats[2] };
+				m_guiHelper->getRenderInterface()->drawLines(&pos[0], color, points.size(), sizeof(btVector3FloatData), &indices[0], indices.size(), lineWidth);
 			}
 		}
 		else
@@ -176,7 +177,7 @@ public:
 			serial++;
 			//  b3Printf("# motors = %d, cmd[%d] qIndex = %d, uIndex = %d, targetPos = %f", m_numMotors, serial, qIndex,uIndex,targetPos);
 
-			b3JointControlSetDesiredPosition(commandHandle, qIndex, targetPos);
+			b3JointControlSetDesiredPosition(commandHandle, qIndex, (float)targetPos);
 			b3JointControlSetDesiredVelocity(commandHandle, uIndex, 0);
 			b3JointControlSetKp(commandHandle, qIndex, 0.2);
 			b3JointControlSetKd(commandHandle, uIndex, 1.);
@@ -271,11 +272,11 @@ void PhysicsClientExample::prepareAndSubmitCommand(int commandId)
 			b3RequestCameraImageSetCameraMatrices(commandHandle, viewMatrix, projectionMatrix);
 			b3RequestCameraImageSetPixelResolution(commandHandle, camVisualizerWidth, camVisualizerHeight);
 			float lightPos[3];
-			lightPos[0] = m_lightPos[0];
-			lightPos[1] = m_lightPos[1];
-			lightPos[2] = m_lightPos[2];
+			lightPos[0] = (float)m_lightPos[0];
+			lightPos[1] = (float)m_lightPos[1];
+			lightPos[2] = (float)m_lightPos[2];
 			b3RequestCameraImageSetLightDirection(commandHandle, lightPos);
-			b3RequestCameraImageSetLightSpecularCoeff(commandHandle, m_specularCoeff);
+			b3RequestCameraImageSetLightSpecularCoeff(commandHandle, (float)m_specularCoeff);
 			b3SubmitClientCommand(m_physicsClientHandle, commandHandle);
 			break;
 		}
@@ -334,7 +335,7 @@ void PhysicsClientExample::prepareAndSubmitCommand(int commandId)
 					toggle = 0;
 
 				btQuaternion orn;
-				orn.setValue(0, 0, 0, 1);
+				orn.setValue((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)1);
 
 				switch (toggle)
 				{
@@ -349,13 +350,13 @@ void PhysicsClientExample::prepareAndSubmitCommand(int commandId)
 						break;
 
 					default:
-						orn.setValue(0, 0, 0, 1);
+						orn.setValue((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)1);
 				};
 
-				b3CreatePoseCommandSetBaseOrientation(commandHandle, orn[0], orn[1], orn[2], orn[3]);
+				b3CreatePoseCommandSetBaseOrientation(commandHandle, (float)orn[0], (float)orn[1], (float)orn[2], (float)orn[3]);
 				b3CreatePoseCommandSetBasePosition(commandHandle, pos[0], pos[1], pos[2]);
 				int numJoints = b3GetNumJoints(m_physicsClientHandle, m_selectedBody);
-				static double jointPos = SIMD_PI / 2.f;
+				static double jointPos = (float)SIMD_PI / 2.f;
 
 				for (int i = 0; i < numJoints; i++)
 				{
@@ -366,7 +367,7 @@ void PhysicsClientExample::prepareAndSubmitCommand(int commandId)
 						b3CreatePoseCommandSetJointPosition(m_physicsClientHandle, commandHandle, i, jointPos);
 					}
 				}
-				jointPos += SIMD_PI / 8.0;
+				jointPos += (float)SIMD_PI / 8.0;
 				b3SubmitClientCommand(m_physicsClientHandle, commandHandle);
 			}
 			break;
@@ -664,8 +665,8 @@ void PhysicsClientExample::createButtons()
 						safe_printf(motorName, sizeof(motorName), "%s q", info.m_jointName);
 						// MyMotorInfo2* motorInfo = &m_motorTargetVelocities[m_numMotors];
 						MyMotorInfo2* motorInfo = &m_motorTargetPositions[m_numMotors];
-						motorInfo->m_velTarget = 0.f;
-						motorInfo->m_posTarget = 0.f;
+						motorInfo->m_velTarget = (btScalar)0.f;
+						motorInfo->m_posTarget = (btScalar)0.f;
 						motorInfo->m_uIndex = info.m_uIndex;
 						motorInfo->m_qIndex = info.m_qIndex;
 
@@ -729,9 +730,9 @@ void PhysicsClientExample::initPhysics()
 	m_selectedBody = -1;
 	m_prevSelectedBody = -1;
 
-	m_lightPos[0] = 1.0;
-	m_lightPos[1] = 1.0;
-	m_lightPos[2] = 1.0;
+	m_lightPos[0] = (btScalar)1.0;
+	m_lightPos[1] = (btScalar)1.0;
+	m_lightPos[2] = (btScalar)1.0;
 
 	{
 		m_canvas = m_guiHelper->get2dCanvasInterface();
@@ -787,7 +788,7 @@ void PhysicsClientExample::initPhysics()
 	}
 }
 
-void PhysicsClientExample::stepSimulation(float deltaTime)
+void PhysicsClientExample::stepSimulation(btScalar deltaTime)
 {
 	if (m_options == eCLIENTEXAMPLE_SERVER)
 	{
@@ -824,8 +825,8 @@ void PhysicsClientExample::stepSimulation(float deltaTime)
 				if (m_canvas)
 				{
 					//compute depth image range
-					float minDepthValue = 1e20f;
-					float maxDepthValue = -1e20f;
+					btScalar minDepthValue = (btScalar)1e20f;
+					btScalar maxDepthValue = (btScalar)-1e20f;
 
 					for (int i = 0; i < camVisualizerWidth; i++)
 					{
@@ -839,9 +840,9 @@ void PhysicsClientExample::stepSimulation(float deltaTime)
 							if (m_canvasDepthIndex >= 0)
 							{
 								int depthPixelIndex = (xIndex + yIndex * imageData.m_pixelWidth);
-								float depthValue = imageData.m_depthValues[depthPixelIndex];
+								btScalar depthValue = (btScalar)imageData.m_depthValues[depthPixelIndex];
 								//todo: rescale the depthValue to [0..255]
-								if (depthValue > -1e20)
+								if (depthValue > (btScalar)-1e20)
 								{
 									maxDepthValue = btMax(maxDepthValue, depthValue);
 									minDepthValue = btMin(minDepthValue, depthValue);
@@ -873,15 +874,15 @@ void PhysicsClientExample::stepSimulation(float deltaTime)
 							if (m_canvasDepthIndex >= 0)
 							{
 								int depthPixelIndex = (xIndex + yIndex * imageData.m_pixelWidth);
-								float depthValue = imageData.m_depthValues[depthPixelIndex];
+								btScalar depthValue = (btScalar)imageData.m_depthValues[depthPixelIndex];
 								//todo: rescale the depthValue to [0..255]
-								if (depthValue > -1e20)
+								if (depthValue > (btScalar)-1e20)
 								{
 									int rgb = 0;
 
 									if (maxDepthValue != minDepthValue)
 									{
-										rgb = (depthValue - minDepthValue) * (255. / (btFabs(maxDepthValue - minDepthValue)));
+										rgb = (int)((depthValue - minDepthValue) * ((btScalar)255. / (btFabs(maxDepthValue - minDepthValue))));
 										if (rgb < 0 || rgb > 255)
 										{
 											//printf("rgb=%d\n",rgb);
@@ -904,10 +905,10 @@ void PhysicsClientExample::stepSimulation(float deltaTime)
 							{
 								int segmentationMaskPixelIndex = (xIndex + yIndex * imageData.m_pixelWidth);
 								int segmentationMask = imageData.m_segmentationMaskValues[segmentationMaskPixelIndex];
-								btVector4 palette[4] = {btVector4(32, 255, 32, 255),
-														btVector4(32, 32, 255, 255),
-														btVector4(255, 255, 32, 255),
-														btVector4(32, 255, 255, 255)};
+								btVector4 palette[4] = {btVector4((btScalar)32, (btScalar)255, (btScalar)32, (btScalar)255),
+														btVector4((btScalar)32, (btScalar)32, (btScalar)255, (btScalar)255),
+														btVector4((btScalar)255, (btScalar)255, (btScalar)32, (btScalar)255),
+														btVector4((btScalar)32, (btScalar)255, (btScalar)255, (btScalar)255)};
 								if (segmentationMask >= 0)
 								{
 									int obIndex = segmentationMask & ((1 << 24) - 1);
@@ -915,9 +916,9 @@ void PhysicsClientExample::stepSimulation(float deltaTime)
 
 									btVector4 rgb = palette[(obIndex + linkIndex) & 3];
 									m_canvas->setPixel(m_canvasSegMaskIndex, i, j,
-													   rgb.x(),
-													   rgb.y(),
-													   rgb.z(), 255);  //alpha set to 255
+													   (int)rgb.x(),
+													   (int)rgb.y(),
+													   (int)rgb.z(), 255);  //alpha set to 255
 								}
 								else
 								{

@@ -29,9 +29,9 @@
 ///The BasicTest shows the contact between volumetric deformable objects and rigid objects.
 // static btScalar E = 50;
 // static btScalar nu = 0.3;
-static btScalar damping_alpha = 0.0;
-static btScalar damping_beta = 0.001;
-static btScalar COLLIDING_VELOCITY = 0;
+static btScalar damping_alpha = (btScalar)0.0;
+static btScalar damping_beta = (btScalar)0.001;
+static btScalar COLLIDING_VELOCITY = (btScalar)0;
 static int num_modes = 20;
 
 class FrictionSlope : public CommonDeformableBodyBase
@@ -71,7 +71,7 @@ public:
         startTransform.setIdentity();
 
         startTransform.setOrigin(btVector3(0,4,0));
-        btRigidBody* rb1 = createRigidBody(mass, startTransform, shape);
+        btRigidBody* rb1 = createRigidBody((btScalar)mass, startTransform, shape);
         rb1->setLinearVelocity(btVector3(0, 0, 0));
     }
 
@@ -85,13 +85,13 @@ public:
         // groundTransform.setRotation(btQuaternion(btVector3(0, 0, 1), SIMD_PI / 6.0));
         groundTransform.setOrigin(btVector3(0, 0, 0));
         btScalar mass(1e6);
-        btRigidBody* ground = createRigidBody(mass, groundTransform, groundShape, btVector4(0,0,0,0));
+        btRigidBody* ground = createRigidBody(mass, groundTransform, groundShape, btVector4((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)0));
         // ground->setFriction(1);
     }
     
-    void stepSimulation(float deltaTime)
+    void stepSimulation(btScalar deltaTime)
     {
-      float internalTimeStep = 1. / 60.f;
+      btScalar internalTimeStep = (btScalar)1. / (btScalar)60.f;
       m_dynamicsWorld->stepSimulation(deltaTime, 1, internalTimeStep);
     }
     
@@ -128,13 +128,13 @@ namespace FrictionSlopeHelper
         btAlignedObjectArray<btRigidBody*>& rbs = world->getNonStaticRigidBodies();
 
         btRigidBody* ground = rbs[0];
-        btAssert(ground->getMass() > 1e5);
+        btAssert(ground->getMass() > (btScalar)1e5);
 
-        btScalar start_time = 2;
-        btScalar end_time = 8;
-        btScalar start_angle = 0;
+        btScalar start_time = (btScalar)2;
+        btScalar end_time = (btScalar)8;
+        btScalar start_angle = (btScalar)0;
         btScalar end_angle = SIMD_PI / 6;
-        btScalar current_angle = 0;
+        btScalar current_angle = (btScalar)0;
         btScalar turn_speed = (end_angle - start_angle) / (end_time - start_time);
 
         if (time >= start_time)
@@ -143,13 +143,13 @@ namespace FrictionSlopeHelper
             if (time > end_time)
             {
                 current_angle = end_angle;
-                turn_speed = 0;
+                turn_speed = (btScalar)0;
             }
         }
         else
         {
             current_angle = start_angle;
-            turn_speed = 0;
+            turn_speed = (btScalar)0;
         }
         
         btTransform groundTransform;
@@ -197,22 +197,22 @@ void FrictionSlope::initPhysics()
                                             false);
 
         getDeformableDynamicsWorld()->addSoftBody(rsb);
-        rsb->getCollisionShape()->setMargin(0.01);
+        rsb->getCollisionShape()->setMargin((btScalar)0.01);
 
         btTransform init_transform;
         init_transform.setIdentity();
         init_transform.setOrigin(btVector3(0, 4, 0));
-        init_transform.setRotation(btQuaternion(btVector3(0, 0, 1), SIMD_PI / 2.0));
+        init_transform.setRotation(btQuaternion(btVector3(0, 0, 1), SIMD_PI / (btScalar)2.0));
         rsb->transform(init_transform);
-        rsb->setStiffnessScale(50);
+        rsb->setStiffnessScale((btScalar)50);
         rsb->setDamping(damping_alpha, damping_beta);
 
-        rsb->m_cfg.kKHR = 1; // collision hardness with kinematic objects
-        rsb->m_cfg.kCHR = 1; // collision hardness with rigid body
-        rsb->m_cfg.kDF = 0;
+        rsb->m_cfg.kKHR = (btScalar)1; // collision hardness with kinematic objects
+        rsb->m_cfg.kCHR = (btScalar)1; // collision hardness with rigid body
+        rsb->m_cfg.kDF = (btScalar)0;
         rsb->m_cfg.collisions = btSoftBody::fCollision::SDF_RD;
         rsb->m_cfg.collisions |= btSoftBody::fCollision::SDF_RDN;
-        rsb->m_sleepingThreshold = 0;
+        rsb->m_sleepingThreshold = (btScalar)0;
         btSoftBodyHelpers::generateBoundaryFaces(rsb);
     }
 
@@ -223,10 +223,10 @@ void FrictionSlope::initPhysics()
     getDeformableDynamicsWorld()->setImplicit(false);
     getDeformableDynamicsWorld()->setLineSearch(false);
     getDeformableDynamicsWorld()->setUseProjection(false);
-    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_erp = 0.2;
-    getDeformableDynamicsWorld()->getSolverInfo().m_friction = 1;
+    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_erp = (btScalar)0.2;
+    getDeformableDynamicsWorld()->getSolverInfo().m_friction = (btScalar)1;
     getDeformableDynamicsWorld()->getSolverInfo().m_deformable_maxErrorReduction = btScalar(200);
-    getDeformableDynamicsWorld()->getSolverInfo().m_leastSquaresResidualThreshold = 1e-3;
+    getDeformableDynamicsWorld()->getSolverInfo().m_leastSquaresResidualThreshold = (btScalar)1e-3;
     getDeformableDynamicsWorld()->getSolverInfo().m_splitImpulse = false;
     getDeformableDynamicsWorld()->getSolverInfo().m_numIterations = 100;
     getDeformableDynamicsWorld()->setSolverCallback(FrictionSlopeHelper::groundMotion);

@@ -86,7 +86,7 @@ public:
 
 	virtual btScalar solveConstraint(const btContactSolverInfo& infoGlobal)
 	{
-		return 0;
+		return (btScalar)0;
 	}
 
 	virtual btVector3 getVa() const

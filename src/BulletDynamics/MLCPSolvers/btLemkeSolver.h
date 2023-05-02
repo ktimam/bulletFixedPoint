@@ -94,9 +94,9 @@ public:
 					for (j = n; j < 2 * n; j++)
 					{
 						if (i == (j - n))
-							matrix.setElem(i, j, 1.0);
+							matrix.setElem(i, j, (btScalar)1.0);
 						else
-							matrix.setElem(i, j, 0.0);
+							matrix.setElem(i, j, (btScalar)0.0);
 					}
 				}
 				for (i = 0; i < n; i++)
@@ -108,7 +108,7 @@ public:
 							btScalar v = matrix(i, i);
 							if (btFuzzyZero(v))
 							{
-								a = 0.000001f;
+								a = (btScalar)0.000001f;
 							}
 							ratio = matrix(j, i) / matrix(i, i);
 							for (k = 0; k < 2 * n; k++)
@@ -123,9 +123,9 @@ public:
 					a = matrix(i, i);
 					if (btFuzzyZero(a))
 					{
-						a = 0.000001f;
+						a = (btScalar)0.000001f;
 					}
-					btScalar invA = 1.f / a;
+					btScalar invA = (btScalar)1.f / a;
 					for (j = 0; j < 2 * n; j++)
 					{
 						matrix.mulElem(i, j, invA);
@@ -199,13 +199,13 @@ public:
 
 			int errorIndexMax = -1;
 			int errorIndexMin = -1;
-			float errorValueMax = -1e30;
-			float errorValueMin = 1e30;
+			btScalar errorValueMax = (btScalar)-1e30;
+			btScalar errorValueMin = (btScalar)1e30;
 
 			for (int i = 0; i < n; i++)
 			{
 				x[i] = solution[i];
-				volatile btScalar check = x[i];
+				btScalar check = x[i];
 				if (x[i] != check)
 				{
 					//printf("Lemke result is #NAN\n");
@@ -240,14 +240,14 @@ public:
 			{
 				int m_errorCountTimes = 0;
 				if (errorIndexMin < 0)
-					errorValueMin = 0.f;
+					errorValueMin = (btScalar)0.f;
 				if (errorIndexMax < 0)
-					errorValueMax = 0.f;
+					errorValueMax = (btScalar)0.f;
 				m_errorCountTimes++;
 				//	printf("Error (x[%d] = %f, x[%d] = %f), resetting %d times\n", errorIndexMin,errorValueMin, errorIndexMax, errorValueMax, errorCountTimes++);
 				for (int i = 0; i < n; i++)
 				{
-					x[i] = 0.f;
+					x[i] = (btScalar)0.f;
 				}
 			}
 			return !fail;
@@ -279,13 +279,13 @@ public:
 			bool fail = false;
 			int errorIndexMax = -1;
 			int errorIndexMin = -1;
-			float errorValueMax = -1e30;
-			float errorValueMin = 1e30;
+			btScalar errorValueMax = (btScalar)-1e30;
+			btScalar errorValueMin = (btScalar)1e30;
 
 			for (int i = 0; i < dimension; i++)
 			{
 				x[i] = solution[i + dimension];
-				volatile btScalar check = x[i];
+				btScalar check = x[i];
 				if (x[i] != check)
 				{
 					x.setZero();
@@ -319,13 +319,13 @@ public:
 			{
 				static int errorCountTimes = 0;
 				if (errorIndexMin < 0)
-					errorValueMin = 0.f;
+					errorValueMin = (btScalar)0.f;
 				if (errorIndexMax < 0)
-					errorValueMax = 0.f;
+					errorValueMax = (btScalar)0.f;
 				printf("Error (x[%d] = %f, x[%d] = %f), resetting %d times\n", errorIndexMin, errorValueMin, errorIndexMax, errorValueMax, errorCountTimes++);
 				for (int i = 0; i < dimension; i++)
 				{
-					x[i] = 0.f;
+					x[i] = (btScalar)0.f;
 				}
 			}
 

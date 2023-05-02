@@ -50,9 +50,9 @@ public:
         m_guiHelper->resetCamera(dist, yaw, pitch, targetPos[0], targetPos[1], targetPos[2]);
     }
     
-    void stepSimulation(float deltaTime)
+    void stepSimulation(btScalar deltaTime)
     {
-        float internalTimeStep = 1. / 240.f;
+        btScalar internalTimeStep = (btScalar)1. / (btScalar)240.f;
         m_dynamicsWorld->stepSimulation(deltaTime, 4, internalTimeStep);
     }
     
@@ -97,7 +97,7 @@ void DeformableContact::initPhysics()
     btVector3 gravity = btVector3(0, -10, 0);
     m_dynamicsWorld->setGravity(gravity);
     getDeformableDynamicsWorld()->getWorldInfo().m_gravity = gravity;
-    getDeformableDynamicsWorld()->getWorldInfo().m_sparsesdf.setDefaultVoxelsz(0.25);
+    getDeformableDynamicsWorld()->getWorldInfo().m_sparsesdf.setDefaultVoxelsz((btScalar)0.25);
 		getDeformableDynamicsWorld()->getWorldInfo().m_sparsesdf.Reset();
     m_guiHelper->createPhysicsDebugDrawer(m_dynamicsWorld);
     
@@ -110,12 +110,12 @@ void DeformableContact::initPhysics()
         btTransform groundTransform;
         groundTransform.setIdentity();
         groundTransform.setOrigin(btVector3(0, -32, 0));
-        groundTransform.setRotation(btQuaternion(btVector3(1, 0, 0), SIMD_PI * 0.));
+        groundTransform.setRotation(btQuaternion(btVector3(1, 0, 0), SIMD_PI * (btScalar)0.));
         //We can also use DemoApplication::localCreateRigidBody, but for clarity it is provided here:
         btScalar mass(0.);
         
         //rigidbody is dynamic if and only if mass is non zero, otherwise static
-        bool isDynamic = (mass != 0.f);
+        bool isDynamic = (mass != (btScalar)0.f);
         
         btVector3 localInertia(0, 0, 0);
         if (isDynamic)
@@ -125,7 +125,7 @@ void DeformableContact::initPhysics()
         btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
         btRigidBody* body = new btRigidBody(rbInfo);
-        body->setFriction(2);
+        body->setFriction((btScalar)2);
         
         //add the ground to the dynamics world
         m_dynamicsWorld->addRigidBody(body);
@@ -133,29 +133,29 @@ void DeformableContact::initPhysics()
     
     // create a piece of cloth
     {
-        btScalar s = 4;
-        btScalar h = 0;
+        btScalar s = (btScalar)4;
+        btScalar h = (btScalar)0;
         
         btSoftBody* psb = btSoftBodyHelpers::CreatePatch(getDeformableDynamicsWorld()->getWorldInfo(), btVector3(-s, h, -s),
-                                                         btVector3(+s, h, -s),
-                                                         btVector3(-s, h, +s),
-                                                         btVector3(+s, h, +s),
+                                                         btVector3(s, h, -s),
+                                                         btVector3(-s, h, s),
+                                                         btVector3(s, h, s),
                                                          20,20,
                                                          1 + 2 + 4 + 8, true);
         
-        psb->getCollisionShape()->setMargin(0.05);
+        psb->getCollisionShape()->setMargin((btScalar)0.05);
         psb->generateBendingConstraints(2);
-        psb->setSpringStiffness(10);
-        psb->setTotalMass(1);
-        psb->m_cfg.kKHR = 1; // collision hardness with kinematic objects
-        psb->m_cfg.kCHR = 1; // collision hardness with rigid body
-        psb->m_cfg.kDF = 0;
+        psb->setSpringStiffness((btScalar)10);
+        psb->setTotalMass((btScalar)1);
+        psb->m_cfg.kKHR = (btScalar)1; // collision hardness with kinematic objects
+        psb->m_cfg.kCHR = (btScalar)1; // collision hardness with rigid body
+        psb->m_cfg.kDF = (btScalar)0;
         psb->m_cfg.collisions = btSoftBody::fCollision::SDF_RD;
         psb->m_cfg.collisions |= btSoftBody::fCollision::SDF_RDF;
         psb->m_cfg.collisions |= btSoftBody::fCollision::VF_DD;
         getDeformableDynamicsWorld()->addSoftBody(psb);
         
-        btDeformableMassSpringForce* mass_spring = new btDeformableMassSpringForce(10,1, true);
+        btDeformableMassSpringForce* mass_spring = new btDeformableMassSpringForce((btScalar)10, (btScalar)1, true);
         getDeformableDynamicsWorld()->addForce(psb, mass_spring);
         m_forces.push_back(mass_spring);
         
@@ -164,28 +164,28 @@ void DeformableContact::initPhysics()
         m_forces.push_back(gravity_force);
 
         
-        h = 2;
-        s = 2;
+        h = (btScalar)2;
+        s = (btScalar)2;
         btSoftBody* psb2 = btSoftBodyHelpers::CreatePatch(getDeformableDynamicsWorld()->getWorldInfo(), btVector3(-s, h, -s),
-                                                          btVector3(+s, h, -s),
-                                                          btVector3(-s, h, +s),
-                                                          btVector3(+s, h, +s),
+                                                          btVector3(s, h, -s),
+                                                          btVector3(-s, h, s),
+                                                          btVector3(s, h, s),
                                                           10,10,
                                                           0, true);
-        psb2->getCollisionShape()->setMargin(0.05);
+        psb2->getCollisionShape()->setMargin((btScalar)0.05);
         psb2->generateBendingConstraints(2);
-        psb2->setSpringStiffness(10);
-        psb2->setTotalMass(1);
-        psb2->m_cfg.kKHR = 1; // collision hardness with kinematic objects
-        psb2->m_cfg.kCHR = 1; // collision hardness with rigid body
-        psb2->m_cfg.kDF = 0.5;
+        psb2->setSpringStiffness((btScalar)10);
+        psb2->setTotalMass((btScalar)1);
+        psb2->m_cfg.kKHR = (btScalar)1; // collision hardness with kinematic objects
+        psb2->m_cfg.kCHR = (btScalar)1; // collision hardness with rigid body
+        psb2->m_cfg.kDF = (btScalar)0.5;
         psb2->m_cfg.collisions = btSoftBody::fCollision::SDF_RD;
         psb2->m_cfg.collisions |= btSoftBody::fCollision::SDF_RDF;
         psb2->m_cfg.collisions |= btSoftBody::fCollision::VF_DD;
         psb->translate(btVector3(3.5,0,0));
         getDeformableDynamicsWorld()->addSoftBody(psb2);
         
-        btDeformableMassSpringForce* mass_spring2 = new btDeformableMassSpringForce(10,1, true);
+        btDeformableMassSpringForce* mass_spring2 = new btDeformableMassSpringForce((btScalar)10, (btScalar)1, true);
         getDeformableDynamicsWorld()->addForce(psb2, mass_spring2);
         m_forces.push_back(mass_spring2);
         

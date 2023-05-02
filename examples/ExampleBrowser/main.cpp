@@ -17,7 +17,7 @@
 
 #include "LinearMath/btAlignedAllocator.h"
 
-static double gMinUpdateTimeMicroSecs = 1000.;
+static btScalar gMinUpdateTimeMicroSecs = (btScalar)1000.;
 
 static bool interrupted = false;
 static OpenGLExampleBrowser* sExampleBrowser = 0;
@@ -84,14 +84,14 @@ int main(int argc, char* argv[])
 		{
 			do
 			{
-				float deltaTimeInSeconds = clock.getTimeMicroseconds() / 1000000.f;
-				if (deltaTimeInSeconds > 0.1)
+				btScalar deltaTimeInSeconds = clock.getTimeMicroseconds() / (btScalar)1000000.f;
+				if (deltaTimeInSeconds > (btScalar)0.1)
 				{
-					deltaTimeInSeconds = 0.1;
+					deltaTimeInSeconds = (btScalar)0.1;
 				}
-				if (deltaTimeInSeconds < (gMinUpdateTimeMicroSecs / 1e6))
+				if (deltaTimeInSeconds < (gMinUpdateTimeMicroSecs / (btScalar)1e6))
 				{
-					b3Clock::usleep(gMinUpdateTimeMicroSecs / 10.);
+					b3Clock::usleep((float)gMinUpdateTimeMicroSecs / 10.);
 				}
 				else
 				{

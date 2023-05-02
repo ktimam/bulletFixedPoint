@@ -133,13 +133,13 @@ public:
 
 	/**@brief Fill an array representation
    * @param m A pointer to a 16 element array (12 rotation(row major padded on the right by 1), and 3 translation */
-	void getOpenGLMatrix(btScalar * m) const
+	void getOpenGLMatrix(float * m) const
 	{
 		m_basis.getOpenGLSubMatrix(m);
-		m[12] = m_origin.x();
-		m[13] = m_origin.y();
-		m[14] = m_origin.z();
-		m[15] = btScalar(1.0);
+		m[12] = (float)m_origin.x();
+		m[13] = (float)m_origin.y();
+		m[14] = (float)m_origin.z();
+		m[15] = float(1.0);
 	}
 
 	/**@brief Set the translational element

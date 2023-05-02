@@ -5,8 +5,8 @@ btReducedDeformableBodySolver::btReducedDeformableBodySolver()
 {
   m_ascendOrder = true;
   m_reducedSolver = true;
-  m_dampingAlpha = 0;
-  m_dampingBeta = 0;
+  m_dampingAlpha = (btScalar)0;
+  m_dampingBeta = (btScalar)0;
   m_gravity = btVector3(0, 0, 0);
 }
 
@@ -36,7 +36,7 @@ void btReducedDeformableBodySolver::reinitialize(const btAlignedObjectArray<btSo
 		m_residual[i].setZero();
 	}
 
-	if (dt > 0)
+	if (dt > (btScalar)0)
 	{
 		m_dt = dt;
 	}
@@ -102,7 +102,7 @@ void btReducedDeformableBodySolver::predictReduceDeformableMotion(btScalar solve
     // calculate inverse mass matrix for all nodes
     for (int j = 0; j < rsb->m_nodes.size(); ++j)
     {
-      if (rsb->m_nodes[j].m_im > 0)
+      if (rsb->m_nodes[j].m_im > (btScalar)0)
       {
         rsb->m_nodes[j].m_effectiveMass_inv = rsb->m_nodes[j].m_effectiveMass.inverse();
       }
@@ -207,12 +207,12 @@ void btReducedDeformableBodySolver::setConstraints(const btContactSolverInfo& in
     for (int j = 0; j < rsb->m_fixedNodes.size(); ++j)
 		{
       int i_node = rsb->m_fixedNodes[j];
-			if (rsb->m_nodes[i_node].m_im == 0)
+			if (rsb->m_nodes[i_node].m_im == (btScalar)0)
 			{
         for (int k = 0; k < 3; ++k)
         {
           btVector3 dir(0, 0, 0);
-          dir[k] = 1;
+          dir[k] = (btScalar)1;
           btReducedDeformableStaticConstraint static_constraint(rsb, &rsb->m_nodes[i_node], rsb->getRelativePos(i_node), rsb->m_x0[i_node], dir, infoGlobal, m_dt);
           m_staticConstraints[i].push_back(static_constraint);
         }
@@ -225,7 +225,7 @@ void btReducedDeformableBodySolver::setConstraints(const btContactSolverInfo& in
 		{
 			const btSoftBody::DeformableNodeRigidContact& contact = rsb->m_nodeRigidContacts[j];
 			// skip fixed points
-			if (contact.m_node->m_im == 0)
+			if (contact.m_node->m_im == (btScalar)0)
 			{
 				continue;
 			}
@@ -241,7 +241,7 @@ void btReducedDeformableBodySolver::setConstraints(const btContactSolverInfo& in
 
 btScalar btReducedDeformableBodySolver::solveContactConstraints(btCollisionObject** deformableBodies, int numDeformableBodies, const btContactSolverInfo& infoGlobal)
 {
-  btScalar residualSquare = 0;
+  btScalar residualSquare = (btScalar)0;
 
   for (int i = 0; i < m_softBodies.size(); ++i)
   {

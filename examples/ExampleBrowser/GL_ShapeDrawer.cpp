@@ -14,7 +14,7 @@ subject to the following restrictions:
 */
 
 #ifdef _WIN32  //needed for glut.h
-#include <windows.h>
+//#include <windows.h>
 #endif
 
 #include "../OpenGLWindow/OpenGL2Include.h"
@@ -96,14 +96,14 @@ public:
 		{
 			glBegin(GL_LINES);
 			glColor3f(1, 0, 0);
-			glVertex3d(triangle[0].getX(), triangle[0].getY(), triangle[0].getZ());
-			glVertex3d(triangle[1].getX(), triangle[1].getY(), triangle[1].getZ());
-			glColor3f(0, 1, 0);
-			glVertex3d(triangle[2].getX(), triangle[2].getY(), triangle[2].getZ());
-			glVertex3d(triangle[1].getX(), triangle[1].getY(), triangle[1].getZ());
-			glColor3f(0, 0, 1);
-			glVertex3d(triangle[2].getX(), triangle[2].getY(), triangle[2].getZ());
-			glVertex3d(triangle[0].getX(), triangle[0].getY(), triangle[0].getZ());
+			glVertex3d((float)triangle[0].getX(), (float)triangle[0].getY(), (float)triangle[0].getZ());
+			glVertex3d((float)triangle[1].getX(), (float)triangle[1].getY(), (float)triangle[1].getZ());
+			glColor3f(0, 1, 0);								   
+			glVertex3d((float)triangle[2].getX(), (float)triangle[2].getY(), (float)triangle[2].getZ());
+			glVertex3d((float)triangle[1].getX(), (float)triangle[1].getY(), (float)triangle[1].getZ());
+			glColor3f(0, 0, 1);								   
+			glVertex3d((float)triangle[2].getX(), (float)triangle[2].getY(), (float)triangle[2].getZ());
+			glVertex3d((float)triangle[0].getX(), (float)triangle[0].getY(), (float)triangle[0].getZ());
 			glEnd();
 		}
 		else
@@ -111,13 +111,13 @@ public:
 			glBegin(GL_TRIANGLES);
 			//glColor3f(1, 1, 1);
 
-			glVertex3d(triangle[0].getX(), triangle[0].getY(), triangle[0].getZ());
-			glVertex3d(triangle[1].getX(), triangle[1].getY(), triangle[1].getZ());
-			glVertex3d(triangle[2].getX(), triangle[2].getY(), triangle[2].getZ());
+			glVertex3d((float)triangle[0].getX(), (float)triangle[0].getY(), (float)triangle[0].getZ());
+			glVertex3d((float)triangle[1].getX(), (float)triangle[1].getY(), (float)triangle[1].getZ());
+			glVertex3d((float)triangle[2].getX(), (float)triangle[2].getY(), (float)triangle[2].getZ());
 
-			glVertex3d(triangle[2].getX(), triangle[2].getY(), triangle[2].getZ());
-			glVertex3d(triangle[1].getX(), triangle[1].getY(), triangle[1].getZ());
-			glVertex3d(triangle[0].getX(), triangle[0].getY(), triangle[0].getZ());
+			glVertex3d((float)triangle[2].getX(), (float)triangle[2].getY(), (float)triangle[2].getZ());
+			glVertex3d((float)triangle[1].getX(), (float)triangle[1].getY(), (float)triangle[1].getZ());
+			glVertex3d((float)triangle[0].getX(), (float)triangle[0].getY(), (float)triangle[0].getZ());
 			glEnd();
 		}
 	}
@@ -133,14 +133,14 @@ public:
 
 		glBegin(GL_TRIANGLES);  //LINES);
 		glColor3f(1, 0, 0);
-		glVertex3d(triangle[0].getX(), triangle[0].getY(), triangle[0].getZ());
-		glVertex3d(triangle[1].getX(), triangle[1].getY(), triangle[1].getZ());
-		glColor3f(0, 1, 0);
-		glVertex3d(triangle[2].getX(), triangle[2].getY(), triangle[2].getZ());
-		glVertex3d(triangle[1].getX(), triangle[1].getY(), triangle[1].getZ());
-		glColor3f(0, 0, 1);
-		glVertex3d(triangle[2].getX(), triangle[2].getY(), triangle[2].getZ());
-		glVertex3d(triangle[0].getX(), triangle[0].getY(), triangle[0].getZ());
+		glVertex3d((float)triangle[0].getX(), (float)triangle[0].getY(), (float)triangle[0].getZ());
+		glVertex3d((float)triangle[1].getX(), (float)triangle[1].getY(), (float)triangle[1].getZ());
+		glColor3f(0, 1, 0);			   
+		glVertex3d((float)triangle[2].getX(), (float)triangle[2].getY(), (float)triangle[2].getZ());
+		glVertex3d((float)triangle[1].getX(), (float)triangle[1].getY(), (float)triangle[1].getZ());
+		glColor3f(0, 0, 1);			   
+		glVertex3d((float)triangle[2].getX(), (float)triangle[2].getY(), (float)triangle[2].getZ());
+		glVertex3d((float)triangle[0].getX(), (float)triangle[0].getY(), (float)triangle[0].getZ());
 		glEnd();
 	}
 };
@@ -151,23 +151,23 @@ void GL_ShapeDrawer::drawSphere(btScalar radius, int lats, int longs)
 	for (i = 0; i <= lats; i++)
 	{
 		btScalar lat0 = SIMD_PI * (-btScalar(0.5) + (btScalar)(i - 1) / lats);
-		btScalar z0 = radius * std::sin(lat0);
-		btScalar zr0 = radius * std::cos(lat0);
+		btScalar z0 = radius * sin(lat0);
+		btScalar zr0 = radius * cos(lat0);
 
 		btScalar lat1 = SIMD_PI * (-btScalar(0.5) + (btScalar)i / lats);
-		btScalar z1 = radius * std::sin(lat1);
-		btScalar zr1 = radius * std::cos(lat1);
+		btScalar z1 = radius * sin(lat1);
+		btScalar zr1 = radius * cos(lat1);
 
 		glBegin(GL_QUAD_STRIP);
 		for (j = 0; j <= longs; j++)
 		{
 			btScalar lng = 2 * SIMD_PI * (btScalar)(j - 1) / longs;
-			btScalar x = std::cos(lng);
-			btScalar y = std::sin(lng);
-			glNormal3f(x * zr1, y * zr1, z1);
-			glVertex3f(x * zr1, y * zr1, z1);
-			glNormal3f(x * zr0, y * zr0, z0);
-			glVertex3f(x * zr0, y * zr0, z0);
+			btScalar x = cos(lng);
+			btScalar y = sin(lng);
+			glNormal3f((float)x * (float)zr1, (float)y * (float)zr1, (float)z1);
+			glVertex3f((float)x * (float)zr1, (float)y * (float)zr1, (float)z1);
+			glNormal3f((float)x * (float)zr0, (float)y * (float)zr0, (float)z0);
+			glVertex3f((float)x * (float)zr0, (float)y * (float)zr0, (float)z0);
 		}
 		glEnd();
 	}
@@ -228,9 +228,9 @@ void renderSquareA(float x, float y, float z)
 	glEnd();
 }
 
-inline void glDrawVector(const btVector3& v) { glVertex3d(v[0], v[1], v[2]); }
+inline void glDrawVector(const btVector3& v) { glVertex3d((float)v[0], (float)v[1], (float)v[2]); }
 
-void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, const btVector3& color, int debugMode, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax)
+void GL_ShapeDrawer::drawOpenGL(float* m, const btCollisionShape* shape, const btVector3& color, int debugMode, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax)
 {
 	if (shape->getShapeType() == CUSTOM_CONVEX_SHAPE_TYPE)
 	{
@@ -298,12 +298,12 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 		const btConvexShape* convexShape = scalingShape->getChildShape();
 		float scalingFactor = (float)scalingShape->getUniformScalingFactor();
 		{
-			btScalar tmpScaling[4][4] = {{scalingFactor, 0, 0, 0},
-										 {0, scalingFactor, 0, 0},
+			float tmpScaling[4][4] = {{scalingFactor, 0, 0, 0},
+										 {0, scalingFactor,0, 0},
 										 {0, 0, scalingFactor, 0},
 										 {0, 0, 0, 1}};
 
-			drawOpenGL((btScalar*)tmpScaling, convexShape, color, debugMode, worldBoundsMin, worldBoundsMax);
+			drawOpenGL((float*)tmpScaling, convexShape, color, debugMode, worldBoundsMin, worldBoundsMax);
 		}
 		glPopMatrix();
 		return;
@@ -316,7 +316,7 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 		{
 			btTransform childTrans = compoundShape->getChildTransform(i);
 			const btCollisionShape* colShape = compoundShape->getChildShape(i);
-			ATTRIBUTE_ALIGNED16(btScalar)
+			ATTRIBUTE_ALIGNED16(float)
 			childMat[16];
 			childTrans.getOpenGLMatrix(childMat);
 			drawOpenGL(childMat, colShape, color, debugMode, worldBoundsMin, worldBoundsMax);
@@ -384,7 +384,7 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 			glDisable(GL_TEXTURE_2D);
 		}
 
-		glColor3f(color.x(), color.y(), color.z());
+		glColor3f((float)color.x(), (float)color.y(), (float)color.z());
 
 		//bool useWireframeFallback = true;
 
@@ -400,8 +400,8 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 				case SPHERE_SHAPE_PROXYTYPE:
 				{
 					const btSphereShape* sphereShape = static_cast<const btSphereShape*>(shape);
-					float radius = sphereShape->getMargin();  //radius doesn't include the margin, so draw with margin
-					drawSphere(radius, 10, 10);
+					float radius = (float)sphereShape->getMargin();  //radius doesn't include the margin, so draw with margin
+					drawSphere((btScalar)radius, 10, 10);
 					//useWireframeFallback = false;
 					break;
 				}
@@ -445,10 +445,10 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 						const btVector3& v3 = vertices[indices[i + 2]];
 						btVector3 normal = (v3 - v1).cross(v2 - v1);
 						normal.normalize();
-						glNormal3f(normal.getX(), normal.getY(), normal.getZ());
-						glVertex3f(v1.x(), v1.y(), v1.z());
-						glVertex3f(v2.x(), v2.y(), v2.z());
-						glVertex3f(v3.x(), v3.y(), v3.z());
+						glNormal3f((float)normal.getX(), (float)normal.getY(), (float)normal.getZ());
+						glVertex3f((float)v1.x(), (float)v1.y(), (float)v1.z());
+						glVertex3f((float)v2.x(), (float)v2.y(), (float)v2.z());
+						glVertex3f((float)v3.x(), (float)v3.y(), (float)v3.z());
 					}
 					glEnd();
 #endif
@@ -496,16 +496,16 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 					btVector3 planeOrigin = planeNormal * planeConst;
 					btVector3 vec0, vec1;
 					btPlaneSpace1(planeNormal, vec0, vec1);
-					btScalar vecLen = 100.f;
+					btScalar vecLen = (btScalar)100.f;
 					btVector3 pt0 = planeOrigin + vec0 * vecLen;
 					btVector3 pt1 = planeOrigin - vec0 * vecLen;
 					btVector3 pt2 = planeOrigin + vec1 * vecLen;
 					btVector3 pt3 = planeOrigin - vec1 * vecLen;
 					glBegin(GL_LINES);
-					glVertex3f(pt0.getX(), pt0.getY(), pt0.getZ());
-					glVertex3f(pt1.getX(), pt1.getY(), pt1.getZ());
-					glVertex3f(pt2.getX(), pt2.getY(), pt2.getZ());
-					glVertex3f(pt3.getX(), pt3.getY(), pt3.getZ());
+					glVertex3f((float)pt0.getX(), (float)pt0.getY(), (float)pt0.getZ());
+					glVertex3f((float)pt1.getX(), (float)pt1.getY(), (float)pt1.getZ());
+					glVertex3f((float)pt2.getX(), (float)pt2.getY(), (float)pt2.getZ());
+					glVertex3f((float)pt3.getX(), (float)pt3.getY(), (float)pt3.getZ());
 					glEnd();
 
 					break;
@@ -522,7 +522,7 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 					{
 						btSphereShape sc(multiSphereShape->getSphereRadius(i));
 						childTransform.setOrigin(multiSphereShape->getSpherePosition(i));
-						ATTRIBUTE_ALIGNED16(btScalar)
+						ATTRIBUTE_ALIGNED16(float)
 						childMat[16];
 						childTransform.getOpenGLMatrix(childMat);
 						drawOpenGL(childMat, &sc, color, debugMode, worldBoundsMin, worldBoundsMax);
@@ -553,10 +553,10 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 										btVector3 v3 = poly->m_vertices[poly->m_faces[i].m_indices[v + 2]];
 										btVector3 normal = (v3 - v1).cross(v2 - v1);
 										normal.normalize();
-										glNormal3f(normal.getX(), normal.getY(), normal.getZ());
-										glVertex3f(v1.x(), v1.y(), v1.z());
-										glVertex3f(v2.x(), v2.y(), v2.z());
-										glVertex3f(v3.x(), v3.y(), v3.z());
+										glNormal3f((float)normal.getX(), (float)normal.getY(), (float)normal.getZ());
+										glVertex3f((float)v1.x(), (float)v1.y(), (float)v1.z());
+										glVertex3f((float)v2.x(), (float)v2.y(), (float)v2.z());
+										glVertex3f((float)v3.x(), (float)v3.y(), (float)v3.z());
 									}
 								}
 							}
@@ -597,11 +597,11 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 									btVector3 v3 = vtx[index3];
 									btVector3 normal = (v3 - v1).cross(v2 - v1);
 									normal.normalize();
-									glNormal3f(normal.getX(), normal.getY(), normal.getZ());
-									glVertex3f(v1.x(), v1.y(), v1.z());
-									glVertex3f(v2.x(), v2.y(), v2.z());
-									glVertex3f(v3.x(), v3.y(), v3.z());
-								}
+									glNormal3f((float)normal.getX(), (float)normal.getY(), (float)normal.getZ());
+									glVertex3f((float)v1.x(), (float)v1.y(), (float)v1.z());
+									glVertex3f((float)v2.x(), (float)v2.y(), (float)v2.z());
+									glVertex3f((float)v3.x(), (float)v3.y(), (float)v3.z());
+								}							   
 								glEnd();
 							}
 						}
@@ -649,7 +649,7 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 }
 
 //
-void GL_ShapeDrawer::drawShadow(btScalar* m, const btVector3& extrusion, const btCollisionShape* shape, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax)
+void GL_ShapeDrawer::drawShadow(float* m, const btVector3& extrusion, const btCollisionShape* shape, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax)
 {
 	glPushMatrix();
 	btglMultMatrix(m);
@@ -658,11 +658,11 @@ void GL_ShapeDrawer::drawShadow(btScalar* m, const btVector3& extrusion, const b
 		const btUniformScalingShape* scalingShape = static_cast<const btUniformScalingShape*>(shape);
 		const btConvexShape* convexShape = scalingShape->getChildShape();
 		float scalingFactor = (float)scalingShape->getUniformScalingFactor();
-		btScalar tmpScaling[4][4] = {{scalingFactor, 0, 0, 0},
+		float tmpScaling[4][4] = {{scalingFactor, 0, 0, 0},
 									 {0, scalingFactor, 0, 0},
 									 {0, 0, scalingFactor, 0},
 									 {0, 0, 0, 1}};
-		drawShadow((btScalar*)tmpScaling, extrusion, convexShape, worldBoundsMin, worldBoundsMax);
+		drawShadow((float*)tmpScaling, extrusion, convexShape, worldBoundsMin, worldBoundsMax);
 		glPopMatrix();
 		return;
 	}
@@ -673,7 +673,7 @@ void GL_ShapeDrawer::drawShadow(btScalar* m, const btVector3& extrusion, const b
 		{
 			btTransform childTrans = compoundShape->getChildTransform(i);
 			const btCollisionShape* colShape = compoundShape->getChildShape(i);
-			ATTRIBUTE_ALIGNED16(btScalar)
+			ATTRIBUTE_ALIGNED16(float)
 			childMat[16];
 			childTrans.getOpenGLMatrix(childMat);
 			drawShadow(childMat, extrusion * childTrans.getBasis(), colShape, worldBoundsMin, worldBoundsMax);
@@ -690,15 +690,15 @@ void GL_ShapeDrawer::drawShadow(btScalar* m, const btVector3& extrusion, const b
 			for (int i = 0; i < sc->m_edges.size(); ++i)
 			{
 				const btScalar d = btDot(sc->m_edges[i].n[0], extrusion);
-				if ((d * btDot(sc->m_edges[i].n[1], extrusion)) < 0)
+				if ((d * btDot(sc->m_edges[i].n[1], extrusion)) < (btScalar)0)
 				{
-					const int q = d < 0 ? 1 : 0;
+					const int q = (float)d < 0 ? 1 : 0;
 					const btVector3& a = hull->getVertexPointer()[sc->m_edges[i].v[q]];
 					const btVector3& b = hull->getVertexPointer()[sc->m_edges[i].v[1 - q]];
-					glVertex3f(a[0], a[1], a[2]);
-					glVertex3f(b[0], b[1], b[2]);
-					glVertex3f(b[0] + extrusion[0], b[1] + extrusion[1], b[2] + extrusion[2]);
-					glVertex3f(a[0] + extrusion[0], a[1] + extrusion[1], a[2] + extrusion[2]);
+					glVertex3f((float)a[0], (float)a[1], (float)a[2]);
+					glVertex3f((float)b[0], (float)b[1], (float)b[2]);
+					glVertex3f((float)b[0] + (float)extrusion[0], (float)b[1] + (float)extrusion[1], (float)b[2] + (float)extrusion[2]);
+					glVertex3f((float)a[0] + (float)extrusion[0], (float)a[1] + (float)extrusion[1], (float)a[2] + (float)extrusion[2]);
 				}
 			}
 			glEnd();
@@ -745,7 +745,7 @@ void GL_ShapeDrawer::drawSceneInternal(const btDiscreteDynamicsWorld* dynamicsWo
 {
 	btAssert(dynamicsWorld);
 
-	btScalar m[16];
+	float m[16];
 	btMatrix3x3 rot;
 	rot.setIdentity();
 	const int numObjects = dynamicsWorld->getNumCollisionObjects();
@@ -808,10 +808,10 @@ void GL_ShapeDrawer::drawSceneInternal(const btDiscreteDynamicsWorld* dynamicsWo
 		int debugMode = 0;  //getDebugMode()
 		//btVector3 m_sundirection(-1,-1,-1);
 
-		btVector3 m_sundirection(btVector3(1, -2, 1) * 1000);
+		btVector3 m_sundirection(btVector3(1, -2, 1) * (btScalar)1000);
 		if (cameraUpAxis == 2)
 		{
-			m_sundirection = btVector3(1, 1, -2) * 1000;
+			m_sundirection = btVector3(1, 1, -2) * (btScalar)1000;
 		}
 
 		switch (pass)
@@ -834,12 +834,12 @@ extern bool useShadowMap;
 void GL_ShapeDrawer::drawScene(const btDiscreteDynamicsWorld* dynamicsWorld, bool useShadows1, int cameraUpAxis)
 {
 	bool useShadows = useShadowMap;
-	GLfloat light_ambient[] = {btScalar(0.2), btScalar(0.2), btScalar(0.2), btScalar(1.0)};
-	GLfloat light_diffuse[] = {btScalar(1.0), btScalar(1.0), btScalar(1.0), btScalar(1.0)};
-	GLfloat light_specular[] = {btScalar(1.0), btScalar(1.0), btScalar(1.0), btScalar(1.0)};
+	GLfloat light_ambient[] = {(0.2), (0.2), (0.2), (1.0)};
+	GLfloat light_diffuse[] = {(1.0), (1.0), (1.0), (1.0)};
+	GLfloat light_specular[] = {(1.0), (1.0), (1.0), (1.0)};
 	/*	light_position is NOT default value	*/
-	GLfloat light_position0[] = {btScalar(1.0), btScalar(10.0), btScalar(1.0), btScalar(0.0)};
-	GLfloat light_position1[] = {btScalar(-1.0), btScalar(-10.0), btScalar(-1.0), btScalar(0.0)};
+	GLfloat light_position0[] = {(1.0), (10.0), (1.0), (0.0)};
+	GLfloat light_position1[] = {(-1.0), (-10.0), (-1.0), (0.0)};
 
 	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
@@ -859,7 +859,7 @@ void GL_ShapeDrawer::drawScene(const btDiscreteDynamicsWorld* dynamicsWorld, boo
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
-	glClearColor(btScalar(0.7), btScalar(0.7), btScalar(0.7), btScalar(0));
+	glClearColor((0.7), (0.7), (0.7), (0));
 
 	if (useShadows)
 	{

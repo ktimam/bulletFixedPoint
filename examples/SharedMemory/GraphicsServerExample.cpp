@@ -907,7 +907,7 @@ public:
 		}
 	}
 
-	virtual void stepSimulation(float deltaTime)
+	virtual void stepSimulation(btScalar deltaTime)
 	{
 		B3_PROFILE("stepSimulation");
 		processClientCommands();

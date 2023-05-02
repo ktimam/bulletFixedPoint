@@ -83,7 +83,7 @@ void ImportColladaSetup::initPhysics()
 		return;
 
 	btVector3 shift(0, 0, 0);
-	btVector3 scaling(1, 1, 1);
+	float scaling[] = { 1, 1, 1 };
 	//	int index=10;
 
 	{
@@ -94,7 +94,7 @@ void ImportColladaSetup::initPhysics()
 		btTransform upAxisTrans;
 		upAxisTrans.setIdentity();
 
-		btVector4 color(0, 0, 1,1);
+		float color[] = { 0, 0, 1,1 };
 
 #ifdef COMPARE_WITH_ASSIMP
 		static int useAssimp = 0;
@@ -131,8 +131,8 @@ void ImportColladaSetup::initPhysics()
 		{
 			ColladaGraphicsInstance* instance = &visualShapeInstances[i];
 			GLInstanceGraphicsShape* gfxShape = &visualShapes[instance->m_shapeIndex];
-			btVector3 position(0, 0, 0);   // = scaling*btVector3(instance->m_pos[0],instance->m_pos[1],instance->m_pos[2]);
-			btQuaternion orn(0, 0, 0, 1);  //instance->m_orn[0],instance->m_orn[1],instance->m_orn[2],instance->m_orn[3]);
+			float position[] = { 0, 0, 0 };   // = scaling*btVector3(instance->m_pos[0],instance->m_pos[1],instance->m_pos[2]);
+			float orn[] = { 0, 0, 0, 1 };  //instance->m_orn[0],instance->m_orn[1],instance->m_orn[2],instance->m_orn[3]);
 
 			//sort the visualShapeInstances, then iterate etc
 			//void LoadMeshFromCollada(const char* relativeFileName,

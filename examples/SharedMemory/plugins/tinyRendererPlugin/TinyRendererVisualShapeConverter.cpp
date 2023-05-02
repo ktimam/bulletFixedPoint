@@ -227,18 +227,18 @@ static void convertURDFToVisualShape(const UrdfShape* visual, const char* urdfPa
 			btVector3 dir = v.normalized();
 			tr = visual->m_linkLocalFrame;
 			len = v.length();
-			rad = visual->m_geometry.m_capsuleRadius;
+			rad = (btScalar)visual->m_geometry.m_capsuleRadius;
 			btVector3 ax1, ax2;
 			btPlaneSpace1(dir, ax1, ax2);
 
 			for (int i = 0; i < numSteps; i++)
 			{
 				{
-					btVector3 vert = p1 + ax1 * rad * btSin(SIMD_2_PI * (float(i) / numSteps)) + ax2 * rad * btCos(SIMD_2_PI * (float(i) / numSteps));
+					btVector3 vert = p1 + ax1 * rad * btSin(SIMD_2_PI * ((btScalar)(i) / numSteps)) + ax2 * rad * btCos(SIMD_2_PI * ((btScalar)(i) / numSteps));
 					vertices.push_back(vert);
 				}
 				{
-					btVector3 vert = p2 + ax1 * rad * btSin(SIMD_2_PI * (float(i) / numSteps)) + ax2 * rad * btCos(SIMD_2_PI * (float(i) / numSteps));
+					btVector3 vert = p2 + ax1 * rad * btSin(SIMD_2_PI * ((btScalar)(i) / numSteps)) + ax2 * rad * btCos(SIMD_2_PI * ((btScalar)(i) / numSteps));
 					vertices.push_back(vert);
 				}
 			}
@@ -254,45 +254,45 @@ static void convertURDFToVisualShape(const UrdfShape* visual, const char* urdfPa
 		{
 			//assume a capsule along the Z-axis, centered at the origin
 			tr = visual->m_linkLocalFrame;
-			len = visual->m_geometry.m_capsuleHeight;
-			rad = visual->m_geometry.m_capsuleRadius;
+			len = (btScalar)visual->m_geometry.m_capsuleHeight;
+			rad = (btScalar)visual->m_geometry.m_capsuleRadius;
 			for (int i = 0; i < numSteps; i++)
 			{
-				btVector3 vert(rad * btSin(SIMD_2_PI * (float(i) / numSteps)), rad * btCos(SIMD_2_PI * (float(i) / numSteps)), len / 2.);
+				btVector3 vert(rad * btSin(SIMD_2_PI * ((btScalar)(i) / numSteps)), rad * btCos(SIMD_2_PI * ((btScalar)(i) / numSteps)), len / (btScalar)2.);
 				vertices.push_back(vert);
-				vert[2] = -len / 2.;
+				vert[2] = -len / (btScalar)2.;
 				vertices.push_back(vert);
 			}
 			if (visual->m_geometry.m_type == URDF_GEOM_CAPSULE)
 			{
-				btVector3 pole1(0, 0, +len / 2. + rad);
-				btVector3 pole2(0, 0, -len / 2. - rad);
+				btVector3 pole1((btScalar)0, (btScalar)0, len / (btScalar)2. + rad);
+				btVector3 pole2((btScalar)0, (btScalar)0, -len / (btScalar)2. - rad);
 				vertices.push_back(pole1);
 				vertices.push_back(pole2);
 			}
 		}
-		visualShapeOut.m_localVisualFrame[0] = tr.getOrigin()[0];
-		visualShapeOut.m_localVisualFrame[1] = tr.getOrigin()[1];
-		visualShapeOut.m_localVisualFrame[2] = tr.getOrigin()[2];
-		visualShapeOut.m_localVisualFrame[3] = tr.getRotation()[0];
-		visualShapeOut.m_localVisualFrame[4] = tr.getRotation()[1];
-		visualShapeOut.m_localVisualFrame[5] = tr.getRotation()[2];
-		visualShapeOut.m_localVisualFrame[6] = tr.getRotation()[3];
-		visualShapeOut.m_dimensions[0] = len;
-		visualShapeOut.m_dimensions[1] = rad;
+		visualShapeOut.m_localVisualFrame[0] = (float)tr.getOrigin()[0];
+		visualShapeOut.m_localVisualFrame[1] = (float)tr.getOrigin()[1];
+		visualShapeOut.m_localVisualFrame[2] = (float)tr.getOrigin()[2];
+		visualShapeOut.m_localVisualFrame[3] = (float)tr.getRotation()[0];
+		visualShapeOut.m_localVisualFrame[4] = (float)tr.getRotation()[1];
+		visualShapeOut.m_localVisualFrame[5] = (float)tr.getRotation()[2];
+		visualShapeOut.m_localVisualFrame[6] = (float)tr.getRotation()[3];
+		visualShapeOut.m_dimensions[0] = (float)len;
+		visualShapeOut.m_dimensions[1] = (float)rad;
 
 		btConvexHullShape* cylZShape = new btConvexHullShape(&vertices[0].x(), vertices.size(), sizeof(btVector3));
 		//btCapsuleShape* cylZShape = new btCapsuleShape(rad,len);//btConvexHullShape(&vertices[0].x(), vertices.size(), sizeof(btVector3));
 
-		cylZShape->setMargin(0.001);
+		cylZShape->setMargin((btScalar)0.001);
 		convexColShape = cylZShape;
 		break;
 	}
 	case URDF_GEOM_BOX:
 	{
-		visualShapeOut.m_dimensions[0] = visual->m_geometry.m_boxSize[0];
-		visualShapeOut.m_dimensions[1] = visual->m_geometry.m_boxSize[1];
-		visualShapeOut.m_dimensions[2] = visual->m_geometry.m_boxSize[2];
+		visualShapeOut.m_dimensions[0] = (float)visual->m_geometry.m_boxSize[0];
+		visualShapeOut.m_dimensions[1] = (float)visual->m_geometry.m_boxSize[1];
+		visualShapeOut.m_dimensions[2] = (float)visual->m_geometry.m_boxSize[2];
 
 		btVector3 extents = visual->m_geometry.m_boxSize;
 
@@ -313,24 +313,24 @@ static void convertURDFToVisualShape(const UrdfShape* visual, const char* urdfPa
 		}
 		glmesh->m_vertices->resize(numVertices);
 
-		btScalar halfExtentsX = extents[0] * 0.5;
-		btScalar halfExtentsY = extents[1] * 0.5;
-		btScalar halfExtentsZ = extents[2] * 0.5;
+		btScalar halfExtentsX = extents[0] * (btScalar)0.5;
+		btScalar halfExtentsY = extents[1] * (btScalar)0.5;
+		btScalar halfExtentsZ = extents[2] * (btScalar)0.5;
 		GLInstanceVertex* verts = &glmesh->m_vertices->at(0);
-		btScalar textureScaling = 1;
+		btScalar textureScaling = (btScalar)1;
 
 		for (int i = 0; i < numVertices; i++)
 		{
 
-			verts[i].xyzw[0] = halfExtentsX * cube_vertices_textured[i * 9];
-			verts[i].xyzw[1] = halfExtentsY * cube_vertices_textured[i * 9 + 1];
-			verts[i].xyzw[2] = halfExtentsZ * cube_vertices_textured[i * 9 + 2];
+			verts[i].xyzw[0] = (float)halfExtentsX * cube_vertices_textured[i * 9];
+			verts[i].xyzw[1] = (float)halfExtentsY * cube_vertices_textured[i * 9 + 1];
+			verts[i].xyzw[2] = (float)halfExtentsZ * cube_vertices_textured[i * 9 + 2];
 			verts[i].xyzw[3] = cube_vertices_textured[i * 9 + 3];
 			verts[i].normal[0] = cube_vertices_textured[i * 9 + 4];
 			verts[i].normal[1] = cube_vertices_textured[i * 9 + 5];
 			verts[i].normal[2] = cube_vertices_textured[i * 9 + 6];
-			verts[i].uv[0] = cube_vertices_textured[i * 9 + 7] * textureScaling;
-			verts[i].uv[1] = cube_vertices_textured[i * 9 + 8] * textureScaling;
+			verts[i].uv[0] = (float)cube_vertices_textured[i * 9 + 7] * (float)textureScaling;
+			verts[i].uv[1] = (float)cube_vertices_textured[i * 9 + 8] * (float)textureScaling;
 		}
 
 		glmesh->m_numIndices = numIndices;
@@ -343,10 +343,10 @@ static void convertURDFToVisualShape(const UrdfShape* visual, const char* urdfPa
 	{
 		visualShapeOut.m_dimensions[0] = visual->m_geometry.m_sphereRadius;
 
-		btScalar radius = visual->m_geometry.m_sphereRadius;
+		btScalar radius = (btScalar)visual->m_geometry.m_sphereRadius;
 		btSphereShape* sphereShape = new btSphereShape(radius);
 		convexColShape = sphereShape;
-		convexColShape->setMargin(0.001);
+		convexColShape->setMargin((btScalar)0.001);
 		break;
 	}
 	case URDF_GEOM_MESH:
@@ -354,9 +354,9 @@ static void convertURDFToVisualShape(const UrdfShape* visual, const char* urdfPa
 		strncpy(visualShapeOut.m_meshAssetFileName, visual->m_geometry.m_meshFileName.c_str(), VISUAL_SHAPE_MAX_PATH_LEN);
 		visualShapeOut.m_meshAssetFileName[VISUAL_SHAPE_MAX_PATH_LEN - 1] = 0;
 
-		visualShapeOut.m_dimensions[0] = visual->m_geometry.m_meshScale[0];
-		visualShapeOut.m_dimensions[1] = visual->m_geometry.m_meshScale[1];
-		visualShapeOut.m_dimensions[2] = visual->m_geometry.m_meshScale[2];
+		visualShapeOut.m_dimensions[0] = (float)visual->m_geometry.m_meshScale[0];
+		visualShapeOut.m_dimensions[1] = (float)visual->m_geometry.m_meshScale[1];
+		visualShapeOut.m_dimensions[2] = (float)visual->m_geometry.m_meshScale[2];
 
 		switch (visual->m_geometry.m_meshFileType)
 		{
@@ -371,9 +371,9 @@ static void convertURDFToVisualShape(const UrdfShape* visual, const char* urdfPa
 
 			for (int i = 0; i < visual->m_geometry.m_vertices.size(); i++)
 			{
-				glmesh->m_vertices->at(i).xyzw[0] = visual->m_geometry.m_vertices[i].x();
-				glmesh->m_vertices->at(i).xyzw[1] = visual->m_geometry.m_vertices[i].y();
-				glmesh->m_vertices->at(i).xyzw[2] = visual->m_geometry.m_vertices[i].z();
+				glmesh->m_vertices->at(i).xyzw[0] = (float)visual->m_geometry.m_vertices[i].x();
+				glmesh->m_vertices->at(i).xyzw[1] = (float)visual->m_geometry.m_vertices[i].y();
+				glmesh->m_vertices->at(i).xyzw[2] = (float)visual->m_geometry.m_vertices[i].z();
 				glmesh->m_vertices->at(i).xyzw[3] = 1;
 				btVector3 normal(visual->m_geometry.m_vertices[i]);
 				if (visual->m_geometry.m_normals.size() == visual->m_geometry.m_vertices.size())
@@ -390,11 +390,11 @@ static void convertURDFToVisualShape(const UrdfShape* visual, const char* urdfPa
 				{
 					uv = visual->m_geometry.m_uvs[i];
 				}
-				glmesh->m_vertices->at(i).normal[0] = normal[0];
-				glmesh->m_vertices->at(i).normal[1] = normal[1];
-				glmesh->m_vertices->at(i).normal[2] = normal[2];
-				glmesh->m_vertices->at(i).uv[0] = uv[0];
-				glmesh->m_vertices->at(i).uv[1] = uv[1];
+				glmesh->m_vertices->at(i).normal[0] = (float)normal[0];
+				glmesh->m_vertices->at(i).normal[1] = (float)normal[1];
+				glmesh->m_vertices->at(i).normal[2] = (float)normal[2];
+				glmesh->m_vertices->at(i).uv[0] = (float)uv[0];
+				glmesh->m_vertices->at(i).uv[1] = (float)uv[1];
 
 			}
 			for (int i = 0; i < visual->m_geometry.m_indices.size(); i++)
@@ -546,9 +546,9 @@ static void convertURDFToVisualShape(const UrdfShape* visual, const char* urdfPa
 			//apply the geometry scaling
 			for (int i = 0; i < glmesh->m_vertices->size(); i++)
 			{
-				glmesh->m_vertices->at(i).xyzw[0] *= visual->m_geometry.m_meshScale[0];
-				glmesh->m_vertices->at(i).xyzw[1] *= visual->m_geometry.m_meshScale[1];
-				glmesh->m_vertices->at(i).xyzw[2] *= visual->m_geometry.m_meshScale[2];
+				glmesh->m_vertices->at(i).xyzw[0] *= (float)visual->m_geometry.m_meshScale[0];
+				glmesh->m_vertices->at(i).xyzw[1] *= (float)visual->m_geometry.m_meshScale[1];
+				glmesh->m_vertices->at(i).xyzw[2] *= (float)visual->m_geometry.m_meshScale[2];
 			}
 		}
 		else
@@ -579,15 +579,15 @@ static void convertURDFToVisualShape(const UrdfShape* visual, const char* urdfPa
 		for (int v = 0; v < visual->m_geometry.m_vertices.size(); v++)
 		{
 			GLInstanceVertex vtx;
-			vtx.xyzw[0] = visual->m_geometry.m_vertices[v].x();
-			vtx.xyzw[1] = visual->m_geometry.m_vertices[v].y();
-			vtx.xyzw[2] = visual->m_geometry.m_vertices[v].z();
+			vtx.xyzw[0] = (float)visual->m_geometry.m_vertices[v].x();
+			vtx.xyzw[1] = (float)visual->m_geometry.m_vertices[v].y();
+			vtx.xyzw[2] = (float)visual->m_geometry.m_vertices[v].z();
 			vtx.xyzw[3] = 1;
-			vtx.uv[0] = visual->m_geometry.m_uvs[v].x();
-			vtx.uv[1] = visual->m_geometry.m_uvs[v].y();
-			vtx.normal[0] = visual->m_geometry.m_normals[v].x();
-			vtx.normal[1] = visual->m_geometry.m_normals[v].y();
-			vtx.normal[2] = visual->m_geometry.m_normals[v].z();
+			vtx.uv[0] = (float)visual->m_geometry.m_uvs[v].x();
+			vtx.uv[1] = (float)visual->m_geometry.m_uvs[v].y();
+			vtx.normal[0] = (float)visual->m_geometry.m_normals[v].x();
+			vtx.normal[1] = (float)visual->m_geometry.m_normals[v].y();
+			vtx.normal[2] = (float)visual->m_geometry.m_normals[v].z();
 			glmesh->m_vertices->push_back(vtx);
 		}
 
@@ -612,13 +612,13 @@ static void convertURDFToVisualShape(const UrdfShape* visual, const char* urdfPa
 		glmesh->m_scaling[2] = 1;
 		glmesh->m_scaling[3] = 1;
 
-		btScalar planeConst = 0;
+		btScalar planeConst = (btScalar)0;
 		btVector3 planeNormal = visual->m_geometry.m_planeNormal;
 		btVector3 planeOrigin = planeNormal * planeConst;
 		btVector3 vec0, vec1;
 		btPlaneSpace1(planeNormal, vec0, vec1);
 
-		btScalar vecLen = 128;
+		btScalar vecLen = (btScalar)128;
 		btVector3 verts[4];
 
 		verts[0] = planeOrigin + vec0 * vecLen + vec1 * vecLen;
@@ -627,24 +627,24 @@ static void convertURDFToVisualShape(const UrdfShape* visual, const char* urdfPa
 		verts[3] = planeOrigin + vec0 * vecLen - vec1 * vecLen;
 
 		GLInstanceVertex vtx;
-		vtx.xyzw[0] = verts[0][0]; vtx.xyzw[1] = verts[0][1]; vtx.xyzw[2] = 0; vtx.xyzw[3] = 0;
+		vtx.xyzw[0] = (float)verts[0][0]; vtx.xyzw[1] = (float)verts[0][1]; vtx.xyzw[2] = 0; vtx.xyzw[3] = 0;
 		vtx.normal[0] = 0; vtx.normal[1] = 0; vtx.normal[2] = 1;
-		vtx.uv[0] = vecLen; vtx.uv[1] = vecLen;
+		vtx.uv[0] = (float)vecLen; vtx.uv[1] = (float)vecLen;
 		glmesh->m_vertices->push_back(vtx);
 
-		vtx.xyzw[0] = verts[1][0]; vtx.xyzw[1] = verts[1][1]; vtx.xyzw[2] = 0; vtx.xyzw[3] = 0;
+		vtx.xyzw[0] = (float)verts[1][0]; vtx.xyzw[1] = (float)verts[1][1]; vtx.xyzw[2] = 0; vtx.xyzw[3] = 0;
 		vtx.normal[0] = 0; vtx.normal[1] = 0; vtx.normal[2] = 1;
-		vtx.uv[0] = 0; vtx.uv[1] = vecLen;
+		vtx.uv[0] = 0; vtx.uv[1] = (float)vecLen;
 		glmesh->m_vertices->push_back(vtx);
 
-		vtx.xyzw[0] = verts[2][0]; vtx.xyzw[1] = verts[2][1]; vtx.xyzw[2] = 0; vtx.xyzw[3] = 0;
+		vtx.xyzw[0] = (float)verts[2][0]; vtx.xyzw[1] = (float)verts[2][1]; vtx.xyzw[2] = 0; vtx.xyzw[3] = 0;
 		vtx.normal[0] = 0; vtx.normal[1] = 0; vtx.normal[2] = 1;
 		vtx.uv[0] = 0; vtx.uv[1] = 0;
 		glmesh->m_vertices->push_back(vtx);
 
-		vtx.xyzw[0] = verts[3][0]; vtx.xyzw[1] = verts[3][1]; vtx.xyzw[2] = 0; vtx.xyzw[3] = 0;
+		vtx.xyzw[0] = (float)verts[3][0]; vtx.xyzw[1] = (float)verts[3][1]; vtx.xyzw[2] = 0; vtx.xyzw[3] = 0;
 		vtx.normal[0] = 0; vtx.normal[1] = 0; vtx.normal[2] = 1;
-		vtx.uv[0] = vecLen; vtx.uv[1] = 0;
+		vtx.uv[0] = (float)vecLen; vtx.uv[1] = 0;
 		glmesh->m_vertices->push_back(vtx);
 
 		glmesh->m_numIndices = glmesh->m_indices->size();
@@ -661,7 +661,7 @@ static void convertURDFToVisualShape(const UrdfShape* visual, const char* urdfPa
 	if ((glmesh == 0) && convexColShape)
 	{
 		btShapeHull* hull = new btShapeHull(convexColShape);
-		hull->buildHull(0.0);
+		hull->buildHull((btScalar)0.0);
 		{
 			//	int strideInBytes = 9*sizeof(float);
 			int numVertices = hull->numVertices();
@@ -676,18 +676,18 @@ static void convertURDFToVisualShape(const UrdfShape* visual, const char* urdfPa
 			{
 				GLInstanceVertex vtx;
 				btVector3 pos = hull->getVertexPointer()[i];
-				vtx.xyzw[0] = pos.x();
-				vtx.xyzw[1] = pos.y();
-				vtx.xyzw[2] = pos.z();
+				vtx.xyzw[0] = (float)pos.x();
+				vtx.xyzw[1] = (float)pos.y();
+				vtx.xyzw[2] = (float)pos.z();
 				vtx.xyzw[3] = 1.f;
 				btVector3 normal = pos.safeNormalize();
-				vtx.normal[0] = normal.x();
-				vtx.normal[1] = normal.y();
-				vtx.normal[2] = normal.z();
-				btScalar u = btAtan2(normal[0], normal[2]) / (2 * SIMD_PI) + 0.5;
-				btScalar v = normal[1] * 0.5 + 0.5;
-				vtx.uv[0] = u;
-				vtx.uv[1] = v;
+				vtx.normal[0] = (float)normal.x();
+				vtx.normal[1] = (float)normal.y();
+				vtx.normal[2] = (float)normal.z();
+				btScalar u = btAtan2(normal[0], normal[2]) / (2 * SIMD_PI) + (btScalar)0.5;
+				btScalar v = normal[1] * (btScalar)0.5 + (btScalar)0.5;
+				vtx.uv[0] = (float)u;
+				vtx.uv[1] = (float)v;
 				glmesh->m_vertices->push_back(vtx);
 			}
 
@@ -719,14 +719,14 @@ static void convertURDFToVisualShape(const UrdfShape* visual, const char* urdfPa
 			GLInstanceVertex& v = glmesh->m_vertices->at(i);
 			btVector3 vert(v.xyzw[0], v.xyzw[1], v.xyzw[2]);
 			btVector3 vt = visualTransform * vert;
-			v.xyzw[0] = vt[0];
-			v.xyzw[1] = vt[1];
-			v.xyzw[2] = vt[2];
+			v.xyzw[0] = (float)vt[0];
+			v.xyzw[1] = (float)vt[1];
+			v.xyzw[2] = (float)vt[2];
 			btVector3 triNormal(v.normal[0], v.normal[1], v.normal[2]);
 			triNormal = visualTransform.getBasis() * triNormal;
-			v.normal[0] = triNormal[0];
-			v.normal[1] = triNormal[1];
-			v.normal[2] = triNormal[2];
+			v.normal[0] = (float)triNormal[0];
+			v.normal[1] = (float)triNormal[1];
+			v.normal[2] = (float)triNormal[2];
 			verticesOut.push_back(v);
 		}
 	}
@@ -735,10 +735,10 @@ static void convertURDFToVisualShape(const UrdfShape* visual, const char* urdfPa
 
 static btVector4 sGoogleyColors[4] =
 {
-	btVector4(60. / 256., 186. / 256., 84. / 256., 1),
-	btVector4(244. / 256., 194. / 256., 13. / 256., 1),
-	btVector4(219. / 256., 50. / 256., 54. / 256., 1),
-	btVector4(72. / 256., 133. / 256., 237. / 256., 1),
+	btVector4((btScalar)60. / (btScalar)256., (btScalar)186. / (btScalar)256., (btScalar)84. / (btScalar)256., (btScalar)1),
+	btVector4((btScalar)244. / (btScalar)256.,(btScalar)194. / (btScalar)256., (btScalar)13. / (btScalar)256., (btScalar)1),
+	btVector4((btScalar)219. / (btScalar)256., (btScalar)50. / (btScalar)256., (btScalar)54. / (btScalar)256., (btScalar)1),
+	btVector4((btScalar)72. / (btScalar)256.,(btScalar)133. / (btScalar)256., (btScalar)237. / (btScalar)256., (btScalar)1),
 
 	//btVector4(1,1,0,1),
 };
@@ -793,7 +793,7 @@ int  TinyRendererVisualShapeConverter::convertVisualShapes(
 				colorIndex = 0;
 			colorIndex &= 3;
 			btVector4 color;
-			color = (m_data->m_flags & URDF_GOOGLEY_UNDEFINED_COLORS) ? sGoogleyColors[colorIndex] : btVector4(1, 1, 1, 1);
+			color = (m_data->m_flags & URDF_GOOGLEY_UNDEFINED_COLORS) ? sGoogleyColors[colorIndex] : btVector4((btScalar)1, (btScalar)1, (btScalar)1, (btScalar)1);
 			float rgbaColor[4] = { (float)color[0], (float)color[1], (float)color[2], (float)color[3] };
 			//if (colObj->getCollisionShape()->getShapeType()==STATIC_PLANE_PROXYTYPE)
 			//{
@@ -809,7 +809,7 @@ int  TinyRendererVisualShapeConverter::convertVisualShapes(
 					{
 						for (int i = 0; i < 4; i++)
 						{
-							rgbaColor[i] = (*matPtr)->m_matColor.m_rgbaColor[i];
+							rgbaColor[i] = (float)(*matPtr)->m_matColor.m_rgbaColor[i];
 						}
 						//printf("UrdfMaterial %s, rgba = %f,%f,%f,%f\n",mat->m_name.c_str(),mat->m_rgbaColor[0],mat->m_rgbaColor[1],mat->m_rgbaColor[2],mat->m_rgbaColor[3]);
 						//m_data->m_linkColors.insert(linkIndex,mat->m_rgbaColor);
@@ -821,7 +821,7 @@ int  TinyRendererVisualShapeConverter::convertVisualShapes(
 						{
 							for (int i = 0; i < 4; i++)
 							{
-								rgbaColor[i] = vis->m_geometry.m_localMaterial.m_matColor.m_rgbaColor[i];
+								rgbaColor[i] = (float)vis->m_geometry.m_localMaterial.m_matColor.m_rgbaColor[i];
 							}
 						}
 					}
@@ -833,7 +833,7 @@ int  TinyRendererVisualShapeConverter::convertVisualShapes(
 				{
 					for (int i = 0; i < 4; i++)
 					{
-						rgbaColor[i] = vis->m_geometry.m_localMaterial.m_matColor.m_rgbaColor[i];
+						rgbaColor[i] = (float)vis->m_geometry.m_localMaterial.m_matColor.m_rgbaColor[i];
 					}
 				}
 			}
@@ -853,13 +853,13 @@ int  TinyRendererVisualShapeConverter::convertVisualShapes(
 			b3VisualShapeData visualShape;
 			visualShape.m_objectUniqueId = bodyUniqueId;
 			visualShape.m_linkIndex = linkIndex;
-			visualShape.m_localVisualFrame[0] = vis->m_linkLocalFrame.getOrigin()[0];
-			visualShape.m_localVisualFrame[1] = vis->m_linkLocalFrame.getOrigin()[1];
-			visualShape.m_localVisualFrame[2] = vis->m_linkLocalFrame.getOrigin()[2];
-			visualShape.m_localVisualFrame[3] = vis->m_linkLocalFrame.getRotation()[0];
-			visualShape.m_localVisualFrame[4] = vis->m_linkLocalFrame.getRotation()[1];
-			visualShape.m_localVisualFrame[5] = vis->m_linkLocalFrame.getRotation()[2];
-			visualShape.m_localVisualFrame[6] = vis->m_linkLocalFrame.getRotation()[3];
+			visualShape.m_localVisualFrame[0] = (float)vis->m_linkLocalFrame.getOrigin()[0];
+			visualShape.m_localVisualFrame[1] = (float)vis->m_linkLocalFrame.getOrigin()[1];
+			visualShape.m_localVisualFrame[2] = (float)vis->m_linkLocalFrame.getOrigin()[2];
+			visualShape.m_localVisualFrame[3] = (float)vis->m_linkLocalFrame.getRotation()[0];
+			visualShape.m_localVisualFrame[4] = (float)vis->m_linkLocalFrame.getRotation()[1];
+			visualShape.m_localVisualFrame[5] = (float)vis->m_linkLocalFrame.getRotation()[2];
+			visualShape.m_localVisualFrame[6] = (float)vis->m_linkLocalFrame.getRotation()[3];
 			visualShape.m_rgbaColor[0] = rgbaColor[0];
 			visualShape.m_rgbaColor[1] = rgbaColor[1];
 			visualShape.m_rgbaColor[2] = rgbaColor[2];
@@ -1031,9 +1031,9 @@ void TinyRendererVisualShapeConverter::updateShape(int shapeUniqueId, const btVe
 				for (int i = 0; i < numVertices; i++)
 				{
 					const btVector3& vtx = vertices[i];
-					verts[i].x = vtx.x();
-					verts[i].y = vtx.y();
-					verts[i].z = vtx.z();
+					verts[i].x = (float)vtx.x();
+					verts[i].y = (float)vtx.y();
+					verts[i].z = (float)vtx.z();
 				}
 				if (renderObj->m_model->nnormals() == numNormals)
 				{
@@ -1041,9 +1041,9 @@ void TinyRendererVisualShapeConverter::updateShape(int shapeUniqueId, const btVe
 					for (int i = 0; i < numNormals; i++)
 					{
 						const btVector3& normal = normals[i];
-						norms[i].x = normal.x();
-						norms[i].y = normal.y();
-						norms[i].z = normal.z();
+						norms[i].x = (float)normal.x();
+						norms[i].y = (float)normal.y();
+						norms[i].z = (float)normal.z();
 					}
 				}
 			}
@@ -1217,7 +1217,7 @@ void TinyRendererVisualShapeConverter::render(const float viewMat[16], const flo
 
 	clearBuffers(clearColor);
 
-	ATTRIBUTE_ALIGNED16(btScalar modelMat[16]);
+	ATTRIBUTE_ALIGNED16(float modelMat[16]);
 
 	btVector3 lightDirWorld(-5, 200, -40);
 	if (m_data->m_hasLightDirection)
@@ -1294,7 +1294,7 @@ void TinyRendererVisualShapeConverter::render(const float viewMat[16], const flo
 					for (int j = 0; j < 4; j++)
 					{
 						renderObj->m_projectionMatrix[i][j] = projMat[i + 4 * j];
-						renderObj->m_modelMatrix[i][j] = modelMat[i + 4 * j];
+						renderObj->m_modelMatrix[i][j] = (float)modelMat[i + 4 * j];
 						renderObj->m_viewMatrix[i][j] = viewMat[i + 4 * j];
 					}
 				}
@@ -1330,7 +1330,7 @@ void TinyRendererVisualShapeConverter::render(const float viewMat[16], const flo
 				for (int j = 0; j < 4; j++)
 				{
 					renderObj->m_projectionMatrix[i][j] = projMat[i + 4 * j];
-					renderObj->m_modelMatrix[i][j] = modelMat[i + 4 * j];
+					renderObj->m_modelMatrix[i][j] = (float)modelMat[i + 4 * j];
 					renderObj->m_viewMatrix[i][j] = viewMat[i + 4 * j];
 				}
 			}

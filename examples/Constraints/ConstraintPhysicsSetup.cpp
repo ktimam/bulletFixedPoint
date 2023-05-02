@@ -9,7 +9,7 @@ struct ConstraintPhysicsSetup : public CommonRigidBodyBase
 	virtual ~ConstraintPhysicsSetup();
 	virtual void initPhysics();
 
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 
 	virtual void resetCamera()
 	{
@@ -30,21 +30,21 @@ ConstraintPhysicsSetup::~ConstraintPhysicsSetup()
 }
 
 static btScalar val;
-static btScalar targetVel = 0;
-static btScalar maxImpulse = 10000;
+static btScalar targetVel = (btScalar)0;
+static btScalar maxImpulse = (btScalar)10000;
 static btHingeAccumulatedAngleConstraint* spDoorHinge = 0;
-static btScalar actualHingeVelocity = 0.f;
+static btScalar actualHingeVelocity = (btScalar)0.f;
 
 static btVector3 btAxisA(0, 1, 0);
 
-void ConstraintPhysicsSetup::stepSimulation(float deltaTime)
+void ConstraintPhysicsSetup::stepSimulation(btScalar deltaTime)
 {
 	val = spDoorHinge->getAccumulatedHingeAngle() * SIMD_DEGS_PER_RAD;
 	if (m_dynamicsWorld)
 	{
 		spDoorHinge->enableAngularMotor(true, targetVel, maxImpulse);
 
-		m_dynamicsWorld->stepSimulation(deltaTime, 10, 1. / 240.);
+		m_dynamicsWorld->stepSimulation(deltaTime, 10, (btScalar)1. / (btScalar)240.);
 
 		btHingeConstraint* hinge = spDoorHinge;
 
@@ -111,7 +111,7 @@ void ConstraintPhysicsSetup::initPhysics()
 		m_guiHelper->getParameterInterface()->registerSliderFloatParameter(slider);
 	}
 
-	val = 1.f;
+	val = (btScalar)1.f;
 	{
 		SliderParams slider("angle", &val);
 		slider.m_minVal = -720;
@@ -125,7 +125,7 @@ void ConstraintPhysicsSetup::initPhysics()
 		btTransform doorTrans;
 		doorTrans.setIdentity();
 		doorTrans.setOrigin(btVector3(-5.0f, -2.0f, 0.0f));
-		btRigidBody* pDoorBody = createRigidBody(1.0, doorTrans, pDoorShape);
+		btRigidBody* pDoorBody = createRigidBody((btScalar)1.0, doorTrans, pDoorShape);
 		pDoorBody->setActivationState(DISABLE_DEACTIVATION);
 		const btVector3 btPivotA(10.f + 2.1f, -2.0f, 0.0f);  // right next to the door slightly outside
 

@@ -26,10 +26,10 @@ static bool enableConstraints = true;
 
 static btVector4 gGoogleyColors[4] =
 {
-		btVector4(60. / 256., 186. / 256., 84. / 256., 1),
-		btVector4(244. / 256., 194. / 256., 13. / 256., 1),
-		btVector4(219. / 256., 50. / 256., 54. / 256., 1),
-		btVector4(72. / 256., 133. / 256., 237. / 256., 1),
+		btVector4((btScalar)60. / (btScalar)256., (btScalar)186. / (btScalar)256., (btScalar)84. / (btScalar)256., (btScalar)1),
+		btVector4((btScalar)244. / (btScalar)256., (btScalar)194. / (btScalar)256., (btScalar)13. / (btScalar)256., (btScalar)1),
+		btVector4((btScalar)219. / (btScalar)256.,(btScalar)50. / (btScalar)256., (btScalar)54. / (btScalar)256., (btScalar)1),
+		btVector4((btScalar)72. / (btScalar)256., (btScalar)133. / (btScalar)256., (btScalar)237. / (btScalar)256., (btScalar)1),
 };
 
 static btVector4 selectColor2()
@@ -197,7 +197,7 @@ void processContactParameters(const URDFLinkContactInfo& contactInfo, btCollisio
 	}
 }
 
-btScalar tmpUrdfScaling = 2;
+btScalar tmpUrdfScaling = (btScalar)2;
 
 btTransform ConvertURDF2BulletInternal(
 	const URDFImporterInterface& u2b, MultiBodyCreationInterface& creation,
@@ -245,7 +245,7 @@ btTransform ConvertURDF2BulletInternal(
 		u2b.getMassAndInertia2(urdfParentIndex, parentMass, parentLocalInertiaDiagonal, parentLocalInertialFrame, flags);
 	}
 
-	btScalar mass = 0;
+	btScalar mass = (btScalar)0;
 	btTransform localInertialFrame;
 	localInertialFrame.setIdentity();
 	btVector3 localInertiaDiagonal(0, 0, 0);
@@ -315,7 +315,7 @@ btTransform ConvertURDF2BulletInternal(
 	{
 		UrdfMaterialColor matColor;
 		
-		btVector4 color2 = (flags & CUF_GOOGLEY_UNDEFINED_COLORS) ? selectColor2() : btVector4(1, 1, 1, 1);
+		btVector4 color2 = (flags & CUF_GOOGLEY_UNDEFINED_COLORS) ? selectColor2() : btVector4((btScalar)1, (btScalar)1, (btScalar)1, (btScalar)1);
 		btVector3 specular(0.5, 0.5, 0.5);
 		if (u2b.getLinkColor2(urdfLinkIndex, matColor))
 		{
@@ -334,9 +334,9 @@ btTransform ConvertURDF2BulletInternal(
 			if (!(flags & CUF_USE_URDF_INERTIA))
 			{
 				compoundShape->calculateLocalInertia(mass, localInertiaDiagonal);
-				btAssert(localInertiaDiagonal[0] < 1e10);
-				btAssert(localInertiaDiagonal[1] < 1e10);
-				btAssert(localInertiaDiagonal[2] < 1e10);
+				btAssert(localInertiaDiagonal[0] < (btScalar)1e10);
+				btAssert(localInertiaDiagonal[1] < (btScalar)1e10);
+				btAssert(localInertiaDiagonal[2] < (btScalar)1e10);
 			}
 			URDFLinkContactInfo contactInfo;
 			u2b.getLinkContactInfo(urdfLinkIndex, contactInfo);
@@ -379,7 +379,7 @@ btTransform ConvertURDF2BulletInternal(
 		{
 			if (cache.m_bulletMultiBody == 0)
 			{
-				bool isFixedBase = (mass == 0);  //todo: figure out when base is fixed
+				bool isFixedBase = (mass == (btScalar)0);  //todo: figure out when base is fixed
 				int totalNumJoints = cache.m_totalNumJoints1;
 				cache.m_bulletMultiBody = creation.allocateMultiBody(urdfLinkIndex, totalNumJoints, mass, localInertiaDiagonal, isFixedBase, canSleep);
 				if (flags & CUF_GLOBAL_VELOCITIES_MB)
@@ -429,7 +429,7 @@ btTransform ConvertURDF2BulletInternal(
 
 						//create a spherical joint limit, swing_x,. swing_y and twist
 						//jointLowerLimit <= jointUpperLimit)
-						if (jointUpperLimit > 0 && jointLowerLimit> 0 && twistLimit > 0 && jointMaxForce>0)
+						if (jointUpperLimit > (btScalar)0 && jointLowerLimit> (btScalar)0 && twistLimit > (btScalar)0 && jointMaxForce> (btScalar)0)
 						{
 							btMultiBodySphericalJointLimit* con = new btMultiBodySphericalJointLimit(cache.m_bulletMultiBody, mbLinkIndex, 
 								jointLowerLimit,
@@ -568,11 +568,11 @@ btTransform ConvertURDF2BulletInternal(
 							//disable joint limits
 							if (flags & CUF_RESERVED)
 							{
-								dof6 = creation.createRevoluteJoint(urdfLinkIndex, *parentRigidBody, *linkRigidBody, offsetInA, offsetInB, jointAxisInJointSpace, 1, -1);
+								dof6 = creation.createRevoluteJoint(urdfLinkIndex, *parentRigidBody, *linkRigidBody, offsetInA, offsetInB, jointAxisInJointSpace, (btScalar)1, (btScalar)-1);
 							}
 							else
 							{
-								dof6 = creation.createRevoluteJoint(urdfLinkIndex, *linkRigidBody, *parentRigidBody, offsetInB, offsetInA, jointAxisInJointSpace, 1, -1);
+								dof6 = creation.createRevoluteJoint(urdfLinkIndex, *linkRigidBody, *parentRigidBody, offsetInB, offsetInA, jointAxisInJointSpace, (btScalar)1, (btScalar)-1);
 							}
 						}
 
@@ -673,7 +673,7 @@ btTransform ConvertURDF2BulletInternal(
 				}
 				world1->addCollisionObject(col, collisionFilterGroup, collisionFilterMask);
 
-				btVector4 color2 = (flags & CUF_GOOGLEY_UNDEFINED_COLORS) ? selectColor2() : btVector4(1, 1, 1, 1);
+				btVector4 color2 = (flags & CUF_GOOGLEY_UNDEFINED_COLORS) ? selectColor2() : btVector4((btScalar)1, (btScalar)1, (btScalar)1, (btScalar)1);
 				btVector3 specularColor(1, 1, 1);
 				UrdfMaterialColor matCol;
 				if (u2b.getLinkColor2(urdfLinkIndex, matCol))
@@ -698,7 +698,7 @@ btTransform ConvertURDF2BulletInternal(
 				{
 					//if the base is static and all joints in the chain between this link and the base are fixed, 
 					//then this link is static too (doesn't merge islands)
-					if (cache.m_bulletMultiBody->getBaseMass() == 0)
+					if (cache.m_bulletMultiBody->getBaseMass() == (btScalar)0)
 					{
 						bool allJointsFixed = true;
 						int testLinkIndex = mbLinkIndex;
@@ -731,7 +731,7 @@ btTransform ConvertURDF2BulletInternal(
 				{
 					//					if (canSleep)
 					{
-						if (cache.m_bulletMultiBody->getBaseMass() == 0)
+						if (cache.m_bulletMultiBody->getBaseMass() == (btScalar)0)
 						//&& cache.m_bulletMultiBody->getNumDofs()==0)
 						{
 							//col->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);

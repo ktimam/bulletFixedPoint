@@ -30,9 +30,9 @@ enum btDeformableLagrangianForceType
 	BT_MOUSE_PICKING_FORCE = 6
 };
 
-static inline double randomDouble(double low, double high)
+static inline btScalar randomDouble(btScalar low, btScalar high)
 {
-	return low + static_cast<double>(rand()) / RAND_MAX * (high - low);
+	return low + btScalar(rand()) / RAND_MAX * (high - low);
 }
 
 class btDeformableLagrangianForce
@@ -127,7 +127,7 @@ public:
 			btSoftBody* psb = m_softBodies[i];
 			for (int j = 0; j < psb->m_nodes.size(); ++j)
 			{
-				psb->m_nodes[j].m_q += btVector3(randomDouble(-.1, .1), randomDouble(-.1, .1), randomDouble(-.1, .1));
+				psb->m_nodes[j].m_q += btVector3(randomDouble((btScalar)-.1, (btScalar).1), randomDouble((btScalar)-.1, (btScalar).1), randomDouble((btScalar)-.1, (btScalar).1));
 			}
 			psb->updateDeformation();
 		}
@@ -140,7 +140,7 @@ public:
 		{
 			dphi_dx[i].setZero();
 		}
-		addScaledForces(-1, dphi_dx);
+		addScaledForces((btScalar)-1, dphi_dx);
 
 		// write down the current position
 		TVStack x;
@@ -160,21 +160,21 @@ public:
 		// populate dx with random vectors
 		for (int i = 0; i < dx.size(); ++i)
 		{
-			dx[i].setX(randomDouble(-1, 1));
-			dx[i].setY(randomDouble(-1, 1));
-			dx[i].setZ(randomDouble(-1, 1));
+			dx[i].setX(randomDouble((btScalar)-1, (btScalar)1));
+			dx[i].setY(randomDouble((btScalar)-1, (btScalar)1));
+			dx[i].setZ(randomDouble((btScalar)-1, (btScalar)1));
 		}
 
-		btAlignedObjectArray<double> errors;
+		btAlignedObjectArray<btScalar> errors;
 		for (int it = 0; it < 10; ++it)
 		{
 			for (int i = 0; i < dx.size(); ++i)
 			{
-				dx[i] *= 0.5;
+				dx[i] *= (btScalar)0.5;
 			}
 
 			// get dphi/dx * dx
-			double dphi = 0;
+			btScalar dphi = (btScalar)0;
 			for (int i = 0; i < dx.size(); ++i)
 			{
 				dphi += dphi_dx[i].dot(dx[i]);
@@ -191,7 +191,7 @@ public:
 				psb->updateDeformation();
 			}
 			counter = 0;
-			double f1 = totalElasticEnergy(0);
+			btScalar f1 = totalElasticEnergy((btScalar)0);
 
 			for (int i = 0; i < m_softBodies.size(); ++i)
 			{
@@ -205,7 +205,7 @@ public:
 			}
 			counter = 0;
 
-			double f2 = totalElasticEnergy(0);
+			btScalar f2 = totalElasticEnergy((btScalar)0);
 
 			//restore m_q
 			for (int i = 0; i < m_softBodies.size(); ++i)
@@ -219,7 +219,7 @@ public:
 				psb->updateDeformation();
 			}
 			counter = 0;
-			double error = f1 - f2 - 2 * dphi;
+			btScalar error = f1 - f2 - 2 * dphi;
 			errors.push_back(error);
 			std::cout << "Iteration = " << it << ", f1 = " << f1 << ", f2 = " << f2 << ", error = " << error << std::endl;
 		}
@@ -237,7 +237,7 @@ public:
 			btSoftBody* psb = m_softBodies[i];
 			for (int j = 0; j < psb->m_nodes.size(); ++j)
 			{
-				psb->m_nodes[j].m_q += btVector3(randomDouble(-.1, .1), randomDouble(-.1, .1), randomDouble(-.1, .1));
+				psb->m_nodes[j].m_q += btVector3(randomDouble((btScalar)-.1, (btScalar).1), randomDouble((btScalar)-.1, (btScalar).1), randomDouble((btScalar)-.1, (btScalar).1));
 			}
 			psb->updateDeformation();
 		}
@@ -269,17 +269,17 @@ public:
 		// populate dx with random vectors
 		for (int i = 0; i < dx.size(); ++i)
 		{
-			dx[i].setX(randomDouble(-1, 1));
-			dx[i].setY(randomDouble(-1, 1));
-			dx[i].setZ(randomDouble(-1, 1));
+			dx[i].setX(randomDouble((btScalar)-1, (btScalar)1));
+			dx[i].setY(randomDouble((btScalar)-1, (btScalar)1));
+			dx[i].setZ(randomDouble((btScalar)-1, (btScalar)1));
 		}
 
-		btAlignedObjectArray<double> errors;
+		btAlignedObjectArray<btScalar> errors;
 		for (int it = 0; it < 10; ++it)
 		{
 			for (int i = 0; i < dx.size(); ++i)
 			{
-				dx[i] *= 0.5;
+				dx[i] *= (btScalar)0.5;
 			}
 
 			// get df
@@ -291,7 +291,7 @@ public:
 			}
 
 			//set df
-			addScaledElasticForceDifferential(-1, dx, df);
+			addScaledElasticForceDifferential((btScalar)-1, dx, df);
 
 			for (int i = 0; i < m_softBodies.size(); ++i)
 			{
@@ -306,7 +306,7 @@ public:
 			counter = 0;
 
 			//set f1
-			addScaledForces(-1, f1);
+			addScaledForces((btScalar)-1, f1);
 
 			for (int i = 0; i < m_softBodies.size(); ++i)
 			{
@@ -321,7 +321,7 @@ public:
 			counter = 0;
 
 			//set f2
-			addScaledForces(-1, f2);
+			addScaledForces((btScalar)-1, f2);
 
 			//restore m_q
 			for (int i = 0; i < m_softBodies.size(); ++i)
@@ -335,10 +335,10 @@ public:
 				psb->updateDeformation();
 			}
 			counter = 0;
-			double error = 0;
+			btScalar error = (btScalar)0;
 			for (int i = 0; i < df.size(); ++i)
 			{
-				btVector3 error_vector = f1[i] - f2[i] - 2 * df[i];
+				btVector3 error_vector = f1[i] - f2[i] - (btScalar)2 * df[i];
 				error += error_vector.length2();
 			}
 			error = btSqrt(error);
@@ -352,19 +352,19 @@ public:
 	}
 
 	//
-	virtual double totalElasticEnergy(btScalar dt)
+	virtual btScalar totalElasticEnergy(btScalar dt)
 	{
-		return 0;
+		return (btScalar)0;
 	}
 
 	//
-	virtual double totalDampingEnergy(btScalar dt)
+	virtual btScalar totalDampingEnergy(btScalar dt)
 	{
-		return 0;
+		return (btScalar)0;
 	}
 
 	// total Energy takes dt as input because certain energies depend on dt
-	virtual double totalEnergy(btScalar dt)
+	virtual btScalar totalEnergy(btScalar dt)
 	{
 		return totalElasticEnergy(dt) + totalDampingEnergy(dt);
 	}

@@ -19,7 +19,7 @@
 #include <cmath>
 btScalar btDeformableContactProjection::update(btCollisionObject** deformableBodies, int numDeformableBodies, const btContactSolverInfo& infoGlobal)
 {
-	btScalar residualSquare = 0;
+	btScalar residualSquare = (btScalar)0;
 	for (int i = 0; i < numDeformableBodies; ++i)
 	{
 		for (int j = 0; j < m_softBodies.size(); ++j)
@@ -60,7 +60,7 @@ btScalar btDeformableContactProjection::update(btCollisionObject** deformableBod
 
 btScalar btDeformableContactProjection::solveSplitImpulse(btCollisionObject** deformableBodies, int numDeformableBodies, const btContactSolverInfo& infoGlobal)
 {
-	btScalar residualSquare = 0;
+	btScalar residualSquare = (btScalar)0;
 	for (int i = 0; i < numDeformableBodies; ++i)
 	{
 		for (int j = 0; j < m_softBodies.size(); ++j)
@@ -101,7 +101,7 @@ void btDeformableContactProjection::setConstraints(const btContactSolverInfo& in
 		// set Dirichlet constraint
 		for (int j = 0; j < psb->m_nodes.size(); ++j)
 		{
-			if (psb->m_nodes[j].m_im == 0)
+			if (psb->m_nodes[j].m_im == (btScalar)0)
 			{
 				btDeformableStaticConstraint static_constraint(&psb->m_nodes[j], infoGlobal);
 				m_staticConstraints[i].push_back(static_constraint);
@@ -113,7 +113,7 @@ void btDeformableContactProjection::setConstraints(const btContactSolverInfo& in
 		{
 			btSoftBody::DeformableNodeRigidAnchor& anchor = psb->m_deformableAnchors[j];
 			// skip fixed points
-			if (anchor.m_node->m_im == 0)
+			if (anchor.m_node->m_im == (btScalar)0)
 			{
 				continue;
 			}
@@ -127,7 +127,7 @@ void btDeformableContactProjection::setConstraints(const btContactSolverInfo& in
 		{
 			const btSoftBody::DeformableNodeRigidContact& contact = psb->m_nodeRigidContacts[j];
 			// skip fixed points
-			if (contact.m_node->m_im == 0)
+			if (contact.m_node->m_im == (btScalar)0)
 			{
 				continue;
 			}
@@ -140,7 +140,7 @@ void btDeformableContactProjection::setConstraints(const btContactSolverInfo& in
 		{
 			const btSoftBody::DeformableFaceRigidContact& contact = psb->m_faceRigidContacts[j];
 			// skip fixed faces
-			if (contact.m_c2 == 0)
+			if (contact.m_c2 == (btScalar)0)
 			{
 				continue;
 			}
@@ -473,7 +473,7 @@ void btDeformableContactProjection::setLagrangeMultiplier()
 			LagrangeMultiplier lm;
 			lm.m_num_nodes = 1;
 			lm.m_indices[0] = index;
-			lm.m_weights[0] = 1.0;
+			lm.m_weights[0] = (btScalar)1.0;
 			lm.m_num_constraints = 3;
 			lm.m_dirs[0] = btVector3(1, 0, 0);
 			lm.m_dirs[1] = btVector3(0, 1, 0);
@@ -487,7 +487,7 @@ void btDeformableContactProjection::setLagrangeMultiplier()
 			LagrangeMultiplier lm;
 			lm.m_num_nodes = 1;
 			lm.m_indices[0] = index;
-			lm.m_weights[0] = 1.0;
+			lm.m_weights[0] = (btScalar)1.0;
 			lm.m_num_constraints = 3;
 			lm.m_dirs[0] = btVector3(1, 0, 0);
 			lm.m_dirs[1] = btVector3(0, 1, 0);
@@ -506,7 +506,7 @@ void btDeformableContactProjection::setLagrangeMultiplier()
 			LagrangeMultiplier lm;
 			lm.m_num_nodes = 1;
 			lm.m_indices[0] = index;
-			lm.m_weights[0] = 1.0;
+			lm.m_weights[0] = (btScalar)1.0;
 			if (m_nodeRigidConstraints[i][j].m_static)
 			{
 				lm.m_num_constraints = 3;
@@ -542,7 +542,7 @@ void btDeformableContactProjection::setLagrangeMultiplier()
 			}
 			if (m_faceRigidConstraints[i][j].m_static)
 			{
-				face->m_pcontact[3] = 1;
+				face->m_pcontact[3] = (btScalar)1;
 				lm.m_num_constraints = 3;
 				lm.m_dirs[0] = btVector3(1, 0, 0);
 				lm.m_dirs[1] = btVector3(0, 1, 0);
@@ -550,7 +550,7 @@ void btDeformableContactProjection::setLagrangeMultiplier()
 			}
 			else
 			{
-				face->m_pcontact[3] = 0;
+				face->m_pcontact[3] = (btScalar)0;
 				lm.m_num_constraints = 1;
 				lm.m_dirs[0] = m_faceRigidConstraints[i][j].m_normal;
 			}
@@ -568,10 +568,10 @@ void btDeformableContactProjection::applyDynamicFriction(TVStack& f)
 		{
 			const btDeformableNodeRigidContactConstraint& constraint = m_nodeRigidConstraints[i][j];
 			const btSoftBody::Node* node = constraint.m_node;
-			if (node->m_im != 0)
+			if (node->m_im != (btScalar)0)
 			{
 				int index = node->index;
-				f[index] += constraint.getDv(node) * (1. / node->m_im);
+				f[index] += constraint.getDv(node) * ((btScalar)1. / node->m_im);
 			}
 		}
 		for (int j = 0; j < m_faceRigidConstraints[i].size(); ++j)
@@ -581,10 +581,10 @@ void btDeformableContactProjection::applyDynamicFriction(TVStack& f)
 			for (int k = 0; k < 3; ++k)
 			{
 				const btSoftBody::Node* node = face->m_n[k];
-				if (node->m_im != 0)
+				if (node->m_im != (btScalar)0)
 				{
 					int index = node->index;
-					f[index] += constraint.getDv(node) * (1. / node->m_im);
+					f[index] += constraint.getDv(node) * ((btScalar)1. / node->m_im);
 				}
 			}
 		}
@@ -593,18 +593,18 @@ void btDeformableContactProjection::applyDynamicFriction(TVStack& f)
 			const btDeformableFaceNodeContactConstraint& constraint = m_deformableConstraints[i][j];
 			const btSoftBody::Face* face = constraint.getContact()->m_face;
 			const btSoftBody::Node* node = constraint.getContact()->m_node;
-			if (node->m_im != 0)
+			if (node->m_im != (btScalar)0)
 			{
 				int index = node->index;
-				f[index] += constraint.getDv(node) * (1. / node->m_im);
+				f[index] += constraint.getDv(node) * ((btScalar)1. / node->m_im);
 			}
 			for (int k = 0; k < 3; ++k)
 			{
 				const btSoftBody::Node* node = face->m_n[k];
-				if (node->m_im != 0)
+				if (node->m_im != (btScalar)0)
 				{
 					int index = node->index;
-					f[index] += constraint.getDv(node) * (1. / node->m_im);
+					f[index] += constraint.getDv(node) * ((btScalar)1. / node->m_im);
 				}
 			}
 		}

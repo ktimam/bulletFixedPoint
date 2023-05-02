@@ -1,6 +1,10 @@
 #ifndef LW_COLLISION_C_API_H
 #define LW_COLLISION_C_API_H
 
+#include "LinearMath/btScalar.h"
+#include "LinearMath/btVector3.h"
+#include <Bullet3Common/b3Vector3.h>
+
 #define PL_DECLARE_HANDLE(name) \
 	typedef struct name##__     \
 	{                           \
@@ -10,7 +14,7 @@
 #ifdef BT_USE_DOUBLE_PRECISION
 typedef double plReal;
 #else
-typedef float plReal;
+typedef btScalar plReal;
 #endif
 
 typedef plReal plVector3[3];
@@ -80,10 +84,10 @@ extern "C"
 
 	struct lwContactPoint
 	{
-		plVector3 m_ptOnAWorld;
-		plVector3 m_ptOnBWorld;
-		plVector3 m_normalOnB;
-		plReal m_distance;
+		btVector3 m_ptOnAWorld;
+		btVector3 m_ptOnBWorld;
+		btVector3 m_normalOnB;
+		btScalar m_distance;
 	};
 
 	/* Collision Filtering */

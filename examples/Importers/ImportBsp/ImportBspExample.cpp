@@ -91,7 +91,7 @@ public:
 			m_demoApp->m_collisionShapes.push_back(shape);
 
 			//btRigidBody* body = m_demoApp->localCreateRigidBody(mass, startTransform,shape);
-			m_demoApp->createRigidBody(mass, startTransform, shape);
+			m_demoApp->createRigidBody((btScalar)mass, startTransform, shape);
 		}
 	}
 };
@@ -115,7 +115,7 @@ void BspDemo::initPhysics(const char* bspfilename)
 	int cameraUpAxis = 2;
 	m_guiHelper->setUpAxis(cameraUpAxis);
 	btVector3 grav(0, 0, 0);
-	grav[cameraUpAxis] = -10;
+	grav[cameraUpAxis] = (btScalar)-10;
 	m_guiHelper->setUpAxis(cameraUpAxis);
 
 	//_cameraUp = btVector3(0,0,1);

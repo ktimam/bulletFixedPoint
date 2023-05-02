@@ -21,22 +21,22 @@ subject to the following restrictions:
 #include "../CommonInterfaces/CommonRigidBodyBase.h"
 #include "../CommonInterfaces/CommonParameterInterface.h"
 
-static btScalar gTilt = 20.0f / 180.0f * SIMD_PI;  // tilt the ramp 20 degrees
+static btScalar gTilt = (btScalar)20.0f / (btScalar)180.0f * (btScalar)SIMD_PI;  // tilt the ramp 20 degrees
 
-static btScalar gRampFriction = 1;  // set ramp friction to 1
+static btScalar gRampFriction = (btScalar)1;  // set ramp friction to 1
 
-static btScalar gRampRestitution = 0;  // set ramp restitution to 0 (no restitution)
+static btScalar gRampRestitution = (btScalar)0;  // set ramp restitution to 0 (no restitution)
 
-static btScalar gBoxFriction = 1;  // set box friction to 1
+static btScalar gBoxFriction = (btScalar)1;  // set box friction to 1
 
-static btScalar gBoxRestitution = 0;  // set box restitution to 0
+static btScalar gBoxRestitution = (btScalar)0;  // set box restitution to 0
 
-static btScalar gSphereFriction = 1;  // set sphere friction to 1
+static btScalar gSphereFriction = (btScalar)1;  // set sphere friction to 1
 
-static btScalar gSphereRollingFriction = 1;     // set sphere rolling friction to 1
-static btScalar gSphereSpinningFriction = 0.3;  // set sphere spinning friction to 0.3
+static btScalar gSphereRollingFriction = (btScalar)1;     // set sphere rolling friction to 1
+static btScalar gSphereSpinningFriction = (btScalar)0.3;  // set sphere spinning friction to 0.3
 
-static btScalar gSphereRestitution = 0;  // set sphere restitution to 0
+static btScalar gSphereRestitution = (btScalar)0;  // set sphere restitution to 0
 
 // handles for changes
 static btRigidBody* ramp = NULL;
@@ -53,7 +53,7 @@ struct InclinedPlaneExample : public CommonRigidBodyBase
 	virtual void initPhysics();
 	virtual void resetScene();
 	virtual void renderScene();
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 	virtual bool keyboardCallback(int key, int state);
 	void resetCamera()
 	{
@@ -84,7 +84,7 @@ void InclinedPlaneExample::initPhysics()
 	{  // create slider to change the ramp tilt
 		SliderParams slider("Ramp Tilt", &gTilt);
 		slider.m_minVal = 0;
-		slider.m_maxVal = SIMD_PI / 2.0f;
+		slider.m_maxVal = (float)SIMD_PI / 2.0f;
 		slider.m_clampToNotches = false;
 		slider.m_callback = onRampInclinationChanged;
 		m_guiHelper->getParameterInterface()->registerSliderFloatParameter(slider);
@@ -179,7 +179,7 @@ void InclinedPlaneExample::initPhysics()
 		groundTransform.setOrigin(btVector3(0, -50, 0));
 
 		btScalar mass(0.);
-		createRigidBody(mass, groundTransform, groundShape, btVector4(0, 0, 1, 1));
+		createRigidBody(mass, groundTransform, groundShape, btVector4((btScalar)0, (btScalar)0, (btScalar)1, (btScalar)1));
 	}
 
 	{  //create a static inclined plane
@@ -280,7 +280,7 @@ void InclinedPlaneExample::resetScene()
 	}
 }
 
-void InclinedPlaneExample::stepSimulation(float deltaTime)
+void InclinedPlaneExample::stepSimulation(btScalar deltaTime)
 {
 	if (m_dynamicsWorld)
 	{
@@ -314,7 +314,7 @@ void onBoxFrictionChanged(float friction, void*)
 {
 	if (gBox)
 	{
-		gBox->setFriction(friction);
+		gBox->setFriction((btScalar)friction);
 		//		b3Printf("Friction of box changed to %f",friction );
 	}
 }
@@ -323,7 +323,7 @@ void onBoxRestitutionChanged(float restitution, void*)
 {
 	if (gBox)
 	{
-		gBox->setRestitution(restitution);
+		gBox->setRestitution((btScalar)restitution);
 		//b3Printf("Restitution of box changed to %f",restitution);
 	}
 }
@@ -332,7 +332,7 @@ void onSphereFrictionChanged(float friction, void*)
 {
 	if (gSphere)
 	{
-		gSphere->setFriction(friction);
+		gSphere->setFriction((btScalar)friction);
 		//b3Printf("Friction of sphere changed to %f",friction );
 	}
 }
@@ -341,7 +341,7 @@ void onSphereRestitutionChanged(float restitution, void*)
 {
 	if (gSphere)
 	{
-		gSphere->setRestitution(restitution);
+		gSphere->setRestitution((btScalar)restitution);
 		//b3Printf("Restitution of sphere changed to %f",restitution);
 	}
 }
@@ -369,7 +369,7 @@ void onRampFrictionChanged(float friction, void*)
 {
 	if (ramp)
 	{
-		ramp->setFriction(friction);
+		ramp->setFriction((btScalar)friction);
 		//b3Printf("Friction of ramp changed to %f \n",friction );
 	}
 }
@@ -378,7 +378,7 @@ void onRampRestitutionChanged(float restitution, void*)
 {
 	if (ramp)
 	{
-		ramp->setRestitution(restitution);
+		ramp->setRestitution((btScalar)restitution);
 		//b3Printf("Restitution of ramp changed to %f \n",restitution);
 	}
 }

@@ -34,7 +34,7 @@ btDeformableBackwardEulerObjective::~btDeformableBackwardEulerObjective()
 void btDeformableBackwardEulerObjective::reinitialize(bool nodeUpdated, btScalar dt)
 {
 	BT_PROFILE("reinitialize");
-	if (dt > 0)
+	if (dt > (btScalar)0)
 	{
 		setDt(dt);
 	}
@@ -53,8 +53,8 @@ void btDeformableBackwardEulerObjective::reinitialize(bool nodeUpdated, btScalar
 		btSoftBody* psb = m_softBodies[i];
 		for (int j = 0; j < psb->m_nodes.size(); ++j)
 		{
-			if (psb->m_nodes[j].m_im > 0)
-				psb->m_nodes[j].m_effectiveMass = I * (1.0 / psb->m_nodes[j].m_im);
+			if (psb->m_nodes[j].m_im > (btScalar)0)
+				psb->m_nodes[j].m_effectiveMass = I * ((btScalar)1.0 / psb->m_nodes[j].m_im);
 		}
 	}
 	m_projection.reinitialize(nodeUpdated);
@@ -77,7 +77,7 @@ void btDeformableBackwardEulerObjective::multiply(const TVStack& x, TVStack& b) 
 		for (int j = 0; j < psb->m_nodes.size(); ++j)
 		{
 			const btSoftBody::Node& node = psb->m_nodes[j];
-			b[counter] = (node.m_im == 0) ? btVector3(0, 0, 0) : x[counter] / node.m_im;
+			b[counter] = (node.m_im == (btScalar)0) ? btVector3(0, 0, 0) : x[counter] / node.m_im;
 			++counter;
 		}
 	}
@@ -149,7 +149,7 @@ void btDeformableBackwardEulerObjective::applyForce(TVStack& force, bool setZero
 		{
 			for (int j = 0; j < psb->m_nodes.size(); ++j)
 			{
-				if (psb->m_nodes[j].m_im != 0)
+				if (psb->m_nodes[j].m_im != (btScalar)0)
 				{
 					psb->m_nodes[j].m_v += psb->m_nodes[j].m_effectiveMass_inv * force[counter++];
 				}
@@ -159,7 +159,7 @@ void btDeformableBackwardEulerObjective::applyForce(TVStack& force, bool setZero
 		{
 			for (int j = 0; j < psb->m_nodes.size(); ++j)
 			{
-				btScalar one_over_mass = (psb->m_nodes[j].m_im == 0) ? 0 : psb->m_nodes[j].m_im;
+				btScalar one_over_mass = (psb->m_nodes[j].m_im == (btScalar)0) ? (btScalar)0 : psb->m_nodes[j].m_im;
 				psb->m_nodes[j].m_v += one_over_mass * force[counter++];
 			}
 		}
@@ -192,17 +192,17 @@ void btDeformableBackwardEulerObjective::computeResidual(btScalar dt, TVStack& r
 
 btScalar btDeformableBackwardEulerObjective::computeNorm(const TVStack& residual) const
 {
-	btScalar mag = 0;
+	btScalar mag = (btScalar)0;
 	for (int i = 0; i < residual.size(); ++i)
 	{
 		mag += residual[i].length2();
 	}
-	return std::sqrt(mag);
+	return sqrt(mag);
 }
 
 btScalar btDeformableBackwardEulerObjective::totalEnergy(btScalar dt)
 {
-	btScalar e = 0;
+	btScalar e = (btScalar)0;
 	for (int i = 0; i < m_lf.size(); ++i)
 	{
 		e += m_lf[i]->totalEnergy(dt);
@@ -263,7 +263,7 @@ void btDeformableBackwardEulerObjective::applyExplicitForce(TVStack& force)
 		{
 			for (int j = 0; j < psb->m_nodes.size(); ++j)
 			{
-				if (psb->m_nodes[j].m_im > 0)
+				if (psb->m_nodes[j].m_im > (btScalar)0)
 				{
 					psb->m_nodes[j].m_effectiveMass_inv = psb->m_nodes[j].m_effectiveMass.inverse();
 				}

@@ -100,12 +100,12 @@ void RollingFrictionDemo::initPhysics()
 		btTransform groundTransform;
 		groundTransform.setIdentity();
 		groundTransform.setOrigin(btVector3(0, 0, -28));
-		groundTransform.setRotation(btQuaternion(btVector3(0, 1, 0), SIMD_PI * 0.03));
+		groundTransform.setRotation(btQuaternion(btVector3(0, 1, 0), SIMD_PI * (btScalar)0.03));
 		//We can also use DemoApplication::localCreateRigidBody, but for clarity it is provided here:
 		btScalar mass(0.);
 
 		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
+		bool isDynamic = (mass != (btScalar)0.f);
 
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)
@@ -115,7 +115,7 @@ void RollingFrictionDemo::initPhysics()
 		btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
 		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
 		btRigidBody* body = new btRigidBody(rbInfo);
-		body->setFriction(.5);
+		body->setFriction((btScalar).5);
 
 		//add the body to the dynamics world
 		m_dynamicsWorld->addRigidBody(body);
@@ -134,7 +134,7 @@ void RollingFrictionDemo::initPhysics()
 		btScalar mass(0.);
 
 		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
+		bool isDynamic = (mass != (btScalar)0.f);
 
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)
@@ -144,7 +144,7 @@ void RollingFrictionDemo::initPhysics()
 		btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
 		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
 		btRigidBody* body = new btRigidBody(rbInfo);
-		body->setFriction(.1);
+		body->setFriction((btScalar).1);
 		//add the body to the dynamics world
 		m_dynamicsWorld->addRigidBody(body);
 	}
@@ -155,12 +155,12 @@ void RollingFrictionDemo::initPhysics()
 #define NUM_SHAPES 10
 		btCollisionShape* colShapes[NUM_SHAPES] = {
 			new btSphereShape(btScalar(0.5)),
-			new btCapsuleShape(0.25, 0.5),
-			new btCapsuleShapeX(0.25, 0.5),
-			new btCapsuleShapeZ(0.25, 0.5),
-			new btConeShape(0.25, 0.5),
-			new btConeShapeX(0.25, 0.5),
-			new btConeShapeZ(0.25, 0.5),
+			new btCapsuleShape((btScalar)0.25, (btScalar)0.5),
+			new btCapsuleShapeX((btScalar)0.25, (btScalar)0.5),
+			new btCapsuleShapeZ((btScalar)0.25, (btScalar)0.5),
+			new btConeShape((btScalar)0.25, (btScalar)0.5),
+			new btConeShapeX((btScalar)0.25, (btScalar)0.5),
+			new btConeShapeZ((btScalar)0.25, (btScalar)0.5),
 			new btCylinderShape(btVector3(0.25, 0.5, 0.25)),
 			new btCylinderShapeX(btVector3(0.5, 0.25, 0.25)),
 			new btCylinderShapeZ(btVector3(0.25, 0.25, 0.5)),
@@ -188,14 +188,14 @@ void RollingFrictionDemo::initPhysics()
 				{
 					for (int j = 0; j < ARRAY_SIZE_Z; j++)
 					{
-						startTransform.setOrigin(SCALING * btVector3(
+						startTransform.setOrigin((btScalar)SCALING * btVector3(
 															   btScalar(2.0 * i + start_x),
 															   btScalar(2.0 * j + start_z),
 															   btScalar(20 + 2.0 * k + start_y)));
 
 						shapeIndex++;
 						btCollisionShape* colShape = colShapes[shapeIndex % NUM_SHAPES];
-						bool isDynamic = (mass != 0.f);
+						bool isDynamic = (mass != (btScalar)0.f);
 						btVector3 localInertia(0, 0, 0);
 
 						if (isDynamic)
@@ -205,9 +205,9 @@ void RollingFrictionDemo::initPhysics()
 						btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 						btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
 						btRigidBody* body = new btRigidBody(rbInfo);
-						body->setFriction(1.f);
-						body->setRollingFriction(.1);
-						body->setSpinningFriction(0.1);
+						body->setFriction((btScalar)1.f);
+						body->setRollingFriction((btScalar).1);
+						body->setSpinningFriction((btScalar)0.1);
 						body->setAnisotropicFriction(colShape->getAnisotropicRollingFrictionDirection(), btCollisionObject::CF_ANISOTROPIC_ROLLING_FRICTION);
 
 						m_dynamicsWorld->addRigidBody(body);

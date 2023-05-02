@@ -60,7 +60,7 @@ void ChainExample::initPhysics()
 	groundTransform.setOrigin(btVector3(0, -50, 0));
 	{
 		btScalar mass(0.);
-		createRigidBody(mass, groundTransform, groundShape, btVector4(0, 0, 1, 1));
+		createRigidBody(mass, groundTransform, groundShape, btVector4((btScalar)0, (btScalar)0, (btScalar)1, (btScalar)1));
 	}
 
 	{
@@ -77,7 +77,7 @@ void ChainExample::initPhysics()
 		btScalar mass(1.f);
 
 		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
+		bool isDynamic = (mass != (btScalar)0.f);
 
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)
@@ -91,7 +91,7 @@ void ChainExample::initPhysics()
 				btScalar(0),
 				btScalar(5 + i * 2),
 				btScalar(0)));
-			boxes.push_back(createRigidBody((i == lastBoxIndex) ? 0 : mass, startTransform, colShape));
+			boxes.push_back(createRigidBody((i == lastBoxIndex) ? (btScalar)0 : mass, startTransform, colShape));
 		}
 
 		//add N-1 spring constraints

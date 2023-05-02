@@ -14,7 +14,7 @@ subject to the following restrictions:
 */
 
 // Collision Radius
-#define COLLISION_RADIUS 0.0f
+#define COLLISION_RADIUS (btScalar)0.0f
 
 #include "BenchmarkDemo.h"
 
@@ -97,7 +97,7 @@ public:
 
 	void exitPhysics();
 
-	void stepSimulation(float deltaTime);
+	void stepSimulation(btScalar deltaTime);
 
 	void resetCamera()
 	{
@@ -155,11 +155,11 @@ public:
 		min_ms = 9999;
 		sum_ms_samples = 0;
 		sum_ms = 0;
-		dx = 10.0;
-		min_x = 0;
-		max_x = 0;
+		dx = (btScalar)10.0;
+		min_x = (btScalar)0;
+		max_x = (btScalar)0;
 		this->max_y = max_y;
-		sign = 1.0;
+		sign = (btScalar)1.0;
 		btScalar dalpha = 2 * SIMD_2_PI / NUMRAYS;
 		for (int i = 0; i < NUMRAYS; i++)
 		{
@@ -172,7 +172,7 @@ public:
 
 			source[i] = btVector3(min_x, max_y, z);
 			dest[i] = source[i] + direction[i];
-			dest[i][1] = -1000;
+			dest[i][1] = (btScalar)-1000;
 			normal[i] = btVector3(1.0, 0.0, 0.0);
 		}
 	}
@@ -187,9 +187,9 @@ public:
 			dest[i][0] += dx * dt * sign;
 		}
 		if (source[0][0] < min_x)
-			sign = 1.0;
+			sign = (btScalar)1.0;
 		else if (source[0][0] > max_x)
-			sign = -1.0;
+			sign = (btScalar)-1.0;
 	}
 
 	void castRays(btCollisionWorld* cw, int iBegin, int iEnd)
@@ -293,7 +293,7 @@ public:
 			btAlignedObjectArray<unsigned int> indices;
 			btAlignedObjectArray<btVector3FloatData> points;
 
-			float lineColor[4] = {1, 0.4, .4, 1};
+			btScalar lineColor[4] = { (btScalar)1, (btScalar)0.4, (btScalar).4, (btScalar)1};
 
 			for (int i = 0; i < NUMRAYS; i++)
 			{
@@ -318,7 +318,7 @@ public:
 
 static btRaycastBar2 raycastBar;
 
-void BenchmarkDemo::stepSimulation(float deltaTime)
+void BenchmarkDemo::stepSimulation(btScalar deltaTime)
 {
 	if (m_dynamicsWorld)
 	{
@@ -393,7 +393,7 @@ void BenchmarkDemo::initPhysics()
 			btScalar mass(0.);
 
 			//rigidbody is dynamic if and only if mass is non zero, otherwise static
-			bool isDynamic = (mass != 0.f);
+			bool isDynamic = (mass != (btScalar)0.f);
 
 			btVector3 localInertia(0, 0, 0);
 			if (isDynamic)
@@ -464,15 +464,15 @@ void BenchmarkDemo::createTest1()
 {
 	// 3000
 	int size = 8;
-	const float cubeSize = 1.0f;
-	float spacing = cubeSize;
-	btVector3 pos(0.0f, cubeSize * 2, 0.f);
-	float offset = -size * (cubeSize * 2.0f + spacing) * 0.5f;
+	const btScalar cubeSize = (btScalar)1.0f;
+	btScalar spacing = cubeSize;
+	btVector3 pos((btScalar)0.0f, cubeSize * (btScalar)2, (btScalar)0.f);
+	btScalar offset = -size * (cubeSize * (btScalar)2.0f + spacing) * (btScalar)0.5f;
 
 	btBoxShape* blockShape = new btBoxShape(btVector3(cubeSize - COLLISION_RADIUS, cubeSize - COLLISION_RADIUS, cubeSize - COLLISION_RADIUS));
 	btVector3 localInertia(0, 0, 0);
 	float mass = 2.f;
-	blockShape->calculateLocalInertia(mass, localInertia);
+	blockShape->calculateLocalInertia((btScalar)mass, localInertia);
 
 	btTransform trans;
 	trans.setIdentity();
@@ -481,19 +481,19 @@ void BenchmarkDemo::createTest1()
 	{
 		for (int j = 0; j < size; j++)
 		{
-			pos[2] = offset + (float)j * (cubeSize * 2.0f + spacing);
+			pos[2] = offset + (btScalar)j * (cubeSize * (btScalar)2.0f + spacing);
 			for (int i = 0; i < size; i++)
 			{
-				pos[0] = offset + (float)i * (cubeSize * 2.0f + spacing);
+				pos[0] = offset + (btScalar)i * (cubeSize * (btScalar)2.0f + spacing);
 
 				trans.setOrigin(pos);
 				btRigidBody* cmbody;
 				cmbody = createRigidBody(mass, trans, blockShape);
 			}
 		}
-		offset -= 0.05f * spacing * (size - 1);
+		offset -= (btScalar)0.05f * spacing * (size - 1);
 		//		spacing *= 1.01f;
-		pos[1] += (cubeSize * 2.0f + spacing);
+		pos[1] += (cubeSize * (btScalar)2.0f + spacing);
 	}
 }
 
@@ -506,14 +506,14 @@ void BenchmarkDemo::createWall(const btVector3& offsetPosition, int stackSize, c
 
 	float mass = 1.f;
 	btVector3 localInertia(0, 0, 0);
-	blockShape->calculateLocalInertia(mass, localInertia);
+	blockShape->calculateLocalInertia((btScalar)mass, localInertia);
 
 	//	btScalar  diffX = boxSize[0] * 1.0f;
-	btScalar diffY = boxSize[1] * 1.0f;
-	btScalar diffZ = boxSize[2] * 1.0f;
+	btScalar diffY = boxSize[1] * (btScalar)1.0f;
+	btScalar diffZ = boxSize[2] * (btScalar)1.0f;
 
-	btScalar offset = -stackSize * (diffZ * 2.0f) * 0.5f;
-	btVector3 pos(0.0f, diffY, 0.0f);
+	btScalar offset = -stackSize * (diffZ * (btScalar)2.0f) * (btScalar)0.5f;
+	btVector3 pos((btScalar)0.0f, diffY, (btScalar)0.0f);
 
 	btTransform trans;
 	trans.setIdentity();
@@ -522,59 +522,59 @@ void BenchmarkDemo::createWall(const btVector3& offsetPosition, int stackSize, c
 	{
 		for (int i = 0; i < stackSize; i++)
 		{
-			pos[2] = offset + (float)i * (diffZ * 2.0f);
+			pos[2] = offset + (btScalar)i * (diffZ * (btScalar)2.0f);
 
 			trans.setOrigin(offsetPosition + pos);
 			createRigidBody(mass, trans, blockShape);
 		}
 		offset += diffZ;
-		pos[1] += (diffY * 2.0f);
+		pos[1] += (diffY * (btScalar)2.0f);
 		stackSize--;
 	}
 }
 
 void BenchmarkDemo::createPyramid(const btVector3& offsetPosition, int stackSize, const btVector3& boxSize)
 {
-	btScalar space = 0.0001f;
+	btScalar space = (btScalar)0.0001f;
 
-	btVector3 pos(0.0f, boxSize[1], 0.0f);
+	btVector3 pos((btScalar)0.0f, boxSize[1], (btScalar)0.0f);
 
 	btBoxShape* blockShape = new btBoxShape(btVector3(boxSize[0] - COLLISION_RADIUS, boxSize[1] - COLLISION_RADIUS, boxSize[2] - COLLISION_RADIUS));
 	btTransform trans;
 	trans.setIdentity();
 
-	btScalar mass = 1.f;
+	btScalar mass = (btScalar)1.f;
 	btVector3 localInertia(0, 0, 0);
 	blockShape->calculateLocalInertia(mass, localInertia);
 
-	btScalar diffX = boxSize[0] * 1.02f;
-	btScalar diffY = boxSize[1] * 1.02f;
-	btScalar diffZ = boxSize[2] * 1.02f;
+	btScalar diffX = boxSize[0] * (btScalar)1.02f;
+	btScalar diffY = boxSize[1] * (btScalar)1.02f;
+	btScalar diffZ = boxSize[2] * (btScalar)1.02f;
 
-	btScalar offsetX = -stackSize * (diffX * 2.0f + space) * 0.5f;
-	btScalar offsetZ = -stackSize * (diffZ * 2.0f + space) * 0.5f;
+	btScalar offsetX = -stackSize * (diffX * (btScalar)2.0f + space) * (btScalar)0.5f;
+	btScalar offsetZ = -stackSize * (diffZ * (btScalar)2.0f + space) * (btScalar)0.5f;
 	while (stackSize)
 	{
 		for (int j = 0; j < stackSize; j++)
 		{
-			pos[2] = offsetZ + (float)j * (diffZ * 2.0f + space);
+			pos[2] = offsetZ + j * (diffZ * (btScalar)2.0f + space);
 			for (int i = 0; i < stackSize; i++)
 			{
-				pos[0] = offsetX + (float)i * (diffX * 2.0f + space);
+				pos[0] = offsetX + i * (diffX * (btScalar)2.0f + space);
 				trans.setOrigin(offsetPosition + pos);
-				this->createRigidBody(mass, trans, blockShape);
+				this->createRigidBody((float)mass, trans, blockShape);
 			}
 		}
 		offsetX += diffX;
 		offsetZ += diffZ;
-		pos[1] += (diffY * 2.0f + space);
+		pos[1] += (diffY * (btScalar)2.0f + space);
 		stackSize--;
 	}
 }
 
 const btVector3 rotate(const btQuaternion& quat, const btVector3& vec)
 {
-	float tmpX, tmpY, tmpZ, tmpW;
+	btScalar tmpX, tmpY, tmpZ, tmpW;
 	tmpX = (((quat.getW() * vec.getX()) + (quat.getY() * vec.getZ())) - (quat.getZ() * vec.getY()));
 	tmpY = (((quat.getW() * vec.getY()) + (quat.getZ() * vec.getX())) - (quat.getX() * vec.getZ()));
 	tmpZ = (((quat.getW() * vec.getZ()) + (quat.getX() * vec.getY())) - (quat.getY() * vec.getX()));
@@ -594,27 +594,27 @@ void BenchmarkDemo::createTowerCircle(const btVector3& offsetPosition, int stack
 
 	float mass = 1.f;
 	btVector3 localInertia(0, 0, 0);
-	blockShape->calculateLocalInertia(mass, localInertia);
+	blockShape->calculateLocalInertia((btScalar)mass, localInertia);
 
-	float radius = 1.3f * rotSize * boxSize[0] / SIMD_PI;
+	btScalar radius = (btScalar)1.3f * (btScalar)rotSize * boxSize[0] / SIMD_PI;
 
 	// create active boxes
-	btQuaternion rotY(0, 1, 0, 0);
-	float posY = boxSize[1];
+	btQuaternion rotY((btScalar)0, (btScalar)1, (btScalar)0, (btScalar)0);
+	btScalar posY = boxSize[1];
 
 	for (int i = 0; i < stackSize; i++)
 	{
 		for (int j = 0; j < rotSize; j++)
 		{
-			trans.setOrigin(offsetPosition + rotate(rotY, btVector3(0.0f, posY, radius)));
+			trans.setOrigin(offsetPosition + rotate(rotY, btVector3((btScalar)0.0f, posY, radius)));
 			trans.setRotation(rotY);
 			createRigidBody(mass, trans, blockShape);
 
 			rotY *= btQuaternion(btVector3(0, 1, 0), SIMD_PI / (rotSize * btScalar(0.5)));
 		}
 
-		posY += boxSize[1] * 2.0f;
-		rotY *= btQuaternion(btVector3(0, 1, 0), SIMD_PI / (float)rotSize);
+		posY += boxSize[1] * (btScalar)2.0f;
+		rotY *= btQuaternion(btVector3(0, 1, 0), SIMD_PI / rotSize);
 	}
 }
 
@@ -694,7 +694,7 @@ class RagDoll
 
 	btRigidBody* createRigidBody(btScalar mass, const btTransform& startTransform, btCollisionShape* shape)
 	{
-		bool isDynamic = (mass != 0.f);
+		bool isDynamic = (mass != (btScalar)0.f);
 
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)
@@ -763,22 +763,22 @@ public:
 
 		transform.setIdentity();
 		transform.setOrigin(scale * btVector3(btScalar(-0.35), btScalar(1.45), btScalar(0.)));
-		transform.getBasis().setEulerZYX(0, 0, M_PI_2);
+		transform.getBasis().setEulerZYX((btScalar)0, (btScalar)0, M_PI_2);
 		m_bodies[BODYPART_LEFT_UPPER_ARM] = createRigidBody(btScalar(1.), offset * transform, m_shapes[BODYPART_LEFT_UPPER_ARM]);
 
 		transform.setIdentity();
 		transform.setOrigin(scale * btVector3(btScalar(-0.7), btScalar(1.45), btScalar(0.)));
-		transform.getBasis().setEulerZYX(0, 0, M_PI_2);
+		transform.getBasis().setEulerZYX((btScalar)0, (btScalar)0, M_PI_2);
 		m_bodies[BODYPART_LEFT_LOWER_ARM] = createRigidBody(btScalar(1.), offset * transform, m_shapes[BODYPART_LEFT_LOWER_ARM]);
 
 		transform.setIdentity();
 		transform.setOrigin(scale * btVector3(btScalar(0.35), btScalar(1.45), btScalar(0.)));
-		transform.getBasis().setEulerZYX(0, 0, -M_PI_2);
+		transform.getBasis().setEulerZYX((btScalar)0, (btScalar)0, -M_PI_2);
 		m_bodies[BODYPART_RIGHT_UPPER_ARM] = createRigidBody(btScalar(1.), offset * transform, m_shapes[BODYPART_RIGHT_UPPER_ARM]);
 
 		transform.setIdentity();
 		transform.setOrigin(scale * btVector3(btScalar(0.7), btScalar(1.45), btScalar(0.)));
-		transform.getBasis().setEulerZYX(0, 0, -M_PI_2);
+		transform.getBasis().setEulerZYX((btScalar)0, (btScalar)0, -M_PI_2);
 		m_bodies[BODYPART_RIGHT_LOWER_ARM] = createRigidBody(btScalar(1.), offset * transform, m_shapes[BODYPART_RIGHT_LOWER_ARM]);
 
 		// Setup some damping on the m_bodies
@@ -797,9 +797,9 @@ public:
 
 		localA.setIdentity();
 		localB.setIdentity();
-		localA.getBasis().setEulerZYX(0, M_PI_2, 0);
+		localA.getBasis().setEulerZYX((btScalar)0, M_PI_2, (btScalar)0);
 		localA.setOrigin(scale * btVector3(btScalar(0.), btScalar(0.15), btScalar(0.)));
-		localB.getBasis().setEulerZYX(0, M_PI_2, 0);
+		localB.getBasis().setEulerZYX((btScalar)0, M_PI_2, (btScalar)0);
 		localB.setOrigin(scale * btVector3(btScalar(0.), btScalar(-0.15), btScalar(0.)));
 		hingeC = new btHingeConstraint(*m_bodies[BODYPART_PELVIS], *m_bodies[BODYPART_SPINE], localA, localB);
 		hingeC->setLimit(btScalar(-M_PI_4), btScalar(M_PI_2));
@@ -808,9 +808,9 @@ public:
 
 		localA.setIdentity();
 		localB.setIdentity();
-		localA.getBasis().setEulerZYX(0, 0, M_PI_2);
+		localA.getBasis().setEulerZYX((btScalar)0, (btScalar)0, M_PI_2);
 		localA.setOrigin(scale * btVector3(btScalar(0.), btScalar(0.30), btScalar(0.)));
-		localB.getBasis().setEulerZYX(0, 0, M_PI_2);
+		localB.getBasis().setEulerZYX((btScalar)0, (btScalar)0, M_PI_2);
 		localB.setOrigin(scale * btVector3(btScalar(0.), btScalar(-0.14), btScalar(0.)));
 		coneC = new btConeTwistConstraint(*m_bodies[BODYPART_SPINE], *m_bodies[BODYPART_HEAD], localA, localB);
 		coneC->setLimit(M_PI_4, M_PI_4, M_PI_2);
@@ -819,20 +819,20 @@ public:
 
 		localA.setIdentity();
 		localB.setIdentity();
-		localA.getBasis().setEulerZYX(0, 0, -M_PI_4 * 5);
+		localA.getBasis().setEulerZYX((btScalar)0, (btScalar)0, -M_PI_4 * 5);
 		localA.setOrigin(scale * btVector3(btScalar(-0.18), btScalar(-0.10), btScalar(0.)));
-		localB.getBasis().setEulerZYX(0, 0, -M_PI_4 * 5);
+		localB.getBasis().setEulerZYX((btScalar)0, (btScalar)0, -M_PI_4 * 5);
 		localB.setOrigin(scale * btVector3(btScalar(0.), btScalar(0.225), btScalar(0.)));
 		coneC = new btConeTwistConstraint(*m_bodies[BODYPART_PELVIS], *m_bodies[BODYPART_LEFT_UPPER_LEG], localA, localB);
-		coneC->setLimit(M_PI_4, M_PI_4, 0);
+		coneC->setLimit(M_PI_4, M_PI_4, (btScalar)0);
 		m_joints[JOINT_LEFT_HIP] = coneC;
 		m_ownerWorld->addConstraint(m_joints[JOINT_LEFT_HIP], true);
 
 		localA.setIdentity();
 		localB.setIdentity();
-		localA.getBasis().setEulerZYX(0, M_PI_2, 0);
+		localA.getBasis().setEulerZYX((btScalar)0, M_PI_2, (btScalar)0);
 		localA.setOrigin(scale * btVector3(btScalar(0.), btScalar(-0.225), btScalar(0.)));
-		localB.getBasis().setEulerZYX(0, M_PI_2, 0);
+		localB.getBasis().setEulerZYX((btScalar)0, M_PI_2, (btScalar)0);
 		localB.setOrigin(scale * btVector3(btScalar(0.), btScalar(0.185), btScalar(0.)));
 		hingeC = new btHingeConstraint(*m_bodies[BODYPART_LEFT_UPPER_LEG], *m_bodies[BODYPART_LEFT_LOWER_LEG], localA, localB);
 		hingeC->setLimit(btScalar(0), btScalar(M_PI_2));
@@ -841,20 +841,20 @@ public:
 
 		localA.setIdentity();
 		localB.setIdentity();
-		localA.getBasis().setEulerZYX(0, 0, M_PI_4);
+		localA.getBasis().setEulerZYX((btScalar)0, (btScalar)0, M_PI_4);
 		localA.setOrigin(scale * btVector3(btScalar(0.18), btScalar(-0.10), btScalar(0.)));
-		localB.getBasis().setEulerZYX(0, 0, M_PI_4);
+		localB.getBasis().setEulerZYX((btScalar)0, (btScalar)0, M_PI_4);
 		localB.setOrigin(scale * btVector3(btScalar(0.), btScalar(0.225), btScalar(0.)));
 		coneC = new btConeTwistConstraint(*m_bodies[BODYPART_PELVIS], *m_bodies[BODYPART_RIGHT_UPPER_LEG], localA, localB);
-		coneC->setLimit(M_PI_4, M_PI_4, 0);
+		coneC->setLimit(M_PI_4, M_PI_4, (btScalar)0);
 		m_joints[JOINT_RIGHT_HIP] = coneC;
 		m_ownerWorld->addConstraint(m_joints[JOINT_RIGHT_HIP], true);
 
 		localA.setIdentity();
 		localB.setIdentity();
-		localA.getBasis().setEulerZYX(0, M_PI_2, 0);
+		localA.getBasis().setEulerZYX((btScalar)0, M_PI_2, (btScalar)0);
 		localA.setOrigin(scale * btVector3(btScalar(0.), btScalar(-0.225), btScalar(0.)));
-		localB.getBasis().setEulerZYX(0, M_PI_2, 0);
+		localB.getBasis().setEulerZYX((btScalar)0, M_PI_2, (btScalar)0);
 		localB.setOrigin(scale * btVector3(btScalar(0.), btScalar(0.185), btScalar(0.)));
 		hingeC = new btHingeConstraint(*m_bodies[BODYPART_RIGHT_UPPER_LEG], *m_bodies[BODYPART_RIGHT_LOWER_LEG], localA, localB);
 		hingeC->setLimit(btScalar(0), btScalar(M_PI_2));
@@ -863,20 +863,20 @@ public:
 
 		localA.setIdentity();
 		localB.setIdentity();
-		localA.getBasis().setEulerZYX(0, 0, M_PI);
+		localA.getBasis().setEulerZYX((btScalar)0, (btScalar)0, M_PI);
 		localA.setOrigin(scale * btVector3(btScalar(-0.2), btScalar(0.15), btScalar(0.)));
-		localB.getBasis().setEulerZYX(0, 0, M_PI_2);
+		localB.getBasis().setEulerZYX((btScalar)0, (btScalar)0, M_PI_2);
 		localB.setOrigin(scale * btVector3(btScalar(0.), btScalar(-0.18), btScalar(0.)));
 		coneC = new btConeTwistConstraint(*m_bodies[BODYPART_SPINE], *m_bodies[BODYPART_LEFT_UPPER_ARM], localA, localB);
-		coneC->setLimit(M_PI_2, M_PI_2, 0);
+		coneC->setLimit(M_PI_2, M_PI_2, (btScalar)0);
 		m_joints[JOINT_LEFT_SHOULDER] = coneC;
 		m_ownerWorld->addConstraint(m_joints[JOINT_LEFT_SHOULDER], true);
 
 		localA.setIdentity();
 		localB.setIdentity();
-		localA.getBasis().setEulerZYX(0, M_PI_2, 0);
+		localA.getBasis().setEulerZYX((btScalar)0, M_PI_2, (btScalar)0);
 		localA.setOrigin(scale * btVector3(btScalar(0.), btScalar(0.18), btScalar(0.)));
-		localB.getBasis().setEulerZYX(0, M_PI_2, 0);
+		localB.getBasis().setEulerZYX((btScalar)0, M_PI_2, (btScalar)0);
 		localB.setOrigin(scale * btVector3(btScalar(0.), btScalar(-0.14), btScalar(0.)));
 		hingeC = new btHingeConstraint(*m_bodies[BODYPART_LEFT_UPPER_ARM], *m_bodies[BODYPART_LEFT_LOWER_ARM], localA, localB);
 		hingeC->setLimit(btScalar(-M_PI_2), btScalar(0));
@@ -885,20 +885,20 @@ public:
 
 		localA.setIdentity();
 		localB.setIdentity();
-		localA.getBasis().setEulerZYX(0, 0, 0);
+		localA.getBasis().setEulerZYX((btScalar)0, (btScalar)0, (btScalar)0);
 		localA.setOrigin(scale * btVector3(btScalar(0.2), btScalar(0.15), btScalar(0.)));
-		localB.getBasis().setEulerZYX(0, 0, M_PI_2);
+		localB.getBasis().setEulerZYX((btScalar)0, (btScalar)0, M_PI_2);
 		localB.setOrigin(scale * btVector3(btScalar(0.), btScalar(-0.18), btScalar(0.)));
 		coneC = new btConeTwistConstraint(*m_bodies[BODYPART_SPINE], *m_bodies[BODYPART_RIGHT_UPPER_ARM], localA, localB);
-		coneC->setLimit(M_PI_2, M_PI_2, 0);
+		coneC->setLimit(M_PI_2, M_PI_2, (btScalar)0);
 		m_joints[JOINT_RIGHT_SHOULDER] = coneC;
 		m_ownerWorld->addConstraint(m_joints[JOINT_RIGHT_SHOULDER], true);
 
 		localA.setIdentity();
 		localB.setIdentity();
-		localA.getBasis().setEulerZYX(0, M_PI_2, 0);
+		localA.getBasis().setEulerZYX((btScalar)0, M_PI_2, (btScalar)0);
 		localA.setOrigin(scale * btVector3(btScalar(0.), btScalar(0.18), btScalar(0.)));
-		localB.getBasis().setEulerZYX(0, M_PI_2, 0);
+		localB.getBasis().setEulerZYX((btScalar)0, M_PI_2, (btScalar)0);
 		localB.setOrigin(scale * btVector3(btScalar(0.), btScalar(-0.14), btScalar(0.)));
 		hingeC = new btHingeConstraint(*m_bodies[BODYPART_RIGHT_UPPER_ARM], *m_bodies[BODYPART_RIGHT_LOWER_ARM], localA, localB);
 		hingeC->setLimit(btScalar(-M_PI_2), btScalar(0));
@@ -939,27 +939,27 @@ void BenchmarkDemo::createTest3()
 
 	int size = 16;
 
-	float sizeX = 1.f;
-	float sizeY = 1.f;
+	btScalar sizeX = (btScalar)1.f;
+	btScalar sizeY = (btScalar)1.f;
 
 	//int rc=0;
 
 	btScalar scale(3.5);
-	btVector3 pos(0.0f, sizeY, 0.0f);
+	btVector3 pos((btScalar)0.0f, sizeY, (btScalar)0.0f);
 	while (size)
 	{
-		float offset = -size * (sizeX * 6.0f) * 0.5f;
+		btScalar offset = -size * (sizeX * (btScalar)6.0f) * (btScalar)0.5f;
 		for (int i = 0; i < size; i++)
 		{
-			pos[0] = offset + (float)i * (sizeX * 6.0f);
+			pos[0] = offset + i * (sizeX * (btScalar)6.0f);
 
 			RagDoll* ragDoll = new RagDoll(m_dynamicsWorld, pos, scale);
 			m_ragdolls.push_back(ragDoll);
 		}
 
 		offset += sizeX;
-		pos[1] += (sizeY * 7.0f);
-		pos[2] -= sizeX * 2.0f;
+		pos[1] += (sizeY * (btScalar)7.0f);
+		pos[2] -= sizeX * (btScalar)2.0f;
 		size--;
 	}
 }
@@ -968,10 +968,10 @@ void BenchmarkDemo::createTest4()
 	setCameraDistance(btScalar(50.));
 
 	int size = 8;
-	const float cubeSize = 1.5f;
-	float spacing = cubeSize;
-	btVector3 pos(0.0f, cubeSize * 2, 0.0f);
-	float offset = -size * (cubeSize * 2.0f + spacing) * 0.5f;
+	const btScalar cubeSize = (btScalar)1.5f;
+	btScalar spacing = cubeSize;
+	btVector3 pos((btScalar)0.0f, cubeSize * 2, (btScalar)0.0f);
+	btScalar offset = -size * (cubeSize * (btScalar)2.0f + spacing) * (btScalar)0.5f;
 
 	btConvexHullShape* convexHullShape = new btConvexHullShape();
 
@@ -982,7 +982,7 @@ void BenchmarkDemo::createTest4()
 	for (int i = 0; i < TaruVtxCount; i++)
 	{
 		btVector3 vtx(TaruVtx[i * 3], TaruVtx[i * 3 + 1], TaruVtx[i * 3 + 2]);
-		convexHullShape->addPoint(vtx * btScalar(1. / scaling));
+		convexHullShape->addPoint(vtx * btScalar((btScalar)1. / scaling));
 	}
 
 	//this will enable polyhedral contact clipping, better quality, slightly slower
@@ -993,23 +993,23 @@ void BenchmarkDemo::createTest4()
 
 	float mass = 1.f;
 	btVector3 localInertia(0, 0, 0);
-	convexHullShape->calculateLocalInertia(mass, localInertia);
+	convexHullShape->calculateLocalInertia((btScalar)mass, localInertia);
 
 	for (int k = 0; k < 15; k++)
 	{
 		for (int j = 0; j < size; j++)
 		{
-			pos[2] = offset + (float)j * (cubeSize * 2.0f + spacing);
+			pos[2] = offset + j * (cubeSize * (btScalar)2.0f + spacing);
 			for (int i = 0; i < size; i++)
 			{
-				pos[0] = offset + (float)i * (cubeSize * 2.0f + spacing);
+				pos[0] = offset + i * (cubeSize * (btScalar)2.0f + spacing);
 				trans.setOrigin(pos);
 				createRigidBody(mass, trans, convexHullShape);
 			}
 		}
-		offset -= 0.05f * spacing * (size - 1);
-		spacing *= 1.01f;
-		pos[1] += (cubeSize * 2.0f + spacing);
+		offset -= (btScalar)0.05f * spacing * (size - 1);
+		spacing *= (btScalar)1.01f;
+		pos[1] += (cubeSize * (btScalar)2.0f + spacing);
 	}
 }
 
@@ -1038,7 +1038,7 @@ int LandscapeIdxCount[] = {
 	Landscape08IdxCount,
 };
 
-btScalar* LandscapeVtx[] = {
+float* LandscapeVtx[] = {
 	Landscape01Vtx,
 	Landscape02Vtx,
 	Landscape03Vtx,
@@ -1049,7 +1049,7 @@ btScalar* LandscapeVtx[] = {
 	Landscape08Vtx,
 };
 
-btScalar* LandscapeNml[] = {
+float* LandscapeNml[] = {
 	Landscape01Nml,
 	Landscape02Nml,
 	Landscape03Nml,
@@ -1060,7 +1060,7 @@ btScalar* LandscapeNml[] = {
 	Landscape08Nml,
 };
 
-btScalar* LandscapeTex[] = {
+float* LandscapeTex[] = {
 	Landscape01Tex,
 	Landscape02Tex,
 	Landscape03Tex,
@@ -1116,21 +1116,21 @@ void BenchmarkDemo::createTest5()
 {
 	setCameraDistance(btScalar(250.));
 	btVector3 boxSize(1.5f, 1.5f, 1.5f);
-	float boxMass = 1.0f;
-	float sphereRadius = 1.5f;
-	float sphereMass = 1.0f;
-	float capsuleHalf = 2.0f;
-	float capsuleRadius = 1.0f;
-	float capsuleMass = 1.0f;
+	btScalar boxMass = (btScalar)1.0f;
+	btScalar sphereRadius = (btScalar)1.5f;
+	btScalar sphereMass = (btScalar)1.0f;
+	btScalar capsuleHalf = (btScalar)2.0f;
+	btScalar capsuleRadius = (btScalar)1.0f;
+	btScalar capsuleMass = (btScalar)1.0f;
 
 	{
 		int size = 10;
 		int height = 10;
 
-		const float cubeSize = boxSize[0];
-		float spacing = 2.0f;
+		const btScalar cubeSize = boxSize[0];
+		btScalar spacing = (btScalar)2.0f;
 		btVector3 pos(0.0f, 20.0f, 0.0f);
-		float offset = -size * (cubeSize * 2.0f + spacing) * 0.5f;
+		btScalar offset = -size * (cubeSize * (btScalar)2.0f + spacing) * (btScalar)0.5f;
 
 		int numBodies = 0;
 
@@ -1138,10 +1138,10 @@ void BenchmarkDemo::createTest5()
 		{
 			for (int j = 0; j < size; j++)
 			{
-				pos[2] = offset + (float)j * (cubeSize * 2.0f + spacing);
+				pos[2] = offset + j * (cubeSize * (btScalar)2.0f + spacing);
 				for (int i = 0; i < size; i++)
 				{
-					pos[0] = offset + (float)i * (cubeSize * 2.0f + spacing);
+					pos[0] = offset + i * (cubeSize * (btScalar)2.0f + spacing);
 					btVector3 bpos = btVector3(0, 25, 0) + btVector3(5.0f, 1.0f, 5.0f) * pos;
 					int idx = rand() % 9;
 					btTransform trans;
@@ -1154,9 +1154,9 @@ void BenchmarkDemo::createTest5()
 						case 1:
 						case 2:
 						{
-							float r = 0.5f * (idx + 1);
+							btScalar r = (btScalar)0.5f * (idx + 1);
 							btBoxShape* boxShape = new btBoxShape(boxSize * r);
-							createRigidBody(boxMass * r, trans, boxShape);
+							createRigidBody((float)boxMass * (float)r, trans, boxShape);
 						}
 						break;
 
@@ -1164,9 +1164,9 @@ void BenchmarkDemo::createTest5()
 						case 4:
 						case 5:
 						{
-							float r = 0.5f * (idx - 3 + 1);
+							btScalar r = (btScalar)0.5f * (idx - 3 + 1);
 							btSphereShape* sphereShape = new btSphereShape(sphereRadius * r);
-							createRigidBody(sphereMass * r, trans, sphereShape);
+							createRigidBody((float)sphereMass * (float)r, trans, sphereShape);
 						}
 						break;
 
@@ -1174,9 +1174,9 @@ void BenchmarkDemo::createTest5()
 						case 7:
 						case 8:
 						{
-							float r = 0.5f * (idx - 6 + 1);
+							btScalar r = (btScalar)0.5f * (idx - 6 + 1);
 							btCapsuleShape* capsuleShape = new btCapsuleShape(capsuleRadius * r, capsuleHalf * r);
-							createRigidBody(capsuleMass * r, trans, capsuleShape);
+							createRigidBody((float)capsuleMass * (float)r, trans, capsuleShape);
 						}
 						break;
 					}
@@ -1184,9 +1184,9 @@ void BenchmarkDemo::createTest5()
 					numBodies++;
 				}
 			}
-			offset -= 0.05f * spacing * (size - 1);
-			spacing *= 1.1f;
-			pos[1] += (cubeSize * 2.0f + spacing);
+			offset -= (btScalar)0.05f * spacing * (size - 1);
+			spacing *= (btScalar)1.1f;
+			pos[1] += (cubeSize * (btScalar)2.0f + spacing);
 		}
 	}
 
@@ -1211,34 +1211,34 @@ void BenchmarkDemo::createTest6()
 
 	float mass = 1.f;
 	btVector3 localInertia(0, 0, 0);
-	convexHullShape->calculateLocalInertia(mass, localInertia);
+	convexHullShape->calculateLocalInertia((btScalar)mass, localInertia);
 
 	{
 		int size = 10;
 		int height = 10;
 
-		const float cubeSize = boxSize[0];
-		float spacing = 2.0f;
+		const btScalar cubeSize = boxSize[0];
+		btScalar spacing = (btScalar)2.0f;
 		btVector3 pos(0.0f, 20.0f, 0.0f);
-		float offset = -size * (cubeSize * 2.0f + spacing) * 0.5f;
+		btScalar offset = -size * (cubeSize * (btScalar)2.0f + spacing) * (btScalar)0.5f;
 
 		for (int k = 0; k < height; k++)
 		{
 			for (int j = 0; j < size; j++)
 			{
-				pos[2] = offset + (float)j * (cubeSize * 2.0f + spacing);
+				pos[2] = offset + j * (cubeSize * (btScalar)2.0f + spacing);
 				for (int i = 0; i < size; i++)
 				{
-					pos[0] = offset + (float)i * (cubeSize * 2.0f + spacing);
+					pos[0] = offset + i * (cubeSize * (btScalar)2.0f + spacing);
 					btVector3 bpos = btVector3(0, 25, 0) + btVector3(5.0f, 1.0f, 5.0f) * pos;
 					trans.setOrigin(bpos);
 
 					createRigidBody(mass, trans, convexHullShape);
 				}
 			}
-			offset -= 0.05f * spacing * (size - 1);
-			spacing *= 1.1f;
-			pos[1] += (cubeSize * 2.0f + spacing);
+			offset -= (btScalar)0.05f * spacing * (size - 1);
+			spacing *= (btScalar)1.1f;
+			pos[1] += (cubeSize * (btScalar)2.0f + spacing);
 		}
 	}
 
@@ -1247,7 +1247,7 @@ void BenchmarkDemo::createTest6()
 
 void BenchmarkDemo::initRays()
 {
-	raycastBar = btRaycastBar2(2500.0, 0, 50.0, m_guiHelper);
+	raycastBar = btRaycastBar2((btScalar)2500.0, (btScalar)0, (btScalar)50.0, m_guiHelper);
 }
 
 void BenchmarkDemo::castRays()
@@ -1283,29 +1283,29 @@ void BenchmarkDemo::createTest8()
 			verts += 3;
 		}
 		shp->initializePolyhedralFeatures();
-		shp->setMargin(0.04f);
+		shp->setMargin((btScalar)0.04f);
 		btTransform transform;
 		transform.setIdentity();
 		transform.setOrigin(btVector3(origin[0],origin[1]+fallHeight,origin[2]));
 		const float mass = halton_volu[i];
 		btVector3 inertia(0,0,0);
-		shp->calculateLocalInertia(mass, inertia);
-		btRigidBody::btRigidBodyConstructionInfo ci(mass, 0, shp, inertia);
+		shp->calculateLocalInertia((btScalar)mass, inertia);
+		btRigidBody::btRigidBodyConstructionInfo ci((btScalar)mass, 0, shp, inertia);
 		ci.m_startWorldTransform = transform;
 		btRigidBody* body = new btRigidBody(ci);
-		body->setFriction(0.6f);
+		body->setFriction((btScalar)0.6f);
 		m_dynamicsWorld->addRigidBody(body);
 	}
 
         btContactSolverInfo& si = m_dynamicsWorld->getSolverInfo();
 	si.m_numIterations = 20;
-	si.m_erp = 0.8f;
+	si.m_erp = (btScalar)0.8f;
 	si.m_erp2 = si.m_erp / 2;
-	si.m_globalCfm = 0.015f;
+	si.m_globalCfm = (btScalar)0.015f;
 	// Create a ground plane
-	btCollisionShape* groundplane = new btStaticPlaneShape(btVector3(0,1,0),0);
-	groundplane->setMargin(0.04f);
-	btRigidBody::btRigidBodyConstructionInfo rc(0.0f, 0, groundplane, btVector3(0,0,0));
+	btCollisionShape* groundplane = new btStaticPlaneShape(btVector3(0,1,0), (btScalar)0);
+	groundplane->setMargin((btScalar)0.04f);
+	btRigidBody::btRigidBodyConstructionInfo rc((btScalar)0.0f, 0, groundplane, btVector3(0,0,0));
 	btRigidBody* groundbody = new btRigidBody(rc);
 	m_dynamicsWorld->addRigidBody(groundbody);
 #if 0

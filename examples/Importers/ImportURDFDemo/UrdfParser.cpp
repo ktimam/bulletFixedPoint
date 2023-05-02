@@ -42,7 +42,7 @@ static bool parseVector4(btVector4& vec4, const std::string& vector_str)
 	{
 		return false;
 	}
-	vec4.setValue(rgba[0], rgba[1], rgba[2], rgba[3]);
+	vec4.setValue((btScalar)rgba[0], (btScalar)rgba[1], (btScalar)rgba[2], (btScalar)rgba[3]);
 	return true;
 }
 
@@ -181,14 +181,14 @@ bool UrdfParser::parseTransform(btTransform& tr, XMLElement* xml, ErrorLogger* l
 		btVector3 rpy;
 		if (parseVector3(rpy, std::string(xml->GetText()), logger, true))
 		{
-			double phi, the, psi;
-			double roll = rpy[0];
-			double pitch = rpy[1];
-			double yaw = rpy[2];
+			btScalar phi, the, psi;
+			btScalar roll = rpy[0];
+			btScalar pitch = rpy[1];
+			btScalar yaw = rpy[2];
 
-			phi = roll / 2.0;
-			the = pitch / 2.0;
-			psi = yaw / 2.0;
+			phi = roll / (btScalar)2.0;
+			the = pitch / (btScalar)2.0;
+			psi = yaw / (btScalar)2.0;
 
 			btQuaternion orn(
 				sin(phi) * cos(the) * cos(psi) - cos(phi) * sin(the) * sin(psi),
@@ -208,14 +208,14 @@ bool UrdfParser::parseTransform(btTransform& tr, XMLElement* xml, ErrorLogger* l
 			btVector3 rpy;
 			if (parseVector3(rpy, std::string(rpy_str), logger))
 			{
-				double phi, the, psi;
-				double roll = rpy[0];
-				double pitch = rpy[1];
-				double yaw = rpy[2];
+				btScalar phi, the, psi;
+				btScalar roll = rpy[0];
+				btScalar pitch = rpy[1];
+				btScalar yaw = rpy[2];
 
-				phi = roll / 2.0;
-				the = pitch / 2.0;
-				psi = yaw / 2.0;
+				phi = roll / (btScalar)2.0;
+				the = pitch / (btScalar)2.0;
+				psi = yaw / (btScalar)2.0;
 
 				btQuaternion orn(
 					sin(phi) * cos(the) * cos(psi) - cos(phi) * sin(the) * sin(psi),
@@ -388,7 +388,7 @@ bool UrdfParser::parseGeometry(UrdfGeometry& geom, XMLElement* g, ErrorLogger* l
 			}
 			else
 			{
-				geom.m_sphereRadius = m_urdfScaling * urdfLexicalCast<double>(shape->Attribute("radius"));
+				geom.m_sphereRadius = (float)m_urdfScaling * urdfLexicalCast<double>(shape->Attribute("radius"));
 			}
 		}
 	}
@@ -432,12 +432,12 @@ bool UrdfParser::parseGeometry(UrdfGeometry& geom, XMLElement* g, ErrorLogger* l
 			if (XMLElement* scale = shape->FirstChildElement("radius"))
 			{
 				parseVector3(geom.m_meshScale, scale->GetText(), logger);
-				geom.m_capsuleRadius = m_urdfScaling * urdfLexicalCast<double>(scale->GetText());
+				geom.m_capsuleRadius = (float)m_urdfScaling * urdfLexicalCast<double>(scale->GetText());
 			}
 			if (XMLElement* scale = shape->FirstChildElement("length"))
 			{
 				parseVector3(geom.m_meshScale, scale->GetText(), logger);
-				geom.m_capsuleHeight = m_urdfScaling * urdfLexicalCast<double>(scale->GetText());
+				geom.m_capsuleHeight = (float)m_urdfScaling * urdfLexicalCast<double>(scale->GetText());
 			}
 		}
 		else
@@ -447,8 +447,8 @@ bool UrdfParser::parseGeometry(UrdfGeometry& geom, XMLElement* g, ErrorLogger* l
 				logger->reportError("Cylinder shape must have both length and radius attributes");
 				return false;
 			}
-			geom.m_capsuleRadius = m_urdfScaling * urdfLexicalCast<double>(shape->Attribute("radius"));
-			geom.m_capsuleHeight = m_urdfScaling * urdfLexicalCast<double>(shape->Attribute("length"));
+			geom.m_capsuleRadius = (float)m_urdfScaling * urdfLexicalCast<double>(shape->Attribute("radius"));
+			geom.m_capsuleHeight = (float)m_urdfScaling * urdfLexicalCast<double>(shape->Attribute("length"));
 		}
 	}
 	else if (type_name == "capsule")
@@ -460,12 +460,12 @@ bool UrdfParser::parseGeometry(UrdfGeometry& geom, XMLElement* g, ErrorLogger* l
 			if (XMLElement* scale = shape->FirstChildElement("radius"))
 			{
 				parseVector3(geom.m_meshScale, scale->GetText(), logger);
-				geom.m_capsuleRadius = m_urdfScaling * urdfLexicalCast<double>(scale->GetText());
+				geom.m_capsuleRadius = (float)m_urdfScaling * urdfLexicalCast<double>(scale->GetText());
 			}
 			if (XMLElement* scale = shape->FirstChildElement("length"))
 			{
 				parseVector3(geom.m_meshScale, scale->GetText(), logger);
-				geom.m_capsuleHeight = m_urdfScaling * urdfLexicalCast<double>(scale->GetText());
+				geom.m_capsuleHeight = (float)m_urdfScaling * urdfLexicalCast<double>(scale->GetText());
 			}
 		}
 		else
@@ -475,8 +475,8 @@ bool UrdfParser::parseGeometry(UrdfGeometry& geom, XMLElement* g, ErrorLogger* l
 				logger->reportError("Capsule shape must have both length and radius attributes");
 				return false;
 			}
-			geom.m_capsuleRadius = m_urdfScaling * urdfLexicalCast<double>(shape->Attribute("radius"));
-			geom.m_capsuleHeight = m_urdfScaling * urdfLexicalCast<double>(shape->Attribute("length"));
+			geom.m_capsuleRadius = (float)m_urdfScaling * urdfLexicalCast<double>(shape->Attribute("radius"));
+			geom.m_capsuleHeight = (float)m_urdfScaling * urdfLexicalCast<double>(shape->Attribute("length"));
 		}
 	}
 	else if ((type_name == "mesh") || (type_name == "cdf"))
@@ -699,7 +699,7 @@ bool UrdfParser::parseVisual(UrdfModel& model, UrdfVisual& visual, XMLElement* c
 				if (diffuse)
 				{
 					std::string diffuseText = diffuse->GetText();
-					btVector4 rgba(1, 0, 0, 1);
+					btVector4 rgba((btScalar)1, (btScalar)0, (btScalar)0, (btScalar)1);
 					parseVector4(rgba, diffuseText);
 					matPtr->m_matColor.m_rgbaColor = rgba;
 
@@ -869,7 +869,7 @@ bool UrdfParser::parseLink(UrdfModel& model, UrdfLink& link, XMLElement* config,
 			{
 				if (m_parseSDF)
 				{
-					link.m_contactInfo.m_inertiaScaling = urdfLexicalCast<double>(damping_xml->GetText());
+					link.m_contactInfo.m_inertiaScaling = (btScalar)urdfLexicalCast<double>(damping_xml->GetText());
 					link.m_contactInfo.m_flags |= URDF_CONTACT_HAS_INERTIA_SCALING;
 				}
 				else
@@ -880,7 +880,7 @@ bool UrdfParser::parseLink(UrdfModel& model, UrdfLink& link, XMLElement* config,
 						return false;
 					}
 
-					link.m_contactInfo.m_inertiaScaling = urdfLexicalCast<double>(damping_xml->Attribute("value"));
+					link.m_contactInfo.m_inertiaScaling = (btScalar)urdfLexicalCast<double>(damping_xml->Attribute("value"));
 					link.m_contactInfo.m_flags |= URDF_CONTACT_HAS_INERTIA_SCALING;
 				}
 			}
@@ -890,7 +890,7 @@ bool UrdfParser::parseLink(UrdfModel& model, UrdfLink& link, XMLElement* config,
 				{
 					if (m_parseSDF)
 					{
-						link.m_contactInfo.m_lateralFriction = urdfLexicalCast<double>(friction_xml->GetText());
+						link.m_contactInfo.m_lateralFriction = (btScalar)urdfLexicalCast<double>(friction_xml->GetText());
 					}
 					else
 					{
@@ -900,7 +900,7 @@ bool UrdfParser::parseLink(UrdfModel& model, UrdfLink& link, XMLElement* config,
 							return false;
 						}
 
-						link.m_contactInfo.m_lateralFriction = urdfLexicalCast<double>(friction_xml->Attribute("value"));
+						link.m_contactInfo.m_lateralFriction = (btScalar)urdfLexicalCast<double>(friction_xml->Attribute("value"));
 					}
 				}
 			}
@@ -911,7 +911,7 @@ bool UrdfParser::parseLink(UrdfModel& model, UrdfLink& link, XMLElement* config,
 				{
 					if (m_parseSDF)
 					{
-						link.m_contactInfo.m_rollingFriction = urdfLexicalCast<double>(rolling_xml->GetText());
+						link.m_contactInfo.m_rollingFriction = (btScalar)urdfLexicalCast<double>(rolling_xml->GetText());
 						link.m_contactInfo.m_flags |= URDF_CONTACT_HAS_ROLLING_FRICTION;
 					}
 					else
@@ -922,7 +922,7 @@ bool UrdfParser::parseLink(UrdfModel& model, UrdfLink& link, XMLElement* config,
 							return false;
 						}
 
-						link.m_contactInfo.m_rollingFriction = urdfLexicalCast<double>(rolling_xml->Attribute("value"));
+						link.m_contactInfo.m_rollingFriction = (btScalar)urdfLexicalCast<double>(rolling_xml->Attribute("value"));
 						link.m_contactInfo.m_flags |= URDF_CONTACT_HAS_ROLLING_FRICTION;
 					}
 				}
@@ -934,7 +934,7 @@ bool UrdfParser::parseLink(UrdfModel& model, UrdfLink& link, XMLElement* config,
 				{
 					if (m_parseSDF)
 					{
-						link.m_contactInfo.m_restitution = urdfLexicalCast<double>(restitution_xml->GetText());
+						link.m_contactInfo.m_restitution = (btScalar)urdfLexicalCast<double>(restitution_xml->GetText());
 						link.m_contactInfo.m_flags |= URDF_CONTACT_HAS_RESTITUTION;
 					}
 					else
@@ -945,7 +945,7 @@ bool UrdfParser::parseLink(UrdfModel& model, UrdfLink& link, XMLElement* config,
 							return false;
 						}
 
-						link.m_contactInfo.m_restitution = urdfLexicalCast<double>(restitution_xml->Attribute("value"));
+						link.m_contactInfo.m_restitution = (btScalar)urdfLexicalCast<double>(restitution_xml->Attribute("value"));
 						link.m_contactInfo.m_flags |= URDF_CONTACT_HAS_RESTITUTION;
 					}
 				}
@@ -957,7 +957,7 @@ bool UrdfParser::parseLink(UrdfModel& model, UrdfLink& link, XMLElement* config,
 				{
 					if (m_parseSDF)
 					{
-						link.m_contactInfo.m_spinningFriction = urdfLexicalCast<double>(spinning_xml->GetText());
+						link.m_contactInfo.m_spinningFriction = (btScalar)urdfLexicalCast<double>(spinning_xml->GetText());
 						link.m_contactInfo.m_flags |= URDF_CONTACT_HAS_SPINNING_FRICTION;
 					}
 					else
@@ -968,7 +968,7 @@ bool UrdfParser::parseLink(UrdfModel& model, UrdfLink& link, XMLElement* config,
 							return false;
 						}
 
-						link.m_contactInfo.m_spinningFriction = urdfLexicalCast<double>(spinning_xml->Attribute("value"));
+						link.m_contactInfo.m_spinningFriction = (btScalar)urdfLexicalCast<double>(spinning_xml->Attribute("value"));
 						link.m_contactInfo.m_flags |= URDF_CONTACT_HAS_SPINNING_FRICTION;
 					}
 				}
@@ -986,7 +986,7 @@ bool UrdfParser::parseLink(UrdfModel& model, UrdfLink& link, XMLElement* config,
 				{
 					if (m_parseSDF)
 					{
-						link.m_contactInfo.m_contactStiffness = urdfLexicalCast<double>(stiffness_xml->GetText());
+						link.m_contactInfo.m_contactStiffness = (btScalar)urdfLexicalCast<double>(stiffness_xml->GetText());
 						link.m_contactInfo.m_flags |= URDF_CONTACT_HAS_STIFFNESS_DAMPING;
 					}
 					else
@@ -997,7 +997,7 @@ bool UrdfParser::parseLink(UrdfModel& model, UrdfLink& link, XMLElement* config,
 							return false;
 						}
 
-						link.m_contactInfo.m_contactStiffness = urdfLexicalCast<double>(stiffness_xml->Attribute("value"));
+						link.m_contactInfo.m_contactStiffness = (btScalar)urdfLexicalCast<double>(stiffness_xml->Attribute("value"));
 						link.m_contactInfo.m_flags |= URDF_CONTACT_HAS_STIFFNESS_DAMPING;
 					}
 				}
@@ -1008,7 +1008,7 @@ bool UrdfParser::parseLink(UrdfModel& model, UrdfLink& link, XMLElement* config,
 				{
 					if (m_parseSDF)
 					{
-						link.m_contactInfo.m_contactDamping = urdfLexicalCast<double>(damping_xml->GetText());
+						link.m_contactInfo.m_contactDamping = (btScalar)urdfLexicalCast<double>(damping_xml->GetText());
 						link.m_contactInfo.m_flags |= URDF_CONTACT_HAS_STIFFNESS_DAMPING;
 					}
 					else
@@ -1019,7 +1019,7 @@ bool UrdfParser::parseLink(UrdfModel& model, UrdfLink& link, XMLElement* config,
 							return false;
 						}
 
-						link.m_contactInfo.m_contactDamping = urdfLexicalCast<double>(damping_xml->Attribute("value"));
+						link.m_contactInfo.m_contactDamping = (btScalar)urdfLexicalCast<double>(damping_xml->Attribute("value"));
 						link.m_contactInfo.m_flags |= URDF_CONTACT_HAS_STIFFNESS_DAMPING;
 					}
 				}
@@ -1505,8 +1505,8 @@ bool UrdfParser::parseJointLimits(UrdfJoint& joint, XMLElement* config, ErrorLog
 
 		if (joint.m_type == URDFPrismaticJoint)
 		{
-			joint.m_lowerLimit *= m_urdfScaling;
-			joint.m_upperLimit *= m_urdfScaling;
+			joint.m_lowerLimit *= (float)m_urdfScaling;
+			joint.m_upperLimit *= (float)m_urdfScaling;
 		}
 
 		
@@ -1915,23 +1915,23 @@ static void CalculatePrincipalAxisTransform(btScalar* masses, const btTransform*
 {
 	int n = 2;
 
-	btScalar totalMass = 0;
+	btScalar totalMass = (btScalar)0;
 	btVector3 center(0, 0, 0);
 	int k;
 
 	for (k = 0; k < n; k++)
 	{
-		btAssert(masses[k] > 0);
+		btAssert(masses[k] > (btScalar)0);
 		center += transforms[k].getOrigin() * masses[k];
 		totalMass += masses[k];
 	}
 
-	btAssert(totalMass > 0);
+	btAssert(totalMass > (btScalar)0);
 
 	center /= totalMass;
 	principal.setOrigin(center);
 
-	btMatrix3x3 tensor(0, 0, 0, 0, 0, 0, 0, 0, 0);
+	btMatrix3x3 tensor((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)0, (btScalar)0, (btScalar)0, (btScalar)0, (btScalar)0, (btScalar)0);
 	for (k = 0; k < n; k++)
 	{
 		
@@ -1951,9 +1951,9 @@ static void CalculatePrincipalAxisTransform(btScalar* masses, const btTransform*
 
 		//compute inertia tensor of pointmass at o
 		btScalar o2 = o.length2();
-		j[0].setValue(o2, 0, 0);
-		j[1].setValue(0, o2, 0);
-		j[2].setValue(0, 0, o2);
+		j[0].setValue(o2, (btScalar)0, (btScalar)0);
+		j[1].setValue((btScalar)0, o2, (btScalar)0);
+		j[2].setValue((btScalar)0, (btScalar)0, o2);
 		j[0] += o * -o.x();
 		j[1] += o * -o.y();
 		j[2] += o * -o.z();
@@ -2023,13 +2023,13 @@ bool UrdfParser::mergeFixedLinks(UrdfModel& model, UrdfLink* link, ErrorLogger* 
 				btScalar masses[2] = { (btScalar)link->m_inertia.m_mass, (btScalar)childLink->m_inertia.m_mass };
 				btTransform transforms[2] = { link->m_inertia.m_linkLocalFrame, childJoint->m_parentLinkToJointTransform * childLink->m_inertia.m_linkLocalFrame };
 				btMatrix3x3 inertiaLink(
-					link->m_inertia.m_ixx, link->m_inertia.m_ixy, link->m_inertia.m_ixz,
-					link->m_inertia.m_ixy, link->m_inertia.m_iyy, link->m_inertia.m_iyz,
-					link->m_inertia.m_ixz, link->m_inertia.m_iyz, link->m_inertia.m_izz);
+					(btScalar)link->m_inertia.m_ixx, (btScalar)link->m_inertia.m_ixy, (btScalar)link->m_inertia.m_ixz,
+					(btScalar)link->m_inertia.m_ixy, (btScalar)link->m_inertia.m_iyy, (btScalar)link->m_inertia.m_iyz,
+					(btScalar)link->m_inertia.m_ixz, (btScalar)link->m_inertia.m_iyz, (btScalar)link->m_inertia.m_izz);
 				btMatrix3x3 inertiaChild(
-					childLink->m_inertia.m_ixx, childLink->m_inertia.m_ixy, childLink->m_inertia.m_ixz,
-					childLink->m_inertia.m_ixy, childLink->m_inertia.m_iyy, childLink->m_inertia.m_iyz,
-					childLink->m_inertia.m_ixz, childLink->m_inertia.m_iyz, childLink->m_inertia.m_izz);
+					(btScalar)childLink->m_inertia.m_ixx, (btScalar)childLink->m_inertia.m_ixy, (btScalar)childLink->m_inertia.m_ixz,
+					(btScalar)childLink->m_inertia.m_ixy, (btScalar)childLink->m_inertia.m_iyy, (btScalar)childLink->m_inertia.m_iyz,
+					(btScalar)childLink->m_inertia.m_ixz, (btScalar)childLink->m_inertia.m_iyz, (btScalar)childLink->m_inertia.m_izz);
 				btMatrix3x3 inertiasIn[2] = { inertiaLink, inertiaChild };
 				btVector3 inertiaOut;
 				btTransform principal;
@@ -2039,12 +2039,12 @@ bool UrdfParser::mergeFixedLinks(UrdfModel& model, UrdfLink* link, ErrorLogger* 
 				//link->m_inertia.m_linkLocalFrame = principal;
 				link->m_inertia.m_linkLocalFrame.setOrigin(principal.getOrigin());
 				
-				link->m_inertia.m_ixx = inertiaOut[0];
+				link->m_inertia.m_ixx = (float)inertiaOut[0];
 				link->m_inertia.m_ixy = 0;
 				link->m_inertia.m_ixz = 0;
-				link->m_inertia.m_iyy = inertiaOut[1];
+				link->m_inertia.m_iyy = (float)inertiaOut[1];
 				link->m_inertia.m_iyz = 0;
-				link->m_inertia.m_izz = inertiaOut[2];
+				link->m_inertia.m_izz = (float)inertiaOut[2];
 				link->m_inertia.m_mass += childLink->m_inertia.m_mass;
 			}
 			link->m_childJoints.removeAtIndex(i);

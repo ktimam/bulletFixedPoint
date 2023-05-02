@@ -29,9 +29,9 @@
 ///The BasicTest shows the contact between volumetric deformable objects and rigid objects.
 // static btScalar E = 50;
 // static btScalar nu = 0.3;
-static btScalar damping_alpha = 0.0;
-static btScalar damping_beta = 0.0001;
-static btScalar COLLIDING_VELOCITY = 0;
+static btScalar damping_alpha = (btScalar)0.0;
+static btScalar damping_beta = (btScalar)0.0001;
+static btScalar COLLIDING_VELOCITY = (btScalar)0;
 static int num_modes = 40;
 
 class FreeFall : public CommonDeformableBodyBase
@@ -79,7 +79,7 @@ public:
 
         startTransform.setOrigin(origin);
         // startTransform.setRotation(btQuaternion(btVector3(1, 0, 1), SIMD_PI / 4.0));
-        btRigidBody* rb1 = createRigidBody(mass, startTransform, shape);
+        btRigidBody* rb1 = createRigidBody((btScalar)mass, startTransform, shape);
         rb1->setActivationState(DISABLE_DEACTIVATION);
         rb1->setLinearVelocity(btVector3(0, 0, 0));
     }
@@ -96,10 +96,10 @@ public:
                                             false);
 
         getDeformableDynamicsWorld()->addSoftBody(rsb);
-        rsb->getCollisionShape()->setMargin(0.01);
+        rsb->getCollisionShape()->setMargin((btScalar)0.01);
         // rsb->scale(btVector3(1, 1, 0.5));
 
-        rsb->setTotalMass(10);
+        rsb->setTotalMass((btScalar)10);
 
         btTransform init_transform;
         init_transform.setIdentity();
@@ -107,22 +107,22 @@ public:
         init_transform.setRotation(rotation);
         rsb->transformTo(init_transform);
 
-        rsb->setStiffnessScale(25);
+        rsb->setStiffnessScale((btScalar)25);
         rsb->setDamping(damping_alpha, damping_beta);
         // rsb->scale(btVector3(0.5, 0.5, 0.5));
 
-        rsb->m_cfg.kKHR = 1; // collision hardness with kinematic objects
-        rsb->m_cfg.kCHR = 1; // collision hardness with rigid body
-        rsb->m_cfg.kDF = 0;
+        rsb->m_cfg.kKHR = (btScalar)1; // collision hardness with kinematic objects
+        rsb->m_cfg.kCHR = (btScalar)1; // collision hardness with rigid body
+        rsb->m_cfg.kDF = (btScalar)0;
         rsb->m_cfg.collisions = btSoftBody::fCollision::SDF_RD;
         rsb->m_cfg.collisions |= btSoftBody::fCollision::SDF_RDN;
-        rsb->m_sleepingThreshold = 0;
+        rsb->m_sleepingThreshold = (btScalar)0;
         btSoftBodyHelpers::generateBoundaryFaces(rsb);
     }
     
-    void stepSimulation(float deltaTime)
+    void stepSimulation(btScalar deltaTime)
     {
-      float internalTimeStep = 1. / 60.f;
+      btScalar internalTimeStep = (btScalar)1. / (btScalar)60.f;
       m_dynamicsWorld->stepSimulation(deltaTime, 1, internalTimeStep);
     }
     
@@ -181,8 +181,8 @@ void FreeFall::initPhysics()
     // m_dynamicsWorld->getSolverInfo().m_solverMode |= SOLVER_RANDMIZE_ORDER;
     
     // 2 reduced deformable cubes
-    createReducedDeformableObject(btVector3(0, 4, -2), btQuaternion(0, 0, 0));
-    createReducedDeformableObject(btVector3(0, 4, 2), btQuaternion(0, 0, 0));
+    createReducedDeformableObject(btVector3(0, 4, -2), btQuaternion((btScalar)0, (btScalar)0, (btScalar)0));
+    createReducedDeformableObject(btVector3(0, 4, 2), btQuaternion((btScalar)0, (btScalar)0, (btScalar)0));
    
     // 2 rigid cubes
     Ctor_RbUpStack(btVector3(0, 10, -2));
@@ -203,18 +203,18 @@ void FreeFall::initPhysics()
         // groundTransform.setOrigin(btVector3(0, -50, 0));
         {
             btScalar mass(0.);
-            createRigidBody(mass, groundTransform, groundShape, btVector4(0,0,0,0));
+            createRigidBody(mass, groundTransform, groundShape, btVector4((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)0));
         }
     }
 
     getDeformableDynamicsWorld()->setImplicit(false);
     getDeformableDynamicsWorld()->setLineSearch(false);
     getDeformableDynamicsWorld()->setUseProjection(false);
-    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_erp = 0.2;
-    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_cfm = 0.2;
-    getDeformableDynamicsWorld()->getSolverInfo().m_friction = 0.5;
+    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_erp = (btScalar)0.2;
+    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_cfm = (btScalar)0.2;
+    getDeformableDynamicsWorld()->getSolverInfo().m_friction = (btScalar)0.5;
     getDeformableDynamicsWorld()->getSolverInfo().m_deformable_maxErrorReduction = btScalar(200);
-    getDeformableDynamicsWorld()->getSolverInfo().m_leastSquaresResidualThreshold = 1e-3;
+    getDeformableDynamicsWorld()->getSolverInfo().m_leastSquaresResidualThreshold = (btScalar)1e-3;
     getDeformableDynamicsWorld()->getSolverInfo().m_splitImpulse = false;
     getDeformableDynamicsWorld()->getSolverInfo().m_numIterations = 100;
 

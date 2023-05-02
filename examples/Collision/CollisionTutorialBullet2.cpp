@@ -29,10 +29,10 @@ lwContactPoint pointsOut[sPointCapacity];
 int numNearCallbacks = 0;
 static btVector4 sColors[4] =
 	{
-		btVector4(1, 0.7, 0.7, 1),
-		btVector4(1, 1, 0.7, 1),
-		btVector4(0.7, 1, 0.7, 1),
-		btVector4(0.7, 1, 1, 1),
+		btVector4((btScalar)1, (btScalar)0.7, (btScalar)0.7, (btScalar)1),
+		btVector4((btScalar)1, (btScalar)1, (btScalar)0.7, (btScalar)1),
+		btVector4((btScalar)0.7, (btScalar)1, (btScalar)0.7, (btScalar)1),
+		btVector4((btScalar)0.7, (btScalar)1, (btScalar)1, (btScalar)1),
 };
 
 void myNearCallback(plCollisionSdkHandle sdkHandle, plCollisionWorldHandle worldHandle, void* userData, plCollisionObjectHandle objA, plCollisionObjectHandle objB)
@@ -113,11 +113,11 @@ public:
 								for (int i = 0; i < sNumSpheres; i++)
 								{
 									btVector3 childPos(i * 1.5, 0, 0);
-									btQuaternion childOrn(0, 0, 0, 1);
+									btQuaternion childOrn((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)1);
 
 									btVector3 scaling(radius, radius, radius);
 
-									plCollisionShapeHandle childShape = plCreateSphereShape(m_collisionSdkHandle, m_collisionWorldHandle, radius);
+									plCollisionShapeHandle childShape = plCreateSphereShape(m_collisionSdkHandle, m_collisionWorldHandle, (btScalar)radius);
 									plAddChildShape(m_collisionSdkHandle, m_collisionWorldHandle, compoundShape, childShape, childPos, childOrn);
 
 									//m_guiHelper->createCollisionObjectGraphicsObject(colObj,color);
@@ -133,7 +133,7 @@ public:
 
 								{
 									btVector3 pos(j * sNumSpheres * 1.5, -2.4, 0);
-									btQuaternion orn(0, 0, 0, 1);
+									btQuaternion orn((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)1);
 									plCollisionObjectHandle colObjHandle = plCreateCollisionObject(m_collisionSdkHandle, m_collisionWorldHandle, userPointer, -1, compoundShape, pos, orn);
 									if (m_tutorialIndex == TUT_SPHERE_PLANE_BULLET2)
 									{
@@ -149,9 +149,9 @@ public:
 					}
 
 					{
-						plCollisionShapeHandle colShape = plCreatePlaneShape(m_collisionSdkHandle, m_collisionWorldHandle, 0, 1, 0, -3.5);
+						plCollisionShapeHandle colShape = plCreatePlaneShape(m_collisionSdkHandle, m_collisionWorldHandle, (btScalar)0, (btScalar)1, (btScalar)0, (btScalar)-3.5);
 						btVector3 pos(0, 0, 0);
-						btQuaternion orn(0, 0, 0, 1);
+						btQuaternion orn((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)1);
 						void* userPointer = 0;
 						plCollisionObjectHandle colObj = plCreateCollisionObject(m_collisionSdkHandle, m_collisionWorldHandle, userPointer, 0, colShape, pos, orn);
 						colliders.push_back(colObj);
@@ -245,7 +245,7 @@ public:
 	{
 	}
 
-	virtual void stepSimulation(float deltaTime)
+	virtual void stepSimulation(btScalar deltaTime)
 	{
 #ifndef BT_NO_PROFILE
 		CProfileManager::Reset();
@@ -312,8 +312,8 @@ public:
 			{
 				const lwContactPoint& contact = pointsOut[i];
 				btVector3 color(1, 1, 0);
-				btScalar lineWidth = 3;
-				if (contact.m_distance < 0)
+				double lineWidth = 3;
+				if (contact.m_distance < (btScalar)0)
 				{
 					color.setValue(1, 0, 0);
 				}

@@ -60,7 +60,7 @@ void BridgeExample::initPhysics()
 	groundTransform.setOrigin(btVector3(0, -50, 0));
 	{
 		btScalar mass(0.);
-		createRigidBody(mass, groundTransform, groundShape, btVector4(0, 0, 1, 1));
+		createRigidBody(mass, groundTransform, groundShape, btVector4((btScalar)0, (btScalar)0, (btScalar)1, (btScalar)1));
 	}
 
 	//create two fixed boxes to hold the planks
@@ -68,13 +68,13 @@ void BridgeExample::initPhysics()
 	{
 		//create a few dynamic rigidbodies
 		// Re-using the same collision is better for memory usage and performance
-		btScalar plankWidth = 0.4;
-		btScalar plankHeight = 0.2;
-		btScalar plankBreadth = 1;
+		btScalar plankWidth = (btScalar)0.4;
+		btScalar plankHeight = (btScalar)0.2;
+		btScalar plankBreadth = (btScalar)1;
 		btScalar plankOffset = plankWidth;  //distance between two planks
 		btScalar bridgeWidth = plankWidth * TOTAL_PLANKS + plankOffset * (TOTAL_PLANKS - 1);
-		btScalar bridgeHeight = 5;
-		btScalar halfBridgeWidth = bridgeWidth * 0.5f;
+		btScalar bridgeHeight = (btScalar)5;
+		btScalar halfBridgeWidth = bridgeWidth * (btScalar)0.5f;
 
 		btBoxShape* colShape = createBoxShape(btVector3(plankWidth, plankHeight, plankBreadth));
 
@@ -87,7 +87,7 @@ void BridgeExample::initPhysics()
 		btScalar mass(1.f);
 
 		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
+		bool isDynamic = (mass != (btScalar)0.f);
 
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)
@@ -98,13 +98,13 @@ void BridgeExample::initPhysics()
 		int lastBoxIndex = TOTAL_PLANKS - 1;
 		for (int i = 0; i < TOTAL_PLANKS; ++i)
 		{
-			float t = float(i) / lastBoxIndex;
-			t = -(t * 2 - 1.0f) * halfBridgeWidth;
+			btScalar t = btScalar(i) / lastBoxIndex;
+			t = -(t * (btScalar)2 - (btScalar)1.0f) * halfBridgeWidth;
 			startTransform.setOrigin(btVector3(
 				btScalar(t),
 				bridgeHeight,
 				btScalar(0)));
-			boxes.push_back(createRigidBody((i == 0 || i == lastBoxIndex) ? 0 : mass, startTransform, colShape));
+			boxes.push_back(createRigidBody((i == 0 || i == lastBoxIndex) ? (btScalar)0 : mass, startTransform, colShape));
 		}
 
 		//add N-1 spring constraints

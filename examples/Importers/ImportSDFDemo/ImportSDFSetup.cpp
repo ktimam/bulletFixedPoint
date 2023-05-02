@@ -35,7 +35,7 @@ public:
 	virtual ~ImportSDFSetup();
 
 	virtual void initPhysics();
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 
 	void setFileName(const char* urdfFileName);
 
@@ -158,7 +158,7 @@ void ImportSDFSetup::initPhysics()
 		btIDebugDraw::DBG_DrawConstraints + btIDebugDraw::DBG_DrawContactPoints + btIDebugDraw::DBG_DrawAabb);  //+btIDebugDraw::DBG_DrawConstraintLimits);
 
 	btVector3 gravity(0, 0, 0);
-	gravity[upAxis] = -9.8;
+	gravity[upAxis] = (btScalar)-9.8;
 
 	m_dynamicsWorld->setGravity(gravity);
 
@@ -224,13 +224,13 @@ void ImportSDFSetup::initPhysics()
 							char motorName[1024];
 							sprintf(motorName, "%s q'", jointName->c_str());
 							btScalar* motorVel = &m_data->m_motorTargetVelocities[m_data->m_numMotors];
-							*motorVel = 0.f;
+							*motorVel = (btScalar)0.f;
 							SliderParams slider(motorName, motorVel);
 							slider.m_minVal = -4;
 							slider.m_maxVal = 4;
 							m_guiHelper->getParameterInterface()->registerSliderFloatParameter(slider);
 							float maxMotorImpulse = 10.1f;
-							btMultiBodyJointMotor* motor = new btMultiBodyJointMotor(mb, mbLinkIndex, 0, 0, maxMotorImpulse);
+							btMultiBodyJointMotor* motor = new btMultiBodyJointMotor(mb, mbLinkIndex, 0, (btScalar)0, (btScalar)maxMotorImpulse);
 							//motor->setMaxAppliedImpulse(0);
 							m_data->m_jointMotors[m_data->m_numMotors] = motor;
 							m_dynamicsWorld->addMultiBodyConstraint(motor);
@@ -250,7 +250,7 @@ void ImportSDFSetup::initPhysics()
 		if (createGround)
 		{
 			btVector3 groundHalfExtents(20, 20, 20);
-			groundHalfExtents[upAxis] = 1.f;
+			groundHalfExtents[upAxis] = (btScalar)1.f;
 			btBoxShape* box = new btBoxShape(groundHalfExtents);
 			box->initializePolyhedralFeatures();
 
@@ -258,9 +258,9 @@ void ImportSDFSetup::initPhysics()
 			btTransform start;
 			start.setIdentity();
 			btVector3 groundOrigin(0, 0, 0);
-			groundOrigin[upAxis] = -2.5;
+			groundOrigin[upAxis] = (btScalar)-2.5;
 			start.setOrigin(groundOrigin);
-			btRigidBody* body = createRigidBody(0, start, box);
+			btRigidBody* body = createRigidBody((btScalar)0, start, box);
 			//m_dynamicsWorld->removeRigidBody(body);
 			// m_dynamicsWorld->addRigidBody(body,2,1);
 			btVector3 color(0.5, 0.5, 0.5);
@@ -268,11 +268,11 @@ void ImportSDFSetup::initPhysics()
 		}
 
 		///this extra stepSimulation call makes sure that all the btMultibody transforms are properly propagates.
-		m_dynamicsWorld->stepSimulation(1. / 240., 0);  // 1., 10, 1. / 240.);
+		m_dynamicsWorld->stepSimulation((btScalar)1. / (btScalar)240., 0);  // 1., 10, 1. / 240.);
 	}
 }
 
-void ImportSDFSetup::stepSimulation(float deltaTime)
+void ImportSDFSetup::stepSimulation(btScalar deltaTime)
 {
 	if (m_dynamicsWorld)
 	{
@@ -291,7 +291,7 @@ void ImportSDFSetup::stepSimulation(float deltaTime)
 		}
 
 		//the maximal coordinates/iterative MLCP solver requires a smallish timestep to converge
-		m_dynamicsWorld->stepSimulation(deltaTime, 10, 1. / 240.);
+		m_dynamicsWorld->stepSimulation(deltaTime, 10, (btScalar)1. / (btScalar)240.);
 	}
 }
 

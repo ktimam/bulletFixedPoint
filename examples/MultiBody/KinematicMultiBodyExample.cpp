@@ -40,11 +40,11 @@ void kinematicPreTickCallback(btDynamicsWorld* world, btScalar deltaTime)
 	groundBody->setBaseVel(linearVelocity);
 	groundBody->setBaseOmega(angularVelocity);
 
-	static float time = 0.0;
+	static btScalar time = (btScalar)0.0;
 	time += deltaTime;
-	double old_joint_pos = groundBody->getJointPos(0);
-	double joint_pos = 0.5 * sin(time * 3.0 - 0.3);
-	double joint_vel = (joint_pos - old_joint_pos) / deltaTime;
+	btScalar old_joint_pos = groundBody->getJointPos(0);
+	btScalar joint_pos = (btScalar)0.5 * sin(time * (btScalar)3.0 - (btScalar)0.3);
+	btScalar joint_vel = (joint_pos - old_joint_pos) / deltaTime;
 	groundBody->setJointPosMultiDof(0, &joint_pos);
 	groundBody->setJointVelMultiDof(0, &joint_vel);
 }
@@ -59,7 +59,7 @@ struct KinematicMultiBodyExample : public CommonMultiBodyBase
 	{
 	}
 
-	virtual void stepSimulation(float deltaTime)
+	virtual void stepSimulation(btScalar deltaTime)
 	{
 		if (m_dynamicsWorld)
 		{
@@ -108,25 +108,25 @@ void KinematicMultiBodyExample::initPhysics()
 		if (baseMass)
 		{
 			btCollisionShape* pTempBox = new btBoxShape(btVector3(10, 10, 10));
-			pTempBox->calculateLocalInertia(baseMass, baseInertiaDiag);
+			pTempBox->calculateLocalInertia((btScalar)baseMass, baseInertiaDiag);
 			delete pTempBox;
 		}
 		if (secondLevelMass)
 		{
 			btCollisionShape* pTempBox = new btBoxShape(btVector3(0.5, 0.5, 0.5));
-			pTempBox->calculateLocalInertia(secondLevelMass, secondLevelInertiaDiag);
+			pTempBox->calculateLocalInertia((btScalar)secondLevelMass, secondLevelInertiaDiag);
 			delete pTempBox;
 		}
 		btTransform startTransform;
 		startTransform.setIdentity();
 
-		m_groundBody = new btMultiBody(numLinks, baseMass, baseInertiaDiag, !floating, canSleep);
+		m_groundBody = new btMultiBody(numLinks, (btScalar)baseMass, baseInertiaDiag, !floating, canSleep);
 		m_groundBody->setBasePos(startTransform.getOrigin());
 		m_groundBody->setWorldToBaseRot(startTransform.getRotation());
 
 		//init the child link - second level.
 		btVector3 hingeJointAxis(0, 1, 0);
-		m_groundBody->setupRevolute(0, secondLevelMass, secondLevelInertiaDiag, -1, btQuaternion(0.f, 0.f, 0.f, 1.f), hingeJointAxis, btVector3(0, 0.5, 0), btVector3(0, 0, 0), true);
+		m_groundBody->setupRevolute(0, (btScalar)secondLevelMass, secondLevelInertiaDiag, -1, btQuaternion((btScalar)0.f, (btScalar)0.f, (btScalar)0.f, (btScalar)1.f), hingeJointAxis, btVector3(0, 0.5, 0), btVector3(0, 0, 0), true);
 
 		m_groundBody->finalizeMultiDof();
 		m_dynamicsWorld->addMultiBody(m_groundBody);
@@ -165,7 +165,7 @@ void KinematicMultiBodyExample::initPhysics()
 		btScalar mass(1.f);
 
 		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
+		bool isDynamic = (mass != (btScalar)0.f);
 
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)

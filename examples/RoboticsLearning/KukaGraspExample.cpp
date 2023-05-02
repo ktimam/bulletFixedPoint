@@ -115,12 +115,12 @@ public:
 	{
 		m_robotSim.disconnect();
 	}
-	virtual void stepSimulation(float deltaTime)
+	virtual void stepSimulation(btScalar deltaTime)
 	{
-		float dt = deltaTime;
-		btClamp(dt, 0.0001f, 0.01f);
+		btScalar dt = deltaTime;
+		btClamp(dt, (btScalar)0.0001f, (btScalar)0.01f);
 
-		m_time += dt;
+		m_time += (float)dt;
 		m_targetPos.setValue(0.4 - 0.4 * b3Cos(m_time), 0, 0.8 + 0.4 * b3Cos(m_time));
 		m_targetOri.setValue(0, 1.0, 0, 0);
 		m_targetPos.setValue(0.2 * b3Cos(m_time), 0.2 * b3Sin(m_time), 1.1);
@@ -209,9 +209,9 @@ public:
 			ikargs.m_restPoses[0] = 0;
 			ikargs.m_restPoses[1] = 0;
 			ikargs.m_restPoses[2] = 0;
-			ikargs.m_restPoses[3] = SIMD_HALF_PI;
+			ikargs.m_restPoses[3] = (float)SIMD_HALF_PI;
 			ikargs.m_restPoses[4] = 0;
-			ikargs.m_restPoses[5] = -SIMD_HALF_PI * 0.66;
+			ikargs.m_restPoses[5] = (float)-SIMD_HALF_PI * 0.66;
 			ikargs.m_restPoses[6] = 0;
 			ikargs.m_jointDamping[0] = 10.0;
 			ikargs.m_numDegreeOfFreedom = numJoints;

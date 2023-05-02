@@ -49,8 +49,8 @@ btSoftRigidDynamicsWorld::btSoftRigidDynamicsWorld(
 	m_sbi.m_sparsesdf.Reset();
 
 	m_sbi.air_density = (btScalar)1.2;
-	m_sbi.water_density = 0;
-	m_sbi.water_offset = 0;
+	m_sbi.water_density = (btScalar)0;
+	m_sbi.water_offset = (btScalar)0;
 	m_sbi.water_normal = btVector3(0, 0, 0);
 	m_sbi.m_gravity.setValue(0, -10, 0);
 
@@ -71,7 +71,7 @@ void btSoftRigidDynamicsWorld::predictUnconstraintMotion(btScalar timeStep)
 	btDiscreteDynamicsWorld::predictUnconstraintMotion(timeStep);
 	{
 		BT_PROFILE("predictUnconstraintMotionSoftBody");
-		m_softBodySolver->predictMotion(float(timeStep));
+		m_softBodySolver->predictMotion(timeStep);
 	}
 }
 
@@ -114,7 +114,7 @@ void btSoftRigidDynamicsWorld::solveSoftBodiesConstraints(btScalar timeStep)
 	}
 
 	// Solve constraints solver-wise
-	m_softBodySolver->solveConstraints(timeStep * m_softBodySolver->getTimeScale());
+	m_softBodySolver->solveConstraints(timeStep * (btScalar)m_softBodySolver->getTimeScale());
 }
 
 void btSoftRigidDynamicsWorld::addSoftBody(btSoftBody* body, int collisionFilterGroup, int collisionFilterMask)
@@ -201,9 +201,9 @@ struct btSoftSingleRayCallback : public btBroadphaseRayCallback
 		m_rayDirectionInverse[0] = rayDir[0] == btScalar(0.0) ? btScalar(1e30) : btScalar(1.0) / rayDir[0];
 		m_rayDirectionInverse[1] = rayDir[1] == btScalar(0.0) ? btScalar(1e30) : btScalar(1.0) / rayDir[1];
 		m_rayDirectionInverse[2] = rayDir[2] == btScalar(0.0) ? btScalar(1e30) : btScalar(1.0) / rayDir[2];
-		m_signs[0] = m_rayDirectionInverse[0] < 0.0;
-		m_signs[1] = m_rayDirectionInverse[1] < 0.0;
-		m_signs[2] = m_rayDirectionInverse[2] < 0.0;
+		m_signs[0] = m_rayDirectionInverse[0] < (btScalar)0.0;
+		m_signs[1] = m_rayDirectionInverse[1] < (btScalar)0.0;
+		m_signs[2] = m_rayDirectionInverse[2] < (btScalar)0.0;
 
 		m_lambda_max = rayDir.dot(m_rayToWorld - m_rayFromWorld);
 	}
@@ -290,7 +290,7 @@ void btSoftRigidDynamicsWorld::rayTestSingle(const btTransform& rayFromTrans, co
 					if (softResult.feature == btSoftBody::eFeature::Face)
 					{
 						normal = softBody->m_faces[softResult.index].m_normal;
-						if (normal.dot(rayDir) > 0)
+						if (normal.dot(rayDir) > (btScalar)0)
 						{
 							// normal always point toward origin of the ray
 							normal = -normal;

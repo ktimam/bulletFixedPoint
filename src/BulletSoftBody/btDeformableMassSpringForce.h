@@ -175,9 +175,9 @@ public:
 						btVector3 dir = (node2->m_x - node1->m_x).normalized();
 						for (int d = 0; d < 3; ++d)
 						{
-							if (node1->m_im > 0)
+							if (node1->m_im > (btScalar)0)
 								diagA[id1][d] -= scaled_k_damp * dir[d] * dir[d];
-							if (node2->m_im > 0)
+							if (node2->m_im > (btScalar)0)
 								diagA[id2][d] -= scaled_k_damp * dir[d] * dir[d];
 						}
 					}
@@ -186,9 +186,9 @@ public:
 				{
 					for (int d = 0; d < 3; ++d)
 					{
-						if (node1->m_im > 0)
+						if (node1->m_im > (btScalar)0)
 							diagA[id1][d] -= scaled_k_damp;
-						if (node2->m_im > 0)
+						if (node2->m_im > (btScalar)0)
 							diagA[id2][d] -= scaled_k_damp;
 					}
 				}
@@ -196,9 +196,9 @@ public:
 		}
 	}
 
-	virtual double totalElasticEnergy(btScalar dt)
+	virtual btScalar totalElasticEnergy(btScalar dt)
 	{
-		double energy = 0;
+		btScalar energy = (btScalar)0;
 		for (int i = 0; i < m_softBodies.size(); ++i)
 		{
 			const btSoftBody* psb = m_softBodies[i];
@@ -215,15 +215,15 @@ public:
 
 				// elastic force
 				btVector3 dir = (node2->m_q - node1->m_q);
-				energy += 0.5 * m_elasticStiffness * (dir.norm() - r) * (dir.norm() - r);
+				energy += (btScalar)0.5 * m_elasticStiffness * (dir.norm() - r) * (dir.norm() - r);
 			}
 		}
 		return energy;
 	}
 
-	virtual double totalDampingEnergy(btScalar dt)
+	virtual btScalar totalDampingEnergy(btScalar dt)
 	{
-		double energy = 0;
+		btScalar energy = (btScalar)0;
 		int sz = 0;
 		for (int i = 0; i < m_softBodies.size(); ++i)
 		{
@@ -241,7 +241,7 @@ public:
 		dampingForce.resize(sz + 1);
 		for (int i = 0; i < dampingForce.size(); ++i)
 			dampingForce[i].setZero();
-		addScaledDampingForce(0.5, dampingForce);
+		addScaledDampingForce((btScalar)0.5, dampingForce);
 		for (int i = 0; i < m_softBodies.size(); ++i)
 		{
 			btSoftBody* psb = m_softBodies[i];

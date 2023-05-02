@@ -501,16 +501,16 @@ void addJointInfoFromConstraint(int linkIndex, const T* con, U* bodyJoints, bool
 			info.m_jointType = eRevoluteType;
 			btVector3 limitRange = angularLowerLimit.absolute() + angularUpperLimit.absolute();
 			int limitAxis = limitRange.maxAxis();
-			info.m_jointLowerLimit = angularLowerLimit[limitAxis];
-			info.m_jointUpperLimit = angularUpperLimit[limitAxis];
+			info.m_jointLowerLimit = (double)angularLowerLimit[limitAxis];
+			info.m_jointUpperLimit = (double)angularUpperLimit[limitAxis];
 		}
 		else
 		{
 			info.m_jointType = ePrismaticType;
 			btVector3 limitRange = linearLowerLimit.absolute() + linearUpperLimit.absolute();
 			int limitAxis = limitRange.maxAxis();
-			info.m_jointLowerLimit = linearLowerLimit[limitAxis];
-			info.m_jointUpperLimit = linearUpperLimit[limitAxis];
+			info.m_jointLowerLimit = (double)linearLowerLimit[limitAxis];
+			info.m_jointUpperLimit = (double)linearUpperLimit[limitAxis];
 		}
 	}
 
@@ -1062,10 +1062,10 @@ const SharedMemoryStatus* PhysicsClientSharedMemory::processServerStatus()
 				btVector3* verticesReceived = (btVector3*)m_data->m_testBlock1->m_bulletStreamDataServerToClientRefactor;
 				for (int i = 0; i < serverCmd.m_sendMeshDataArgs.m_numVerticesCopied; i++)
 				{
-					m_data->m_cachedVertexPositions[i + serverCmd.m_sendMeshDataArgs.m_startingVertex].x = verticesReceived[i].x();
-					m_data->m_cachedVertexPositions[i + serverCmd.m_sendMeshDataArgs.m_startingVertex].y = verticesReceived[i].y();
-					m_data->m_cachedVertexPositions[i + serverCmd.m_sendMeshDataArgs.m_startingVertex].z = verticesReceived[i].z();
-					m_data->m_cachedVertexPositions[i + serverCmd.m_sendMeshDataArgs.m_startingVertex].w = verticesReceived[i].w();
+					m_data->m_cachedVertexPositions[i + serverCmd.m_sendMeshDataArgs.m_startingVertex].x = (float)verticesReceived[i].x();
+					m_data->m_cachedVertexPositions[i + serverCmd.m_sendMeshDataArgs.m_startingVertex].y = (float)verticesReceived[i].y();
+					m_data->m_cachedVertexPositions[i + serverCmd.m_sendMeshDataArgs.m_startingVertex].z = (float)verticesReceived[i].z();
+					m_data->m_cachedVertexPositions[i + serverCmd.m_sendMeshDataArgs.m_startingVertex].w = (float)verticesReceived[i].w();
 				}
 				break;
 			}

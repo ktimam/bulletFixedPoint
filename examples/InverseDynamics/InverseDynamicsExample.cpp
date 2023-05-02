@@ -42,8 +42,8 @@ subject to the following restrictions:
 
 // the UI interface makes it easier to use static variables & free functions
 // as parameters and callbacks
-static btScalar kp = 10 * 10;
-static btScalar kd = 2 * 10;
+static btScalar kp = (btScalar)10 * (btScalar)10;
+static btScalar kd = (btScalar)2 * (btScalar)10;
 static bool useInverseModel = true;
 static std::vector<btScalar> qd;
 static std::vector<std::string> qd_name;
@@ -51,14 +51,14 @@ static std::vector<std::string> q_name;
 
 static btVector4 sJointCurveColors[8] =
 	{
-		btVector4(1, 0.3, 0.3, 1),
-		btVector4(0.3, 1, 0.3, 1),
-		btVector4(0.3, 0.3, 1, 1),
-		btVector4(0.3, 1, 1, 1),
-		btVector4(1, 0.3, 1, 1),
-		btVector4(1, 1, 0.3, 1),
-		btVector4(1, 0.7, 0.7, 1),
-		btVector4(0.7, 1, 1, 1),
+		btVector4((btScalar)1, (btScalar)0.3,(btScalar)0.3, (btScalar)1),
+		btVector4((btScalar)0.3, (btScalar)1,(btScalar)0.3, (btScalar)1),
+		btVector4((btScalar)0.3, (btScalar)0.3, (btScalar)1, (btScalar)1),
+		btVector4((btScalar)0.3,(btScalar)1, (btScalar)1, (btScalar)1),
+		btVector4((btScalar)1, (btScalar)0.3, (btScalar)1,(btScalar)1),
+		btVector4((btScalar)1, (btScalar)1, (btScalar)0.3, (btScalar)1),
+		btVector4((btScalar)1, (btScalar)0.7,(btScalar)0.7, (btScalar)1),
+		btVector4((btScalar)0.7, (btScalar)1, (btScalar)1, (btScalar)1),
 
 };
 
@@ -171,8 +171,8 @@ void InverseDynamicsExample::initPhysics()
 				{
 					//kuka without joint control/constraints will gain energy explode soon due to timestep/integrator
 					//temporarily set some extreme damping factors until we have some joint control or constraints
-					m_multiBody->setAngularDamping(0 * 0.99);
-					m_multiBody->setLinearDamping(0 * 0.99);
+					m_multiBody->setAngularDamping((btScalar)0 * (btScalar)0.99);
+					m_multiBody->setLinearDamping((btScalar)0 * (btScalar)0.99);
 					b3Printf("Root link name = %s", u2b.getLinkName(u2b.getRootLinkIndex()).c_str());
 				}
 			}
@@ -222,7 +222,7 @@ void InverseDynamicsExample::initPhysics()
 		{
 			for (std::size_t dof = 0; dof < qd.size(); dof++)
 			{
-				qd[dof] = 0;
+				qd[dof] = (btScalar)0;
 				char tmp[25];
 				sprintf(tmp, "q_desired[%lu]", dof);
 				qd_name[dof] = tmp;
@@ -234,7 +234,7 @@ void InverseDynamicsExample::initPhysics()
 				q_name[dof] = tmp;
 				m_guiHelper->getParameterInterface()->registerSliderFloatParameter(slider);
 				btVector4 color = sJointCurveColors[dof & 7];
-				m_timeSeriesCanvas->addDataSource(q_name[dof].c_str(), color[0] * 255, color[1] * 255, color[2] * 255);
+				m_timeSeriesCanvas->addDataSource(q_name[dof].c_str(), (double)color[0] * 255, (double)color[1] * 255, (double)color[2] * 255);
 			}
 		}
 	}
@@ -260,10 +260,10 @@ void InverseDynamicsExample::stepSimulation(float deltaTime)
 			q(dof) = m_multiBody->getJointPos(dof);
 			qdot(dof) = m_multiBody->getJointVel(dof);
 
-			const btScalar qd_dot = 0;
-			const btScalar qd_ddot = 0;
+			const btScalar qd_dot = (btScalar)0;
+			const btScalar qd_ddot = (btScalar)0;
 			if (m_timeSeriesCanvas)
-				m_timeSeriesCanvas->insertDataAtCurrentTime(q[dof], dof, true);
+				m_timeSeriesCanvas->insertDataAtCurrentTime((float)q[dof], dof, true);
 
 			// pd_control is either desired joint torque for pd control,
 			// or the feedback contribution to nu
@@ -333,7 +333,7 @@ void InverseDynamicsExample::stepSimulation(float deltaTime)
 	{
 		// todo(thomas) check that this is correct:
 		// want to advance by 10ms, with 1ms timesteps
-		m_dynamicsWorld->stepSimulation(1e-3, 0);  //,1e-3);
+		m_dynamicsWorld->stepSimulation((btScalar)1e-3, 0);  //,1e-3);
 		btAlignedObjectArray<btQuaternion> scratch_q;
 		btAlignedObjectArray<btVector3> scratch_m;
 		m_multiBody->forwardKinematics(scratch_q, scratch_m);

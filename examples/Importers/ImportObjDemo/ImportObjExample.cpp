@@ -92,11 +92,11 @@ void ImportObjSetup::initPhysics()
 	btTransform trans;
 	trans.setIdentity();
 	trans.setRotation(btQuaternion(btVector3(1, 0, 0), SIMD_HALF_PI));
-	btVector3 position = trans.getOrigin();
-	btQuaternion orn = trans.getRotation();
-
-	btVector3 scaling(1, 1, 1);
-	btVector4 color(1, 1, 1,1);
+	float position[] = { (float)trans.getOrigin().m_floats[0],(float)trans.getOrigin().m_floats[1],(float)trans.getOrigin().m_floats[2],(float)trans.getOrigin().m_floats[3] };
+	float orn[] = { (float)trans.getRotation().getX(),(float)trans.getRotation().getY(),(float)trans.getRotation().getZ(),(float)trans.getRotation().getW() };
+	
+	float scaling[] = { 1, 1, 1 };
+	float color[] = { 1, 1, 1,1 };
 
 	int shapeId = loadAndRegisterMeshFromFile2(m_fileName, m_guiHelper->getRenderInterface());
 	if (shapeId >= 0)

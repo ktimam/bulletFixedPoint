@@ -3,6 +3,9 @@
 #ifndef COMMON_EXAMPLE_INTERFACE_H
 #define COMMON_EXAMPLE_INTERFACE_H
 
+#include "LinearMath/btScalar.h"
+#include "LinearMath/btVector3.h"
+
 struct CommandProcessorCreationInterface
 {
 	virtual ~CommandProcessorCreationInterface() {}
@@ -44,7 +47,7 @@ public:
 	virtual void initPhysics() = 0;
 	virtual void exitPhysics() = 0;
 	virtual void updateGraphics() {}
-	virtual void stepSimulation(float deltaTime) = 0;
+	virtual void stepSimulation(btScalar deltaTime) = 0;
 	virtual void renderScene() = 0;
 	virtual void physicsDebugDraw(int debugFlags) = 0;  //for now we reuse the flags in Bullet/src/LinearMath/btIDebugDraw.h
 	//reset camera is only called when switching demo. this way you can restart (initPhysics) and watch in a specific location easier

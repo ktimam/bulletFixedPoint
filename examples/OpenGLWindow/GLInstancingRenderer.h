@@ -16,6 +16,9 @@ subject to the following restrictions:
 #ifndef GL_INSTANCING_RENDERER_H
 #define GL_INSTANCING_RENDERER_H
 
+#include "LinearMath/btScalar.h"
+#include "LinearMath/btVector3.h"
+
 #include "Bullet3Common/b3AlignedObjectArray.h"
 #include "../CommonInterfaces/CommonRenderInterface.h"
 #include "SimpleCamera.h"
@@ -88,6 +91,20 @@ public:
 		orn[3] = (float)orientation[3];
 		writeSingleInstanceTransformToCPU(pos, orn, srcIndex);
 	}
+	virtual void writeSingleInstanceTransformToCPU(const btVector3 position, const btQuaternion orientation, int srcIndex)
+	{
+		float pos[4];
+		float orn[4];
+		pos[0] = (float)position[0];
+		pos[1] = (float)position[1];
+		pos[2] = (float)position[2];
+		pos[3] = (float)position[3];
+		orn[0] = (float)orientation[0];
+		orn[1] = (float)orientation[1];
+		orn[2] = (float)orientation[2];
+		orn[3] = (float)orientation[3];
+		writeSingleInstanceTransformToCPU(pos, orn, srcIndex);
+	}
 
 	virtual void readSingleInstanceTransformFromCPU(int srcIndex, float* position, float* orientation);
 
@@ -107,6 +124,8 @@ public:
 
 	virtual void drawLine(const float from[4], const float to[4], const float color[4], float lineWidth = 1);
 	virtual void drawLine(const double from[4], const double to[4], const double color[4], double lineWidth = 1);
+	virtual void drawLine(const btVector3 fromIn, const btVector3 toIn, const btVector3 colorIn, double lineWidthIn);
+	virtual void drawLines(const btScalar* positions, const btScalar color[4], int numPoints, int pointStrideInBytes, const unsigned int* indices, int numIndices, float pointDrawSize);
 	virtual void drawLines(const float* positions, const float color[4], int numPoints, int pointStrideInBytes, const unsigned int* indices, int numIndices, float pointDrawSize);
 	virtual void drawPoints(const float* positions, const float color[4], int numPoints, int pointStrideInBytes, float pointDrawSize);
 	virtual void drawPoint(const float* position, const float color[4], float pointSize = 1);

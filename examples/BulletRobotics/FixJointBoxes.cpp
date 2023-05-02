@@ -13,8 +13,8 @@
 #include <vector>
 #include "../RobotSimulator/b3RobotSimulatorClientAPI.h"
 
-static btScalar numSolverIterations = 1000;
-static btScalar solverId = 0;
+static btScalar numSolverIterations = (btScalar)1000;
+static btScalar solverId = (btScalar)0;
 
 class FixJointBoxes : public CommonExampleInterface
 {
@@ -111,14 +111,14 @@ public:
 	{
 		for (int i = 0; i < numCubes; i++)
 		{
-			btVector3 pos(0, i * (btScalar)0.05, 1);
-			btQuaternion quar(0, 0, 0, 1);
+			btVector3 pos((btScalar)0, i * (btScalar)0.05, (btScalar)1);
+			btQuaternion quar((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)1);
 			m_robotSim.resetBasePositionAndOrientation(cubeIds[i], pos, quar);
 		}
 	}
-	virtual void stepSimulation(float deltaTime)
+	virtual void stepSimulation(btScalar deltaTime)
 	{
-		int newSolver = (int)(solverId + 0.5);
+		int newSolver = (int)(solverId + (btScalar)0.5);
 		if (newSolver != solver)
 		{
 			printf("Switching solver, new %d, old %d\n", newSolver, solver);

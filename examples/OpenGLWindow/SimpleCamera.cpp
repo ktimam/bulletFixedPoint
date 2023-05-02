@@ -302,6 +302,13 @@ void SimpleCamera::getCameraTargetPosition(double pos[3]) const
 	pos[1] = m_data->m_cameraTargetPosition[1];
 	pos[2] = m_data->m_cameraTargetPosition[2];
 }
+void SimpleCamera::getCameraPosition(btVector3 &pos) const
+{
+	pos[0] = (btScalar)m_data->m_cameraPosition[0];
+	pos[1] = (btScalar)m_data->m_cameraPosition[1];
+	pos[2] = (btScalar)m_data->m_cameraPosition[2];
+}
+
 
 void SimpleCamera::getCameraPosition(double pos[3]) const
 {
@@ -310,6 +317,12 @@ void SimpleCamera::getCameraPosition(double pos[3]) const
 	pos[2] = m_data->m_cameraPosition[2];
 }
 
+void SimpleCamera::getCameraTargetPosition(btVector3 &pos) const
+{
+	pos[0] = (btScalar)m_data->m_cameraTargetPosition[0];
+	pos[1] = (btScalar)m_data->m_cameraTargetPosition[1];
+	pos[2] = (btScalar)m_data->m_cameraTargetPosition[2];
+}
 void SimpleCamera::getCameraTargetPosition(float pos[3]) const
 {
 	pos[0] = m_data->m_cameraTargetPosition[0];
@@ -322,7 +335,6 @@ void SimpleCamera::getCameraPosition(float pos[3]) const
 	pos[1] = m_data->m_cameraPosition[1];
 	pos[2] = m_data->m_cameraPosition[2];
 }
-
 void SimpleCamera::setCameraTargetPosition(float x, float y, float z)
 {
 	m_data->m_cameraTargetPosition.setValue(x, y, z);

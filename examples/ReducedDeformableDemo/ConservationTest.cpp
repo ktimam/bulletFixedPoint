@@ -27,8 +27,8 @@
 #include "../CommonInterfaces/CommonDeformableBodyBase.h"
 #include "../Utils/b3ResourcePath.h"
 
-static btScalar damping_alpha = 0.0;
-static btScalar damping_beta = 0.0;
+static btScalar damping_alpha = (btScalar)0.0;
+static btScalar damping_beta = (btScalar)0.0;
 static int start_mode = 6;
 static int num_modes = 20;
 
@@ -38,7 +38,7 @@ class ConservationTest : public CommonDeformableBodyBase
     bool first_step;
 
     // get deformed shape
-    void getDeformedShape(btReducedDeformableBody* rsb, const int mode_n, const btScalar scale = 1)
+    void getDeformedShape(btReducedDeformableBody* rsb, const int mode_n, const btScalar scale = (btScalar)1)
     {
       // for (int i = 0; i < rsb->m_nodes.size(); ++i)
       //   for (int k = 0; k < 3; ++k)
@@ -50,7 +50,7 @@ class ConservationTest : public CommonDeformableBodyBase
       srand(1);
       for (int r = 0; r < rsb->m_nReduced; r++)
       {
-        rsb->m_reducedDofs[r] = (btScalar(rand()) / btScalar(RAND_MAX) - 0.5);
+        rsb->m_reducedDofs[r] = (btScalar(rand()) / btScalar(RAND_MAX) - (btScalar)0.5);
         rsb->m_reducedDofsBuffer[r] = rsb->m_reducedDofs[r];
       }
 
@@ -64,7 +64,7 @@ public:
     ConservationTest(struct GUIHelperInterface* helper)
         : CommonDeformableBodyBase(helper)
     {
-        sim_time = 0;
+        sim_time = (btScalar)0;
         first_step = true;
     }
     virtual ~ConservationTest()
@@ -145,17 +145,17 @@ public:
       }
     }
     
-    void stepSimulation(float deltaTime)
+    void stepSimulation(btScalar deltaTime)
     {
       // add initial deformation
       btReducedDeformableBody* rsb = static_cast<btReducedDeformableBody*>(static_cast<btDeformableMultiBodyDynamicsWorld*>(m_dynamicsWorld)->getSoftBodyArray()[0]);
       if (first_step /* && !rsb->m_bUpdateRtCst*/) 
       {
-        getDeformedShape(rsb, 0, 1);
+        getDeformedShape(rsb, 0, (btScalar)1);
         first_step = false;
       }
       
-      float internalTimeStep = 1. / 240.f;
+      btScalar internalTimeStep = (btScalar)1. / (btScalar)240.f;
       m_dynamicsWorld->stepSimulation(deltaTime, 4, internalTimeStep);
 
       sim_time += internalTimeStep;
@@ -175,17 +175,17 @@ public:
                 btSoftBodyHelpers::Draw(rsb, deformableWorld->getDebugDrawer(), deformableWorld->getDrawFlags()); 
 
                 btVector3 origin = rsb->getRigidTransform().getOrigin();
-                btVector3 line_x = rsb->getRigidTransform().getBasis() * 2 * btVector3(1, 0, 0) + origin;
-                btVector3 line_y = rsb->getRigidTransform().getBasis() * 2 * btVector3(0, 1, 0) + origin;
-                btVector3 line_z = rsb->getRigidTransform().getBasis() * 2 * btVector3(0, 0, 1) + origin;
+                btVector3 line_x = rsb->getRigidTransform().getBasis() * (btScalar)2 * btVector3(1, 0, 0) + origin;
+                btVector3 line_y = rsb->getRigidTransform().getBasis() * (btScalar)2 * btVector3(0, 1, 0) + origin;
+                btVector3 line_z = rsb->getRigidTransform().getBasis() * (btScalar)2 * btVector3(0, 0, 1) + origin;
 
                 deformableWorld->getDebugDrawer()->drawLine(origin, line_x, btVector3(1, 0, 0));
                 deformableWorld->getDebugDrawer()->drawLine(origin, line_y, btVector3(0, 1, 0));
                 deformableWorld->getDebugDrawer()->drawLine(origin, line_z, btVector3(0, 0, 1));
 
-                deformableWorld->getDebugDrawer()->drawSphere(btVector3(0, 0, 0), 0.1, btVector3(1, 1, 1));
-                deformableWorld->getDebugDrawer()->drawSphere(btVector3(0, 2, 0), 0.1, btVector3(1, 1, 1));
-                deformableWorld->getDebugDrawer()->drawSphere(btVector3(0, 4, 0), 0.1, btVector3(1, 1, 1));
+                deformableWorld->getDebugDrawer()->drawSphere(btVector3(0, 0, 0), (btScalar)0.1, btVector3(1, 1, 1));
+                deformableWorld->getDebugDrawer()->drawSphere(btVector3(0, 2, 0), (btScalar)0.1, btVector3(1, 1, 1));
+                deformableWorld->getDebugDrawer()->drawSphere(btVector3(0, 4, 0), (btScalar)0.1, btVector3(1, 1, 1));
             }
         }
     }
@@ -226,7 +226,7 @@ void ConservationTest::initPhysics()
                                             false);
 
         getDeformableDynamicsWorld()->addSoftBody(rsb);
-        rsb->getCollisionShape()->setMargin(0.1);
+        rsb->getCollisionShape()->setMargin((btScalar)0.1);
         
         btTransform init_transform;
         init_transform.setIdentity();
@@ -234,15 +234,15 @@ void ConservationTest::initPhysics()
         // init_transform.setRotation(btQuaternion(btVector3(0, 1, 0), SIMD_PI / 2.0));
         rsb->transformTo(init_transform);
 
-        rsb->setStiffnessScale(100);
+        rsb->setStiffnessScale((btScalar)100);
         rsb->setDamping(damping_alpha, damping_beta);
         
-        rsb->m_cfg.kKHR = 1; // collision hardness with kinematic objects
-        rsb->m_cfg.kCHR = 1; // collision hardness with rigid body
-        rsb->m_cfg.kDF = 0;
+        rsb->m_cfg.kKHR = (btScalar)1; // collision hardness with kinematic objects
+        rsb->m_cfg.kCHR = (btScalar)1; // collision hardness with rigid body
+        rsb->m_cfg.kDF = (btScalar)0;
         rsb->m_cfg.collisions = btSoftBody::fCollision::SDF_RD;
         rsb->m_cfg.collisions |= btSoftBody::fCollision::SDF_RDN;
-        rsb->m_sleepingThreshold = 0;
+        rsb->m_sleepingThreshold = (btScalar)0;
         btSoftBodyHelpers::generateBoundaryFaces(rsb);
         
         // rsb->setVelocity(btVector3(0, -COLLIDING_VELOCITY, 0));
@@ -252,10 +252,10 @@ void ConservationTest::initPhysics()
     getDeformableDynamicsWorld()->setImplicit(false);
     getDeformableDynamicsWorld()->setLineSearch(false);
     getDeformableDynamicsWorld()->setUseProjection(false);
-    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_erp = 0.3;
-    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_cfm = 0.2;
+    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_erp = (btScalar)0.3;
+    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_cfm = (btScalar)0.2;
     getDeformableDynamicsWorld()->getSolverInfo().m_deformable_maxErrorReduction = btScalar(200);
-    getDeformableDynamicsWorld()->getSolverInfo().m_leastSquaresResidualThreshold = 1e-3;
+    getDeformableDynamicsWorld()->getSolverInfo().m_leastSquaresResidualThreshold = (btScalar)1e-3;
     getDeformableDynamicsWorld()->getSolverInfo().m_splitImpulse = false;
     getDeformableDynamicsWorld()->getSolverInfo().m_numIterations = 100;
 

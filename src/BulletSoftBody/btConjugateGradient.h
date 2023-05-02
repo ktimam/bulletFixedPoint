@@ -67,7 +67,7 @@ public:
 			// temp = A*p
 			A.multiply(p, temp);
 			A.project(temp);
-			if (this->dot(p, temp) < 0)
+			if (this->dot(p, temp) < (btScalar)0)
 			{
 				if (verbose)
 					std::cout << "Encountered negative direction in CG!" << std::endl;

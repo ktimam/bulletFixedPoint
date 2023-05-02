@@ -59,8 +59,8 @@ public:
 
 #define CUBE_HALF_EXTENTS 1.f
 
-#define SIMD_PI_2 ((SIMD_PI)*0.5f)
-#define SIMD_PI_4 ((SIMD_PI)*0.25f)
+#define SIMD_PI_2 ((SIMD_PI)*(btScalar)0.5f)
+#define SIMD_PI_4 ((SIMD_PI)*(btScalar)0.25f)
 
 btTransform sliderTransform;
 btVector3 lowerSliderLimit = btVector3(-10, 0, 0);
@@ -94,14 +94,14 @@ void AllConstraintDemo::initPhysics()
 	m_guiHelper->createPhysicsDebugDrawer(m_dynamicsWorld);
 
 	//btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.),btScalar(40.),btScalar(50.)));
-	btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), 40);
+	btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), (btScalar)40);
 
 	m_collisionShapes.push_back(groundShape);
 	btTransform groundTransform;
 	groundTransform.setIdentity();
 	groundTransform.setOrigin(btVector3(0, -56, 0));
 	btRigidBody* groundBody;
-	groundBody = createRigidBody(0, groundTransform, groundShape);
+	groundBody = createRigidBody((btScalar)0, groundTransform, groundShape);
 
 	btCollisionShape* shape = new btBoxShape(btVector3(CUBE_HALF_EXTENTS, CUBE_HALF_EXTENTS, CUBE_HALF_EXTENTS));
 	m_collisionShapes.push_back(shape);
@@ -114,9 +114,9 @@ void AllConstraintDemo::initPhysics()
 #if ENABLE_ALL_DEMOS
 	///gear constraint demo
 
-#define THETA SIMD_PI / 4.f
-#define L_1 (2 - std::tan(THETA))
-#define L_2 (1 / std::cos(THETA))
+#define THETA SIMD_PI / (btScalar)4.f
+#define L_1 (2 - tan(THETA))
+#define L_2 (1 / cos(THETA))
 #define RATIO L_2 / L_1
 
 	btRigidBody* bodyA = 0;
@@ -124,12 +124,12 @@ void AllConstraintDemo::initPhysics()
 
 	{
 		btCollisionShape* cylA = new btCylinderShape(btVector3(0.2, 0.25, 0.2));
-		btCollisionShape* cylB = new btCylinderShape(btVector3(L_1, 0.025, L_1));
+		btCollisionShape* cylB = new btCylinderShape(btVector3(L_1, (btScalar)0.025, L_1));
 		btCompoundShape* cyl0 = new btCompoundShape();
 		cyl0->addChildShape(btTransform::getIdentity(), cylA);
 		cyl0->addChildShape(btTransform::getIdentity(), cylB);
 
-		btScalar mass = 6.28;
+		btScalar mass = (btScalar)6.28;
 		btVector3 localInertia;
 		cyl0->calculateLocalInertia(mass, localInertia);
 		btRigidBody::btRigidBodyConstructionInfo ci(mass, 0, cyl0, localInertia);
@@ -144,12 +144,12 @@ void AllConstraintDemo::initPhysics()
 
 	{
 		btCollisionShape* cylA = new btCylinderShape(btVector3(0.2, 0.26, 0.2));
-		btCollisionShape* cylB = new btCylinderShape(btVector3(L_2, 0.025, L_2));
+		btCollisionShape* cylB = new btCylinderShape(btVector3(L_2, (btScalar)0.025, L_2));
 		btCompoundShape* cyl0 = new btCompoundShape();
 		cyl0->addChildShape(btTransform::getIdentity(), cylA);
 		cyl0->addChildShape(btTransform::getIdentity(), cylB);
 
-		btScalar mass = 6.28;
+		btScalar mass = (btScalar)6.28;
 		btVector3 localInertia;
 		cyl0->calculateLocalInertia(mass, localInertia);
 		btRigidBody::btRigidBodyConstructionInfo ci(mass, 0, cyl0, localInertia);
@@ -174,7 +174,7 @@ void AllConstraintDemo::initPhysics()
 	btMatrix3x3 mat(orn);
 	axisB = mat.getRow(1);
 
-	btGearConstraint* gear = new btGearConstraint(*bodyA, *bodyB, axisA, axisB, RATIO);
+	btGearConstraint* gear = new btGearConstraint(*bodyA, *bodyB, axisA, axisB, (btScalar)RATIO);
 	m_dynamicsWorld->addConstraint(gear, true);
 
 #endif
@@ -184,17 +184,17 @@ void AllConstraintDemo::initPhysics()
 	{
 		trans.setIdentity();
 		trans.setOrigin(btVector3(1, 30, -5));
-		createRigidBody(mass, trans, shape);
+		createRigidBody((btScalar)mass, trans, shape);
 		trans.setOrigin(btVector3(0, 0, -5));
 
-		btRigidBody* body0 = createRigidBody(mass, trans, shape);
+		btRigidBody* body0 = createRigidBody((btScalar)mass, trans, shape);
 		trans.setOrigin(btVector3(2 * CUBE_HALF_EXTENTS, 20, 0));
 		mass = 1.f;
 		//	btRigidBody* body1 = 0;//createRigidBody( mass,trans,shape);
 		btVector3 pivotInA(CUBE_HALF_EXTENTS, CUBE_HALF_EXTENTS, 0);
 		btTypedConstraint* p2p = new btPoint2PointConstraint(*body0, pivotInA);
 		m_dynamicsWorld->addConstraint(p2p);
-		p2p->setBreakingImpulseThreshold(10.2);
+		p2p->setBreakingImpulseThreshold((btScalar)10.2);
 		p2p->setDbgDrawSize(btScalar(5.f));
 	}
 #endif
@@ -202,7 +202,7 @@ void AllConstraintDemo::initPhysics()
 #if ENABLE_ALL_DEMOS
 	//point to point constraint (ball socket)
 	{
-		btRigidBody* body0 = createRigidBody(mass, trans, shape);
+		btRigidBody* body0 = createRigidBody((btScalar)mass, trans, shape);
 		trans.setOrigin(btVector3(2 * CUBE_HALF_EXTENTS, 20, 0));
 
 		mass = 1.f;
@@ -252,14 +252,14 @@ void AllConstraintDemo::initPhysics()
 		frameInA = btTransform::getIdentity();
 		frameInB = btTransform::getIdentity();
 
-		btRigidBody* pRbA1 = createRigidBody(mass, trans, shape);
+		btRigidBody* pRbA1 = createRigidBody((btScalar)mass, trans, shape);
 		//	btRigidBody* pRbA1 = createRigidBody(0.f, trans, shape);
 		pRbA1->setActivationState(DISABLE_DEACTIVATION);
 
 		// add dynamic rigid body B1
 		worldPos.setValue(-30, 0, 30);
 		trans.setOrigin(worldPos);
-		btRigidBody* pRbB1 = createRigidBody(mass, trans, shape);
+		btRigidBody* pRbB1 = createRigidBody((btScalar)mass, trans, shape);
 		//	btRigidBody* pRbB1 = createRigidBody(0.f, trans, shape);
 		pRbB1->setActivationState(DISABLE_DEACTIVATION);
 
@@ -267,15 +267,15 @@ void AllConstraintDemo::initPhysics()
 
 		btSliderConstraint* spSlider1 = new btSliderConstraint(*pRbA1, *pRbB1, frameInA, frameInB, true);
 		//	spSlider1 = new btSliderConstraint(*pRbA1, *pRbB1, frameInA, frameInB, false);
-		spSlider1->setLowerLinLimit(-15.0F);
-		spSlider1->setUpperLinLimit(-5.0F);
+		spSlider1->setLowerLinLimit((btScalar)-15.0F);
+		spSlider1->setUpperLinLimit((btScalar)-5.0F);
 		//	spSlider1->setLowerLinLimit(5.0F);
 		//	spSlider1->setUpperLinLimit(15.0F);
 		//	spSlider1->setLowerLinLimit(-10.0F);
 		//	spSlider1->setUpperLinLimit(-10.0F);
 
-		spSlider1->setLowerAngLimit(-SIMD_PI / 3.0F);
-		spSlider1->setUpperAngLimit(SIMD_PI / 3.0F);
+		spSlider1->setLowerAngLimit(-SIMD_PI / (btScalar)3.0F);
+		spSlider1->setUpperAngLimit(SIMD_PI / (btScalar)3.0F);
 
 		m_dynamicsWorld->addConstraint(spSlider1, true);
 		spSlider1->setDbgDrawSize(btScalar(5.f));
@@ -288,16 +288,16 @@ void AllConstraintDemo::initPhysics()
 		mass = 1.f;
 		btVector3 sliderWorldPos(0, 10, 0);
 		btVector3 sliderAxis(1, 0, 0);
-		btScalar angle = 0.f;  //SIMD_RADS_PER_DEG * 10.f;
+		btScalar angle = (btScalar)0.f;  //SIMD_RADS_PER_DEG * 10.f;
 		btMatrix3x3 sliderOrientation(btQuaternion(sliderAxis, angle));
 		trans.setIdentity();
 		trans.setOrigin(sliderWorldPos);
 		//trans.setBasis(sliderOrientation);
 		sliderTransform = trans;
 
-		d6body0 = createRigidBody(mass, trans, shape);
+		d6body0 = createRigidBody((btScalar)mass, trans, shape);
 		d6body0->setActivationState(DISABLE_DEACTIVATION);
-		btRigidBody* fixedBody1 = createRigidBody(0, trans, 0);
+		btRigidBody* fixedBody1 = createRigidBody((btScalar)0, trans, 0);
 		m_dynamicsWorld->addRigidBody(fixedBody1);
 
 		btTransform frameInA, frameInB;
@@ -317,12 +317,12 @@ void AllConstraintDemo::initPhysics()
 		//		spSlider6Dof->setAngularUpperLimit(btVector3(1.5,0,0));
 		//		spSlider6Dof->setAngularLowerLimit(btVector3(0,0,0));
 		//		spSlider6Dof->setAngularUpperLimit(btVector3(0,0,0));
-		spSlider6Dof->setAngularLowerLimit(btVector3(-SIMD_PI, 0, 0));
+		spSlider6Dof->setAngularLowerLimit(btVector3(-SIMD_PI, (btScalar)0, (btScalar)0));
 		spSlider6Dof->setAngularUpperLimit(btVector3(1.5, 0, 0));
 
 		spSlider6Dof->getTranslationalLimitMotor()->m_enableMotor[0] = true;
-		spSlider6Dof->getTranslationalLimitMotor()->m_targetVelocity[0] = -5.0f;
-		spSlider6Dof->getTranslationalLimitMotor()->m_maxMotorForce[0] = 6.0f;
+		spSlider6Dof->getTranslationalLimitMotor()->m_targetVelocity[0] = (btScalar)-5.0f;
+		spSlider6Dof->getTranslationalLimitMotor()->m_maxMotorForce[0] = (btScalar)6.0f;
 
 		m_dynamicsWorld->addConstraint(spSlider6Dof);
 		spSlider6Dof->setDbgDrawSize(btScalar(5.f));
@@ -335,7 +335,7 @@ void AllConstraintDemo::initPhysics()
 		btTransform doorTrans;
 		doorTrans.setIdentity();
 		doorTrans.setOrigin(btVector3(-5.0f, -2.0f, 0.0f));
-		btRigidBody* pDoorBody = createRigidBody(1.0, doorTrans, pDoorShape);
+		btRigidBody* pDoorBody = createRigidBody((btScalar)1.0, doorTrans, pDoorShape);
 		pDoorBody->setActivationState(DISABLE_DEACTIVATION);
 		const btVector3 btPivotA(10.f + 2.1f, -2.0f, 0.0f);  // right next to the door slightly outside
 		btVector3 btAxisA(0.0f, 1.0f, 0.0f);                 // pointing upwards, aka Y-axis
@@ -350,7 +350,7 @@ void AllConstraintDemo::initPhysics()
 		//		spDoorHinge->setLimit( -SIMD_PI*0.8f, SIMD_PI);
 		//		spDoorHinge->setLimit( -SIMD_PI*0.8f, SIMD_PI, 0.9f, 0.3f, 0.0f);
 		//		spDoorHinge->setLimit( -SIMD_PI*0.8f, SIMD_PI, 0.9f, 0.01f, 0.0f); // "sticky limits"
-		spDoorHinge->setLimit(-SIMD_PI * 0.25f, SIMD_PI * 0.25f);
+		spDoorHinge->setLimit(-SIMD_PI * (btScalar)0.25f, SIMD_PI * (btScalar)0.25f);
 		//		spDoorHinge->setLimit( 0.0f, 0.0f );
 		m_dynamicsWorld->addConstraint(spDoorHinge);
 		spDoorHinge->setDbgDrawSize(btScalar(5.f));
@@ -365,16 +365,16 @@ void AllConstraintDemo::initPhysics()
 		btTransform tr;
 		tr.setIdentity();
 		tr.setOrigin(btVector3(btScalar(10.), btScalar(6.), btScalar(0.)));
-		tr.getBasis().setEulerZYX(0, 0, 0);
+		tr.getBasis().setEulerZYX((btScalar)0, (btScalar)0, (btScalar)0);
 		//		btRigidBody* pBodyA = createRigidBody( mass, tr, shape);
-		btRigidBody* pBodyA = createRigidBody(0.0, tr, shape);
+		btRigidBody* pBodyA = createRigidBody((btScalar)0.0, tr, shape);
 		//		btRigidBody* pBodyA = createRigidBody( 0.0, tr, 0);
 		pBodyA->setActivationState(DISABLE_DEACTIVATION);
 
 		tr.setIdentity();
 		tr.setOrigin(btVector3(btScalar(0.), btScalar(6.), btScalar(0.)));
-		tr.getBasis().setEulerZYX(0, 0, 0);
-		btRigidBody* pBodyB = createRigidBody(mass, tr, shape);
+		tr.getBasis().setEulerZYX((btScalar)0, (btScalar)0, (btScalar)0);
+		btRigidBody* pBodyB = createRigidBody((btScalar)mass, tr, shape);
 		//		btRigidBody* pBodyB = createRigidBody(0.f, tr, shape);
 		pBodyB->setActivationState(DISABLE_DEACTIVATION);
 
@@ -402,8 +402,8 @@ void AllConstraintDemo::initPhysics()
 		//		pGen6DOF->setAngularLowerLimit(btVector3(0., 0., -SIMD_HALF_PI));
 		//		pGen6DOF->setAngularUpperLimit(btVector3(0., 0., SIMD_HALF_PI));
 
-		pGen6DOF->setAngularLowerLimit(btVector3(-SIMD_HALF_PI * 0.5f, -0.75, -SIMD_HALF_PI * 0.8f));
-		pGen6DOF->setAngularUpperLimit(btVector3(SIMD_HALF_PI * 0.5f, 0.75, SIMD_HALF_PI * 0.8f));
+		pGen6DOF->setAngularLowerLimit(btVector3(-SIMD_HALF_PI * (btScalar)0.5f, (btScalar)-0.75, -SIMD_HALF_PI * (btScalar)0.8f));
+		pGen6DOF->setAngularUpperLimit(btVector3(SIMD_HALF_PI * (btScalar)0.5f, (btScalar)0.75, SIMD_HALF_PI * (btScalar)0.8f));
 		//		pGen6DOF->setAngularLowerLimit(btVector3(0.f, -0.75, SIMD_HALF_PI * 0.8f));
 		//		pGen6DOF->setAngularUpperLimit(btVector3(0.f, 0.75, -SIMD_HALF_PI * 0.8f));
 		//		pGen6DOF->setAngularLowerLimit(btVector3(0.f, -SIMD_HALF_PI * 0.8f, SIMD_HALF_PI * 1.98f));
@@ -428,29 +428,29 @@ void AllConstraintDemo::initPhysics()
 		btTransform tr;
 		tr.setIdentity();
 		tr.setOrigin(btVector3(btScalar(-10.), btScalar(5.), btScalar(0.)));
-		tr.getBasis().setEulerZYX(0, 0, 0);
-		btRigidBody* pBodyA = createRigidBody(1.0, tr, shape);
+		tr.getBasis().setEulerZYX((btScalar)0, (btScalar)0, (btScalar)0);
+		btRigidBody* pBodyA = createRigidBody((btScalar)1.0, tr, shape);
 		//		btRigidBody* pBodyA = createRigidBody( 0.0, tr, shape);
 		pBodyA->setActivationState(DISABLE_DEACTIVATION);
 
 		tr.setIdentity();
 		tr.setOrigin(btVector3(btScalar(-10.), btScalar(-5.), btScalar(0.)));
-		tr.getBasis().setEulerZYX(0, 0, 0);
-		btRigidBody* pBodyB = createRigidBody(0.0, tr, shape);
+		tr.getBasis().setEulerZYX((btScalar)0, (btScalar)0, (btScalar)0);
+		btRigidBody* pBodyB = createRigidBody((btScalar)0.0, tr, shape);
 		//		btRigidBody* pBodyB = createRigidBody(1.0, tr, shape);
 
 		btTransform frameInA, frameInB;
 		frameInA = btTransform::getIdentity();
-		frameInA.getBasis().setEulerZYX(0, 0, SIMD_PI_2);
+		frameInA.getBasis().setEulerZYX((btScalar)0, (btScalar)0, SIMD_PI_2);
 		frameInA.setOrigin(btVector3(btScalar(0.), btScalar(-5.), btScalar(0.)));
 		frameInB = btTransform::getIdentity();
-		frameInB.getBasis().setEulerZYX(0, 0, SIMD_PI_2);
+		frameInB.getBasis().setEulerZYX((btScalar)0, (btScalar)0, SIMD_PI_2);
 		frameInB.setOrigin(btVector3(btScalar(0.), btScalar(5.), btScalar(0.)));
 
 		m_ctc = new btConeTwistConstraint(*pBodyA, *pBodyB, frameInA, frameInB);
 		//		m_ctc->setLimit(btScalar(SIMD_PI_4), btScalar(SIMD_PI_4), btScalar(SIMD_PI) * 0.8f);
 		//		m_ctc->setLimit(btScalar(SIMD_PI_4*0.6f), btScalar(SIMD_PI_4), btScalar(SIMD_PI) * 0.8f, 1.0f); // soft limit == hard limit
-		m_ctc->setLimit(btScalar(SIMD_PI_4 * 0.6f), btScalar(SIMD_PI_4), btScalar(SIMD_PI) * 0.8f, 0.5f);
+		m_ctc->setLimit(btScalar(SIMD_PI_4 * (btScalar)0.6f), btScalar(SIMD_PI_4), btScalar(SIMD_PI) * (btScalar)0.8f, (btScalar)0.5f);
 		m_dynamicsWorld->addConstraint(m_ctc, true);
 		m_ctc->setDbgDrawSize(btScalar(5.f));
 		// s_bTestConeTwistMotor = true; // use only with old solver for now
@@ -462,14 +462,14 @@ void AllConstraintDemo::initPhysics()
 		btTransform tr;
 		tr.setIdentity();
 		tr.setOrigin(btVector3(btScalar(0.), btScalar(0.), btScalar(0.)));
-		btRigidBody* pBody = createRigidBody(1.0, tr, shape);
+		btRigidBody* pBody = createRigidBody((btScalar)1.0, tr, shape);
 		pBody->setActivationState(DISABLE_DEACTIVATION);
 		const btVector3 btPivotA(10.0f, 0.0f, 0.0f);
 		btVector3 btAxisA(0.0f, 0.0f, 1.0f);
 
 		btHingeConstraint* pHinge = new btHingeConstraint(*pBody, btPivotA, btAxisA);
 		//		pHinge->enableAngularMotor(true, -1.0, 0.165); // use for the old solver
-		pHinge->enableAngularMotor(true, -1.0f, 1.65f);  // use for the new SIMD solver
+		pHinge->enableAngularMotor(true, (btScalar)-1.0f, (btScalar)1.65f);  // use for the new SIMD solver
 		m_dynamicsWorld->addConstraint(pHinge);
 		pHinge->setDbgDrawSize(btScalar(5.f));
 	}
@@ -483,12 +483,12 @@ void AllConstraintDemo::initPhysics()
 		btTransform tr;
 		tr.setIdentity();
 		tr.setOrigin(btVector3(btScalar(20.), btScalar(4.), btScalar(0.)));
-		btRigidBody* pBodyA = createRigidBody(0.0, tr, shape);
+		btRigidBody* pBodyA = createRigidBody((btScalar)0.0, tr, shape);
 		pBodyA->setActivationState(DISABLE_DEACTIVATION);
 		// dynamic bodyB (child) below it :
 		tr.setIdentity();
 		tr.setOrigin(btVector3(btScalar(20.), btScalar(0.), btScalar(0.)));
-		btRigidBody* pBodyB = createRigidBody(1.0, tr, shape);
+		btRigidBody* pBodyB = createRigidBody((btScalar)1.0, tr, shape);
 		pBodyB->setActivationState(DISABLE_DEACTIVATION);
 		// add some (arbitrary) data to build constraint frames
 		btVector3 parentAxis(1.f, 0.f, 0.f);
@@ -496,8 +496,8 @@ void AllConstraintDemo::initPhysics()
 		btVector3 anchor(20.f, 2.f, 0.f);
 
 		btUniversalConstraint* pUniv = new btUniversalConstraint(*pBodyA, *pBodyB, anchor, parentAxis, childAxis);
-		pUniv->setLowerLimit(-SIMD_HALF_PI * 0.5f, -SIMD_HALF_PI * 0.5f);
-		pUniv->setUpperLimit(SIMD_HALF_PI * 0.5f, SIMD_HALF_PI * 0.5f);
+		pUniv->setLowerLimit(-SIMD_HALF_PI * (btScalar)0.5f, -SIMD_HALF_PI * (btScalar)0.5f);
+		pUniv->setUpperLimit(SIMD_HALF_PI * (btScalar)0.5f, SIMD_HALF_PI * (btScalar)0.5f);
 		// add constraint to world
 		m_dynamicsWorld->addConstraint(pUniv, true);
 		// draw constraint frames and limits for debugging
@@ -511,14 +511,14 @@ void AllConstraintDemo::initPhysics()
 		btTransform tr;
 		tr.setIdentity();
 		tr.setOrigin(btVector3(btScalar(-20.), btScalar(16.), btScalar(0.)));
-		tr.getBasis().setEulerZYX(0, 0, 0);
-		btRigidBody* pBodyA = createRigidBody(0.0, tr, shape);
+		tr.getBasis().setEulerZYX((btScalar)0, (btScalar)0, (btScalar)0);
+		btRigidBody* pBodyA = createRigidBody((btScalar)0.0, tr, shape);
 		pBodyA->setActivationState(DISABLE_DEACTIVATION);
 
 		tr.setIdentity();
 		tr.setOrigin(btVector3(btScalar(-10.), btScalar(16.), btScalar(0.)));
-		tr.getBasis().setEulerZYX(0, 0, 0);
-		btRigidBody* pBodyB = createRigidBody(1.0, tr, shape);
+		tr.getBasis().setEulerZYX((btScalar)0, (btScalar)0, (btScalar)0);
+		btRigidBody* pBodyB = createRigidBody((btScalar)1.0, tr, shape);
 		pBodyB->setActivationState(DISABLE_DEACTIVATION);
 
 		btTransform frameInA, frameInB;
@@ -538,11 +538,11 @@ void AllConstraintDemo::initPhysics()
 		pGen6DOFSpring->setDbgDrawSize(btScalar(5.f));
 
 		pGen6DOFSpring->enableSpring(0, true);
-		pGen6DOFSpring->setStiffness(0, 39.478f);
-		pGen6DOFSpring->setDamping(0, 0.5f);
+		pGen6DOFSpring->setStiffness(0, (btScalar)39.478f);
+		pGen6DOFSpring->setDamping(0, (btScalar)0.5f);
 		pGen6DOFSpring->enableSpring(5, true);
-		pGen6DOFSpring->setStiffness(5, 39.478f);
-		pGen6DOFSpring->setDamping(0, 0.3f);
+		pGen6DOFSpring->setStiffness(5, (btScalar)39.478f);
+		pGen6DOFSpring->setDamping(0, (btScalar)0.3f);
 		pGen6DOFSpring->setEquilibriumPoint();
 	}
 #endif
@@ -554,20 +554,20 @@ void AllConstraintDemo::initPhysics()
 		btTransform tr;
 		tr.setIdentity();
 		tr.setOrigin(btVector3(btScalar(-20.), btScalar(4.), btScalar(0.)));
-		btRigidBody* pBodyA = createRigidBody(0.0, tr, shape);
+		btRigidBody* pBodyA = createRigidBody((btScalar)0.0, tr, shape);
 		pBodyA->setActivationState(DISABLE_DEACTIVATION);
 		// dynamic bodyB (child) below it :
 		tr.setIdentity();
 		tr.setOrigin(btVector3(btScalar(-20.), btScalar(0.), btScalar(0.)));
-		btRigidBody* pBodyB = createRigidBody(1.0, tr, shape);
+		btRigidBody* pBodyB = createRigidBody((btScalar)1.0, tr, shape);
 		pBodyB->setActivationState(DISABLE_DEACTIVATION);
 		// add some data to build constraint frames
 		btVector3 parentAxis(0.f, 1.f, 0.f);
 		btVector3 childAxis(1.f, 0.f, 0.f);
 		btVector3 anchor(-20.f, 0.f, 0.f);
 		btHinge2Constraint* pHinge2 = new btHinge2Constraint(*pBodyA, *pBodyB, anchor, parentAxis, childAxis);
-		pHinge2->setLowerLimit(-SIMD_HALF_PI * 0.5f);
-		pHinge2->setUpperLimit(SIMD_HALF_PI * 0.5f);
+		pHinge2->setLowerLimit(-SIMD_HALF_PI * (btScalar)0.5f);
+		pHinge2->setUpperLimit(SIMD_HALF_PI * (btScalar)0.5f);
 		// add constraint to world
 		m_dynamicsWorld->addConstraint(pHinge2, true);
 		// draw constraint frames and limits for debugging
@@ -582,12 +582,12 @@ void AllConstraintDemo::initPhysics()
 		btTransform tr;
 		tr.setIdentity();
 		tr.setOrigin(btVector3(btScalar(-20.), btScalar(-2.), btScalar(0.)));
-		btRigidBody* pBodyA = createRigidBody(1.0f, tr, shape);
+		btRigidBody* pBodyA = createRigidBody((btScalar)1.0f, tr, shape);
 		pBodyA->setActivationState(DISABLE_DEACTIVATION);
 		// dynamic bodyB:
 		tr.setIdentity();
 		tr.setOrigin(btVector3(btScalar(-30.), btScalar(-2.), btScalar(0.)));
-		btRigidBody* pBodyB = createRigidBody(10.0, tr, shape);
+		btRigidBody* pBodyB = createRigidBody((btScalar)10.0, tr, shape);
 		pBodyB->setActivationState(DISABLE_DEACTIVATION);
 		// add some data to build constraint frames
 		btVector3 axisA(0.f, 1.f, 0.f);
@@ -595,7 +595,7 @@ void AllConstraintDemo::initPhysics()
 		btVector3 pivotA(-5.f, 0.f, 0.f);
 		btVector3 pivotB(5.f, 0.f, 0.f);
 		spHingeDynAB = new btHingeConstraint(*pBodyA, *pBodyB, pivotA, pivotB, axisA, axisB);
-		spHingeDynAB->setLimit(-SIMD_HALF_PI * 0.5f, SIMD_HALF_PI * 0.5f);
+		spHingeDynAB->setLimit(-SIMD_HALF_PI * (btScalar)0.5f, SIMD_HALF_PI * (btScalar)0.5f);
 		// add constraint to world
 		m_dynamicsWorld->addConstraint(spHingeDynAB, true);
 		// draw constraint frames and limits for debugging
@@ -608,7 +608,7 @@ void AllConstraintDemo::initPhysics()
 		btTransform tr;
 		tr.setIdentity();
 		tr.setOrigin(btVector3(btScalar(10.), btScalar(-15.), btScalar(0.)));
-		btRigidBody* pBody = createRigidBody(1.0, tr, shape);
+		btRigidBody* pBody = createRigidBody((btScalar)1.0, tr, shape);
 		pBody->setActivationState(DISABLE_DEACTIVATION);
 		btTransform frameB;
 		frameB.setIdentity();
@@ -622,8 +622,8 @@ void AllConstraintDemo::initPhysics()
 		pGen6Dof->setLinearUpperLimit(btVector3(10., 0, 0));
 
 		pGen6Dof->getTranslationalLimitMotor()->m_enableMotor[0] = true;
-		pGen6Dof->getTranslationalLimitMotor()->m_targetVelocity[0] = 5.0f;
-		pGen6Dof->getTranslationalLimitMotor()->m_maxMotorForce[0] = 6.0f;
+		pGen6Dof->getTranslationalLimitMotor()->m_targetVelocity[0] = (btScalar)5.0f;
+		pGen6Dof->getTranslationalLimitMotor()->m_maxMotorForce[0] = (btScalar)6.0f;
 	}
 #endif
 

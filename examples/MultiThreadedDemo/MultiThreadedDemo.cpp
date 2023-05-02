@@ -24,14 +24,14 @@ subject to the following restrictions:
 #include <algorithm>
 #include <cmath>
 
-static btScalar gSliderStackRows = 1.0f;
-static btScalar gSliderStackColumns = 1.0f;
-static btScalar gSliderStackHeight = 15.0f;
-static btScalar gSliderStackWidth = 8.0f;
-static btScalar gSliderGroundHorizontalAmplitude = 0.0f;
-static btScalar gSliderGroundVerticalAmplitude = 0.0f;
-static btScalar gSliderGroundTilt = 0.0f;
-static btScalar gSliderRollingFriction = 0.0f;
+static btScalar gSliderStackRows = (btScalar)1.0f;
+static btScalar gSliderStackColumns = (btScalar)1.0f;
+static btScalar gSliderStackHeight = (btScalar)15.0f;
+static btScalar gSliderStackWidth = (btScalar)8.0f;
+static btScalar gSliderGroundHorizontalAmplitude = (btScalar)0.0f;
+static btScalar gSliderGroundVerticalAmplitude = (btScalar)0.0f;
+static btScalar gSliderGroundTilt = (btScalar)0.0f;
+static btScalar gSliderRollingFriction = (btScalar)0.0f;
 static bool gSpheresNotBoxes = false;
 
 static void boolPtrButtonCallback(int buttonId, bool buttonState, void* userPointer)
@@ -55,8 +55,8 @@ class MultiThreadedDemo : public CommonRigidBodyMTBase
 	float m_cameraDist;
 	btRigidBody* m_groundBody;
 	btTransform m_groundStartXf;
-	float m_groundMovePhase;
-	float m_prevRollingFriction;
+	btScalar m_groundMovePhase;
+	btScalar m_prevRollingFriction;
 
 	void createStack(const btTransform& trans, btCollisionShape* boxShape, const btVector3& halfBoxSize, int size, int width);
 	void createSceneObjects();
@@ -71,25 +71,25 @@ public:
 
 	btQuaternion getGroundRotation() const
 	{
-		btScalar tilt = gSliderGroundTilt * SIMD_2_PI / 360.0f;
+		btScalar tilt = gSliderGroundTilt * SIMD_2_PI / (btScalar)360.0f;
 		return btQuaternion(btVector3(1.0f, 0.0f, 0.0f), tilt);
 	}
 	struct TestSumBody : public btIParallelSumBody
 	{
 		virtual btScalar sumLoop(int iBegin, int iEnd) const BT_OVERRIDE
 		{
-			btScalar sum = 0.0f;
+			btScalar sum = (btScalar)0.0f;
 			for (int i = iBegin; i < iEnd; ++i)
 			{
 				if (i > 0)
 				{
-					sum += 1.0f / btScalar(i);
+					sum += (btScalar)1.0f / btScalar(i);
 				}
 			}
 			return sum;
 		}
 	};
-	virtual void stepSimulation(float deltaTime) BT_OVERRIDE
+	virtual void stepSimulation(btScalar deltaTime) BT_OVERRIDE
 	{
 		if (m_dynamicsWorld)
 		{
@@ -106,14 +106,14 @@ public:
 			if (m_groundBody)
 			{
 				// update ground
-				const float cyclesPerSecond = 1.0f;
+				const btScalar cyclesPerSecond = (btScalar)1.0f;
 				m_groundMovePhase += cyclesPerSecond * deltaTime;
-				m_groundMovePhase -= std::floor(m_groundMovePhase);  // keep phase between 0 and 1
+				m_groundMovePhase -= floor(m_groundMovePhase);  // keep phase between 0 and 1
 				btTransform xf = m_groundStartXf;
-				float gndHOffset = btSin(m_groundMovePhase * SIMD_2_PI) * gSliderGroundHorizontalAmplitude;
-				float gndHVel = btCos(m_groundMovePhase * SIMD_2_PI) * gSliderGroundHorizontalAmplitude * cyclesPerSecond * SIMD_2_PI;  // d(gndHOffset)/dt
-				float gndVOffset = btSin(m_groundMovePhase * SIMD_2_PI) * gSliderGroundVerticalAmplitude;
-				float gndVVel = btCos(m_groundMovePhase * SIMD_2_PI) * gSliderGroundVerticalAmplitude * cyclesPerSecond * SIMD_2_PI;  // d(gndVOffset)/dt
+				btScalar gndHOffset = btSin(m_groundMovePhase * (btScalar)SIMD_2_PI) * gSliderGroundHorizontalAmplitude;
+				btScalar gndHVel = btCos(m_groundMovePhase * SIMD_2_PI) * gSliderGroundHorizontalAmplitude * cyclesPerSecond * SIMD_2_PI;  // d(gndHOffset)/dt
+				btScalar gndVOffset = btSin(m_groundMovePhase * SIMD_2_PI) * gSliderGroundVerticalAmplitude;
+				btScalar gndVVel = btCos(m_groundMovePhase * SIMD_2_PI) * gSliderGroundVerticalAmplitude * cyclesPerSecond * SIMD_2_PI;  // d(gndVOffset)/dt
 				btVector3 offset(0, 0, 0);
 				btVector3 vel(0, 0, 0);
 				int horizAxis = 2;
@@ -127,7 +127,7 @@ public:
 				m_groundBody->setLinearVelocity(vel);
 			}
 			// always step by 1/60 for benchmarking
-			m_dynamicsWorld->stepSimulation(1.0f / 60.0f, 0);
+			m_dynamicsWorld->stepSimulation((btScalar)1.0f / (btScalar)60.0f, 0);
 		}
 #if 0
         {
@@ -145,9 +145,9 @@ public:
 		m_guiHelper->resetCamera(m_cameraDist,
 								 m_cameraYaw,
 								 m_cameraPitch,
-								 m_cameraTargetPos.x(),
-								 m_cameraTargetPos.y(),
-								 m_cameraTargetPos.z());
+								 (float)m_cameraTargetPos.x(),
+								 (float)m_cameraTargetPos.y(),
+			(float)m_cameraTargetPos.z());
 	}
 };
 
@@ -155,12 +155,12 @@ MultiThreadedDemo::MultiThreadedDemo(struct GUIHelperInterface* helper)
 	: CommonRigidBodyMTBase(helper)
 {
 	m_groundBody = NULL;
-	m_groundMovePhase = 0.0f;
+	m_groundMovePhase = (btScalar)0.0f;
 	m_cameraTargetPos = btVector3(0.0f, 0.0f, 0.0f);
 	m_cameraPitch = -30.0f;
 	m_cameraYaw = 90.0f;
 	m_cameraDist = 48.0f;
-	m_prevRollingFriction = -1.0f;
+	m_prevRollingFriction = (btScalar)-1.0f;
 	helper->setUpAxis(kUpAxis);
 }
 
@@ -245,8 +245,8 @@ void MultiThreadedDemo::initPhysics()
 
 btRigidBody* MultiThreadedDemo::localCreateRigidBody(btScalar mass, const btTransform& startTransform, btCollisionShape* shape)
 {
-	btRigidBody* body = createRigidBody(mass, startTransform, shape);
-	if (mass > 0.0f)
+	btRigidBody* body = createRigidBody((float)mass, startTransform, shape);
+	if (mass > (btScalar)0.0f)
 	{
 		// prevent bodies from sleeping to make profiling/benchmarking easier
 		body->forceActivationState(DISABLE_DEACTIVATION);
@@ -259,13 +259,13 @@ void MultiThreadedDemo::createStack(const btTransform& parentTrans, btCollisionS
 	btTransform trans;
 	trans.setIdentity();
 	trans.setRotation(parentTrans.getRotation());
-	float halfBoxHeight = halfBoxSize.y();
-	float halfBoxWidth = halfBoxSize.x();
+	btScalar halfBoxHeight = halfBoxSize.y();
+	btScalar halfBoxWidth = halfBoxSize.x();
 
-	btVector3 offset = btVector3(0, 0, -halfBoxSize.z() * (width - 1));
+	btVector3 offset = btVector3((btScalar)0, (btScalar)0, -halfBoxSize.z() * (width - 1));
 	for (int iZ = 0; iZ < width; iZ++)
 	{
-		offset += btVector3(0, 0, halfBoxSize.z() * 2.0f);
+		offset += btVector3((btScalar)0, (btScalar)0, halfBoxSize.z() * (btScalar)2.0f);
 		for (int iY = 0; iY < height; iY++)
 		{
 			// This constructs a row, from left to right
@@ -274,13 +274,13 @@ void MultiThreadedDemo::createStack(const btTransform& parentTrans, btCollisionS
 			{
 				btVector3 pos = offset + btVector3(halfBoxWidth * (1 + iX * 2 - rowSize),
 												   halfBoxHeight * (1 + iY * 2),
-												   0.0f);
+												   (btScalar)0.0f);
 
 				trans.setOrigin(parentTrans(pos));
-				btScalar mass = 1.f;
+				btScalar mass = (btScalar)1.f;
 
 				btRigidBody* body = localCreateRigidBody(mass, trans, boxShape);
-				body->setFriction(1.0f);
+				body->setFriction((btScalar)1.0f);
 				body->setRollingFriction(gSliderRollingFriction);
 			}
 		}
@@ -297,14 +297,14 @@ void MultiThreadedDemo::createSceneObjects()
 		//either use heightfield or triangle mesh
 
 		btVector3 groundExtents(400, 400, 400);
-		groundExtents[kUpAxis] = 3;
+		groundExtents[kUpAxis] = (btScalar)3;
 		btCollisionShape* groundShape = new btBoxShape(groundExtents);
 		m_collisionShapes.push_back(groundShape);
 
 		//create ground object
 		m_groundBody = createKinematicBody(m_groundStartXf, groundShape);
 		m_groundBody->forceActivationState(DISABLE_DEACTIVATION);
-		m_groundBody->setFriction(1.0f);
+		m_groundBody->setFriction((btScalar)1.0f);
 	}
 
 	{
@@ -314,13 +314,13 @@ void MultiThreadedDemo::createSceneObjects()
 		int numStackCols = btMax(1, int(gSliderStackColumns));
 		int stackHeight = int(gSliderStackHeight);
 		int stackWidth = int(gSliderStackWidth);
-		float stackZSpacing = 2.0f + stackWidth * halfExtents.x() * 2.0f;
-		float stackXSpacing = 20.0f;
+		btScalar stackZSpacing = (btScalar)2.0f + stackWidth * halfExtents.x() * (btScalar)2.0f;
+		btScalar stackXSpacing = (btScalar)20.0f;
 
 		btBoxShape* boxShape = new btBoxShape(halfExtents);
 		m_collisionShapes.push_back(boxShape);
 
-		btSphereShape* sphereShape = new btSphereShape(0.5f);
+		btSphereShape* sphereShape = new btSphereShape((btScalar)0.5f);
 		m_collisionShapes.push_back(sphereShape);
 
 		btCollisionShape* shape = boxShape;
@@ -336,7 +336,7 @@ void MultiThreadedDemo::createSceneObjects()
 		{
 			for (int iZ = 0; iZ < numStackRows; ++iZ)
 			{
-				btVector3 center = btVector3(iX * stackXSpacing, 0.0f, (iZ - numStackRows / 2) * stackZSpacing);
+				btVector3 center = btVector3(iX * stackXSpacing, (btScalar)0.0f, (iZ - numStackRows / 2) * stackZSpacing);
 				btTransform trans = groundTrans;
 				trans.setOrigin(groundTrans(center));
 				createStack(trans, shape, halfExtents, stackHeight, stackWidth);

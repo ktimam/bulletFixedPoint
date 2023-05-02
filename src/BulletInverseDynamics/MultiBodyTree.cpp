@@ -266,15 +266,15 @@ int MultiBodyTree::addBody(int body_index, int parent_index, JointType joint_typ
 				bt_id_warning_message(
 					"axis of motion not a unit axis ([%f %f %f]), will use normalized vector\n",
 					body_axis_of_motion(0), body_axis_of_motion(1), body_axis_of_motion(2));
-				idScalar length = BT_ID_SQRT(BT_ID_POW(body_axis_of_motion(0), 2) +
-											 BT_ID_POW(body_axis_of_motion(1), 2) +
-											 BT_ID_POW(body_axis_of_motion(2), 2));
+				idScalar length = BT_ID_SQRT(BT_ID_POW(body_axis_of_motion(0), (btScalar)2) +
+											 BT_ID_POW(body_axis_of_motion(1), (btScalar)2) +
+											 BT_ID_POW(body_axis_of_motion(2), (btScalar)2));
 				if (length < BT_ID_SQRT(std::numeric_limits<idScalar>::min()))
 				{
 					bt_id_error_message("axis of motion vector too short (%e)\n", length);
 					return -1;
 				}
-				body_axis_of_motion = (1.0 / length) * body_axis_of_motion;
+				body_axis_of_motion = ((btScalar)1.0 / length) * body_axis_of_motion;
 			}
 			break;
 		case FIXED:
@@ -289,7 +289,7 @@ int MultiBodyTree::addBody(int body_index, int parent_index, JointType joint_typ
 	}
 
 	// sanity check for mass properties. Zero mass is OK.
-	if (mass < 0)
+	if (mass < (btScalar)0)
 	{
 		m_mass_parameters_are_valid = false;
 		bt_id_error_message("Body %d has invalid mass %e\n", body_index, mass);
@@ -418,46 +418,46 @@ int MultiBodyTree::finalize()
 				rigid_body.m_Jac_JR(0) = joint.m_child_axis_of_motion(0);
 				rigid_body.m_Jac_JR(1) = joint.m_child_axis_of_motion(1);
 				rigid_body.m_Jac_JR(2) = joint.m_child_axis_of_motion(2);
-				rigid_body.m_Jac_JT(0) = 0.0;
-				rigid_body.m_Jac_JT(1) = 0.0;
-				rigid_body.m_Jac_JT(2) = 0.0;
+				rigid_body.m_Jac_JT(0) = (btScalar)0.0;
+				rigid_body.m_Jac_JT(1) = (btScalar)0.0;
+				rigid_body.m_Jac_JT(2) = (btScalar)0.0;
 				break;
 			case PRISMATIC:
-				rigid_body.m_Jac_JR(0) = 0.0;
-				rigid_body.m_Jac_JR(1) = 0.0;
-				rigid_body.m_Jac_JR(2) = 0.0;
+				rigid_body.m_Jac_JR(0) = (btScalar)0.0;
+				rigid_body.m_Jac_JR(1) = (btScalar)0.0;
+				rigid_body.m_Jac_JR(2) = (btScalar)0.0;
 				rigid_body.m_Jac_JT(0) = joint.m_child_axis_of_motion(0);
 				rigid_body.m_Jac_JT(1) = joint.m_child_axis_of_motion(1);
 				rigid_body.m_Jac_JT(2) = joint.m_child_axis_of_motion(2);
 				break;
 			case FIXED:
 				// NOTE/TODO: dimension really should be zero ..
-				rigid_body.m_Jac_JR(0) = 0.0;
-				rigid_body.m_Jac_JR(1) = 0.0;
-				rigid_body.m_Jac_JR(2) = 0.0;
-				rigid_body.m_Jac_JT(0) = 0.0;
-				rigid_body.m_Jac_JT(1) = 0.0;
-				rigid_body.m_Jac_JT(2) = 0.0;
+				rigid_body.m_Jac_JR(0) = (btScalar)0.0;
+				rigid_body.m_Jac_JR(1) = (btScalar)0.0;
+				rigid_body.m_Jac_JR(2) = (btScalar)0.0;
+				rigid_body.m_Jac_JT(0) = (btScalar)0.0;
+				rigid_body.m_Jac_JT(1) = (btScalar)0.0;
+				rigid_body.m_Jac_JT(2) = (btScalar)0.0;
 				break;
 			case SPHERICAL:
 				// NOTE/TODO: this is not really correct.
 				// the Jacobians should be 3x3 matrices here !
-				rigid_body.m_Jac_JR(0) = 0.0;
-				rigid_body.m_Jac_JR(1) = 0.0;
-				rigid_body.m_Jac_JR(2) = 0.0;
-				rigid_body.m_Jac_JT(0) = 0.0;
-				rigid_body.m_Jac_JT(1) = 0.0;
-				rigid_body.m_Jac_JT(2) = 0.0;
+				rigid_body.m_Jac_JR(0) = (btScalar)0.0;
+				rigid_body.m_Jac_JR(1) = (btScalar)0.0;
+				rigid_body.m_Jac_JR(2) = (btScalar)0.0;
+				rigid_body.m_Jac_JT(0) = (btScalar)0.0;
+				rigid_body.m_Jac_JT(1) = (btScalar)0.0;
+				rigid_body.m_Jac_JT(2) = (btScalar)0.0;
 				break;
 			case FLOATING:
 				// NOTE/TODO: this is not really correct.
 				// the Jacobians should be 3x3 matrices here !
-				rigid_body.m_Jac_JR(0) = 0.0;
-				rigid_body.m_Jac_JR(1) = 0.0;
-				rigid_body.m_Jac_JR(2) = 0.0;
-				rigid_body.m_Jac_JT(0) = 0.0;
-				rigid_body.m_Jac_JT(1) = 0.0;
-				rigid_body.m_Jac_JT(2) = 0.0;
+				rigid_body.m_Jac_JR(0) = (btScalar)0.0;
+				rigid_body.m_Jac_JR(1) = (btScalar)0.0;
+				rigid_body.m_Jac_JR(2) = (btScalar)0.0;
+				rigid_body.m_Jac_JT(0) = (btScalar)0.0;
+				rigid_body.m_Jac_JT(1) = (btScalar)0.0;
+				rigid_body.m_Jac_JT(2) = (btScalar)0.0;
 				break;
 			default:
 				bt_id_error_message("unsupported joint type %d\n", rigid_body.m_joint_type);

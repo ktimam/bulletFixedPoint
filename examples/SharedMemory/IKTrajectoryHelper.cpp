@@ -76,24 +76,24 @@ bool IKTrajectoryHelper::computeIK(const double endEffectorTargetPosition[3],
 	VectorRn deltaR(3);
 	if (useAngularPart)
 	{
-		btQuaternion startQ(endEffectorWorldOrientation[0], endEffectorWorldOrientation[1], endEffectorWorldOrientation[2], endEffectorWorldOrientation[3]);
-		btQuaternion endQ(endEffectorTargetOrientation[0], endEffectorTargetOrientation[1], endEffectorTargetOrientation[2], endEffectorTargetOrientation[3]);
+		btQuaternion startQ((btScalar)endEffectorWorldOrientation[0], (btScalar)endEffectorWorldOrientation[1], (btScalar)endEffectorWorldOrientation[2], (btScalar)endEffectorWorldOrientation[3]);
+		btQuaternion endQ((btScalar)endEffectorTargetOrientation[0], (btScalar)endEffectorTargetOrientation[1], (btScalar)endEffectorTargetOrientation[2], (btScalar)endEffectorTargetOrientation[3]);
 		btQuaternion deltaQ = endQ * startQ.inverse();
-		float angle = deltaQ.getAngle();
+		btScalar angle = deltaQ.getAngle();
 		btVector3 axis = deltaQ.getAxis();
-		if (angle > PI)
+		if (angle > (btScalar)PI)
 		{
-			angle -= 2.0 * PI;
+			angle -= (btScalar)2.0 * (btScalar)PI;
 		}
-		else if (angle < -PI)
+		else if (angle < (btScalar)-PI)
 		{
-			angle += 2.0 * PI;
+			angle += (btScalar)2.0 * (btScalar)PI;
 		}
-		float angleDot = angle;
+		btScalar angleDot = angle;
 		btVector3 angularVel = angleDot * axis.normalize();
 		for (int i = 0; i < 3; ++i)
 		{
-			deltaR.Set(i, dampIk[i + 3] * angularVel[i]);
+			deltaR.Set(i, (float)dampIk[i + 3] * (float)angularVel[i]);
 		}
 	}
 

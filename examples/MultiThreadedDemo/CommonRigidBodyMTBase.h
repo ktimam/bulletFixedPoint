@@ -79,7 +79,7 @@ struct CommonRigidBodyMTBase : public CommonExampleInterface
 	virtual void createDefaultParameters();
 	virtual void createEmptyDynamicsWorld();
 
-	virtual void stepSimulation(float deltaTime)
+	virtual void stepSimulation(btScalar deltaTime)
 	{
 		if (m_dynamicsWorld)
 		{
@@ -180,11 +180,11 @@ struct CommonRigidBodyMTBase : public CommonExampleInterface
 			return btVector3(0, 0, 0);
 		}
 
-		float top = 1.f;
-		float bottom = -1.f;
-		float nearPlane = 1.f;
-		float tanFov = (top - bottom) * 0.5f / nearPlane;
-		float fov = btScalar(2.0) * btAtan(tanFov);
+		btScalar top = (btScalar)1.f;
+		btScalar bottom = (btScalar)-1.f;
+		btScalar nearPlane = (btScalar)1.f;
+		btScalar tanFov = (top - bottom) * (btScalar)0.5f / nearPlane;
+		btScalar fov = btScalar(2.0) * btAtan(tanFov);
 
 		btVector3 camPos, camTarget;
 
@@ -194,12 +194,12 @@ struct CommonRigidBodyMTBase : public CommonExampleInterface
 		btVector3 rayFrom = camPos;
 		btVector3 rayForward = (camTarget - camPos);
 		rayForward.normalize();
-		float farPlane = 10000.f;
+		btScalar farPlane = (btScalar)10000.f;
 		rayForward *= farPlane;
 
 		btVector3 rightOffset;
 		btVector3 cameraUp = btVector3(0, 0, 0);
-		cameraUp[m_guiHelper->getAppInterface()->getUpAxis()] = 1;
+		cameraUp[m_guiHelper->getAppInterface()->getUpAxis()] = (btScalar)1;
 
 		btVector3 vertical = cameraUp;
 
@@ -209,24 +209,24 @@ struct CommonRigidBodyMTBase : public CommonExampleInterface
 		vertical = hor.cross(rayForward);
 		vertical.safeNormalize();
 
-		float tanfov = tanf(0.5f * fov);
+		btScalar tanfov = tan((btScalar)0.5f * (btScalar)fov);
 
-		hor *= 2.f * farPlane * tanfov;
-		vertical *= 2.f * farPlane * tanfov;
+		hor *= (btScalar)2.f * (btScalar)farPlane * tanfov;
+		vertical *= (btScalar)2.f * (btScalar)farPlane * tanfov;
 
 		btScalar aspect;
 		float width = float(renderer->getScreenWidth());
 		float height = float(renderer->getScreenHeight());
 
-		aspect = width / height;
+		aspect = (btScalar)width / (btScalar)height;
 
 		hor *= aspect;
 
 		btVector3 rayToCenter = rayFrom + rayForward;
-		btVector3 dHor = hor * 1.f / width;
-		btVector3 dVert = vertical * 1.f / height;
+		btVector3 dHor = hor * (btScalar)1.f / (btScalar)width;
+		btVector3 dVert = vertical * (btScalar)1.f / (btScalar)height;
 
-		btVector3 rayTo = rayToCenter - 0.5f * hor + 0.5f * vertical;
+		btVector3 rayTo = rayToCenter - (btScalar)0.5f * hor + (btScalar)0.5f * vertical;
 		rayTo += btScalar(x) * dHor;
 		rayTo -= btScalar(y) * dVert;
 		return rayTo;
@@ -339,10 +339,10 @@ struct CommonRigidBodyMTBase : public CommonExampleInterface
 					btPoint2PointConstraint* p2p = new btPoint2PointConstraint(*body, localPivot);
 					m_dynamicsWorld->addConstraint(p2p, true);
 					m_pickedConstraint = p2p;
-					btScalar mousePickClamping = 30.f;
+					btScalar mousePickClamping = (btScalar)30.f;
 					p2p->m_setting.m_impulseClamp = mousePickClamping;
 					//very weak constraint for picking
-					p2p->m_setting.m_tau = 0.001f;
+					p2p->m_setting.m_tau = (btScalar)0.001f;
 				}
 			}
 
@@ -396,7 +396,7 @@ struct CommonRigidBodyMTBase : public CommonExampleInterface
 		return box;
 	}
 
-	btRigidBody* createRigidBody(float mass, const btTransform& startTransform, btCollisionShape* shape, const btVector4& color = btVector4(1, 0, 0, 1))
+	btRigidBody* createRigidBody(float mass, const btTransform& startTransform, btCollisionShape* shape, const btVector4& color = btVector4((btScalar)1, (btScalar)0, (btScalar)0, (btScalar)1))
 	{
 		btAssert((!shape || shape->getShapeType() != INVALID_SHAPE_PROXYTYPE));
 
@@ -405,7 +405,7 @@ struct CommonRigidBodyMTBase : public CommonExampleInterface
 
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)
-			shape->calculateLocalInertia(mass, localInertia);
+			shape->calculateLocalInertia((btScalar)mass, localInertia);
 
 			//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
 
@@ -413,7 +413,7 @@ struct CommonRigidBodyMTBase : public CommonExampleInterface
 #ifdef USE_MOTIONSTATE
 		btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 
-		btRigidBody::btRigidBodyConstructionInfo cInfo(mass, myMotionState, shape, localInertia);
+		btRigidBody::btRigidBodyConstructionInfo cInfo((btScalar)mass, myMotionState, shape, localInertia);
 
 		btRigidBody* body = new btRigidBody(cInfo);
 		//body->setContactProcessingThreshold(m_defaultContactProcessingThreshold);
@@ -432,7 +432,7 @@ struct CommonRigidBodyMTBase : public CommonExampleInterface
 	{
 		btAssert((!shape || shape->getShapeType() != INVALID_SHAPE_PROXYTYPE));
 
-		btRigidBody* body = new btRigidBody(0.0f, NULL, shape);
+		btRigidBody* body = new btRigidBody((btScalar)0.0f, NULL, shape);
 		body->setWorldTransform(startTransform);
 		body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
 		body->setUserIndex(-1);

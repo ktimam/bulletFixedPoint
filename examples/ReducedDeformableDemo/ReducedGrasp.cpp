@@ -29,8 +29,8 @@
 ///The BasicTest shows the contact between volumetric deformable objects and rigid objects.
 // static btScalar E = 50;
 // static btScalar nu = 0.3;
-static btScalar damping_alpha = 0.0;
-static btScalar damping_beta = 0.0001;
+static btScalar damping_alpha = (btScalar)0.0;
+static btScalar damping_beta = (btScalar)0.0001;
 static int num_modes = 20;
 
 class ReducedGrasp : public CommonDeformableBodyBase
@@ -60,10 +60,10 @@ public:
 		m_guiHelper->resetCamera(dist, yaw, pitch, targetPos[0], targetPos[1], targetPos[2]);
 	}
     
-    void stepSimulation(float deltaTime)
+    void stepSimulation(btScalar deltaTime)
     {
         //use a smaller internal timestep, there are stability issues
-        float internalTimeStep = 1. / 240.f;
+        btScalar internalTimeStep = (btScalar)1. / (btScalar)240.f;
         m_dynamicsWorld->stepSimulation(deltaTime, 4, internalTimeStep);
         // float internalTimeStep = 1. / 60.f;
         // m_dynamicsWorld->stepSimulation(deltaTime, 1, internalTimeStep);
@@ -78,15 +78,15 @@ public:
             btTransform startTransform;
             startTransform.setIdentity();
             startTransform.setOrigin(btVector3(0,1,0));
-            startTransform.setRotation(btQuaternion(btVector3(1, 0, 0), SIMD_PI * 0.));
-            createRigidBody(mass, startTransform, shape);
+            startTransform.setRotation(btQuaternion(btVector3(1, 0, 0), SIMD_PI * (btScalar)0.));
+            createRigidBody((btScalar)mass, startTransform, shape);
         }
         {
             btTransform startTransform;
             startTransform.setIdentity();
             startTransform.setOrigin(btVector3(0,1,-4));
-            startTransform.setRotation(btQuaternion(btVector3(1, 0, 0), SIMD_PI * 0.));
-            createRigidBody(mass, startTransform, shape);
+            startTransform.setRotation(btQuaternion(btVector3(1, 0, 0), SIMD_PI * (btScalar)0.));
+            createRigidBody((btScalar)mass, startTransform, shape);
         }
         
     }
@@ -99,9 +99,9 @@ public:
         startTransform.setIdentity();
 
         startTransform.setOrigin(btVector3(0,9.5,0));
-        btRigidBody* rb1 = createRigidBody(mass, startTransform, shape);
+        btRigidBody* rb1 = createRigidBody((btScalar)mass, startTransform, shape);
         rb1->setLinearVelocity(btVector3(0, 0, 0));
-        rb1->setFriction(0.7);
+        rb1->setFriction((btScalar)0.7);
     }
     
     virtual void renderScene()
@@ -141,11 +141,11 @@ void ReducedGrasp::GripperDynamics(btScalar time, btDeformableMultiBodyDynamicsW
     btRigidBody* rb0 = rbs[0];
     // btScalar pressTime = 0.9;
     // btScalar pressTime = 0.96;
-    btScalar pressTime = 1.26;
-    btScalar liftTime = 2.5;
-    btScalar shiftTime = 6;
-    btScalar holdTime = 7;
-    btScalar dropTime = 10;
+    btScalar pressTime = (btScalar)1.26;
+    btScalar liftTime = (btScalar)2.5;
+    btScalar shiftTime = (btScalar)6;
+    btScalar holdTime = (btScalar)7;
+    btScalar dropTime = (btScalar)10;
     // btScalar holdTime = 500;
     // btScalar dropTime = 1000;
     btTransform rbTransform;
@@ -246,8 +246,8 @@ void ReducedGrasp::GripperDynamics(btScalar time, btDeformableMultiBodyDynamicsW
     rb1->setAngularVelocity(btVector3(0,0,0));
     rb1->setLinearVelocity(velocity);
     
-    rb0->setFriction(20);
-    rb1->setFriction(20);
+    rb0->setFriction((btScalar)20);
+    rb1->setFriction((btScalar)20);
 }
 
 void ReducedGrasp::initPhysics()
@@ -272,7 +272,7 @@ void ReducedGrasp::initPhysics()
     btVector3 gravity = btVector3(0, -10, 0);
 	m_dynamicsWorld->setGravity(gravity);
     getDeformableDynamicsWorld()->getWorldInfo().m_gravity = gravity;
-	getDeformableDynamicsWorld()->getWorldInfo().m_sparsesdf.setDefaultVoxelsz(0.25);
+	getDeformableDynamicsWorld()->getWorldInfo().m_sparsesdf.setDefaultVoxelsz((btScalar)0.25);
     getDeformableDynamicsWorld()->setSolverCallback(GripperDynamics);
 	m_guiHelper->createPhysicsDebugDrawer(m_dynamicsWorld);
 
@@ -288,7 +288,7 @@ void ReducedGrasp::initPhysics()
                                             false);
                                             
         getDeformableDynamicsWorld()->addSoftBody(rsb);
-        rsb->getCollisionShape()->setMargin(0.015);
+        rsb->getCollisionShape()->setMargin((btScalar)0.015);
         
         btTransform init_transform;
         init_transform.setIdentity();
@@ -297,15 +297,15 @@ void ReducedGrasp::initPhysics()
         // init_transform.setRotation(btQuaternion(btVector3(0, 1, 0), SIMD_PI / 2.0));
         rsb->transform(init_transform);
 
-        rsb->setStiffnessScale(100);
+        rsb->setStiffnessScale((btScalar)100);
         rsb->setDamping(damping_alpha, damping_beta);
 
-        rsb->m_cfg.kKHR = 1; // collision hardness with kinematic objects
-        rsb->m_cfg.kCHR = 1; // collision hardness with rigid body
-        rsb->m_cfg.kDF = 0;
+        rsb->m_cfg.kKHR = (btScalar)1; // collision hardness with kinematic objects
+        rsb->m_cfg.kCHR = (btScalar)1; // collision hardness with rigid body
+        rsb->m_cfg.kDF = (btScalar)0;
         rsb->m_cfg.collisions = btSoftBody::fCollision::SDF_RD;
         rsb->m_cfg.collisions |= btSoftBody::fCollision::SDF_RDN;
-        rsb->m_sleepingThreshold = 0;
+        rsb->m_sleepingThreshold = (btScalar)0;
         btSoftBodyHelpers::generateBoundaryFaces(rsb);
     }
 
@@ -347,11 +347,11 @@ void ReducedGrasp::initPhysics()
     getDeformableDynamicsWorld()->setImplicit(false);
     getDeformableDynamicsWorld()->setLineSearch(false);
     getDeformableDynamicsWorld()->setUseProjection(false);
-    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_erp = 0.2;
-    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_cfm = 0.2;
-    getDeformableDynamicsWorld()->getSolverInfo().m_friction = 1;
+    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_erp = (btScalar)0.2;
+    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_cfm = (btScalar)0.2;
+    getDeformableDynamicsWorld()->getSolverInfo().m_friction = (btScalar)1;
     getDeformableDynamicsWorld()->getSolverInfo().m_deformable_maxErrorReduction = btScalar(200);
-    getDeformableDynamicsWorld()->getSolverInfo().m_leastSquaresResidualThreshold = 1e-3;
+    getDeformableDynamicsWorld()->getSolverInfo().m_leastSquaresResidualThreshold = (btScalar)1e-3;
     getDeformableDynamicsWorld()->getSolverInfo().m_splitImpulse = false;
     getDeformableDynamicsWorld()->getSolverInfo().m_numIterations = 100;
     
@@ -385,7 +385,7 @@ void ReducedGrasp::initPhysics()
         btScalar mass(0.);
 
         //rigidbody is dynamic if and only if mass is non zero, otherwise static
-        bool isDynamic = (mass != 0.f);
+        bool isDynamic = (mass != (btScalar)0.f);
 
         btVector3 localInertia(0, 0, 0);
         if (isDynamic)
@@ -395,7 +395,7 @@ void ReducedGrasp::initPhysics()
         btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
         btRigidBody* body = new btRigidBody(rbInfo);
-        body->setFriction(0.5);
+        body->setFriction((btScalar)0.5);
 
         //add the ground to the dynamics world
         m_dynamicsWorld->addRigidBody(body);

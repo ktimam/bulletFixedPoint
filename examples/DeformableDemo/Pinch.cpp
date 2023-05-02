@@ -55,10 +55,10 @@ public:
 		m_guiHelper->resetCamera(dist, yaw, pitch, targetPos[0], targetPos[1], targetPos[2]);
 	}
     
-    void stepSimulation(float deltaTime)
+    void stepSimulation(btScalar deltaTime)
     {
         //use a smaller internal timestep, there are stability issues
-        float internalTimeStep = 1. / 240.f;
+        btScalar internalTimeStep = (btScalar)1. / (btScalar)240.f;
         m_dynamicsWorld->stepSimulation(deltaTime, 4, internalTimeStep);
     }
     
@@ -75,8 +75,8 @@ public:
             btTransform startTransform;
             startTransform.setIdentity();
             startTransform.setOrigin(btVector3(10, 0, 0));
-            startTransform.setRotation(btQuaternion(btVector3(1, 0, 0), SIMD_PI * 0.));
-            createRigidBody(mass, startTransform, shape[i % nshapes]);
+            startTransform.setRotation(btQuaternion(btVector3(1, 0, 0), SIMD_PI * (btScalar)0.));
+            createRigidBody((btScalar)mass, startTransform, shape[i % nshapes]);
         }
     }
     
@@ -102,11 +102,11 @@ void dynamics(btScalar time, btDeformableMultiBodyDynamicsWorld* world)
     if (rbs.size()<2)
         return;
     btRigidBody* rb0 = rbs[0];
-    btScalar pressTime = 0.9;
-    btScalar liftTime = 2.5;
-    btScalar shiftTime = 3.5;
-    btScalar holdTime = 4.5*1000;
-    btScalar dropTime = 5.3*1000;
+    btScalar pressTime = (btScalar)0.9;
+    btScalar liftTime = (btScalar)2.5;
+    btScalar shiftTime = (btScalar)3.5;
+    btScalar holdTime = (btScalar)4.5* (btScalar)1000;
+    btScalar dropTime = (btScalar)5.3* (btScalar)1000;
     btTransform rbTransform;
     rbTransform.setIdentity();
     btVector3 translation;
@@ -192,13 +192,13 @@ void dynamics(btScalar time, btDeformableMultiBodyDynamicsWorld* world)
         translation = initialTranslationRight + pinchVelocityRight * pressTime + liftVelocity * (liftTime-pressTime) + shiftVelocity * (shiftTime - liftTime) + holdVelocity * (holdTime - shiftTime)+ openVelocityRight * (dropTime - holdTime);
     }
     rbTransform.setOrigin(translation);
-    rbTransform.setRotation(btQuaternion(btVector3(1, 0, 0), SIMD_PI * 0));
+    rbTransform.setRotation(btQuaternion(btVector3(1, 0, 0), SIMD_PI * (btScalar)0));
     rb1->setCenterOfMassTransform(rbTransform);
     rb1->setAngularVelocity(btVector3(0,0,0));
     rb1->setLinearVelocity(velocity);
     
-    rb0->setFriction(20);
-    rb1->setFriction(20);
+    rb0->setFriction((btScalar)20);
+    rb1->setFriction((btScalar)20);
 }
 
 void Pinch::initPhysics()
@@ -220,7 +220,7 @@ void Pinch::initPhysics()
     btVector3 gravity = btVector3(0, -10, 0);
 	m_dynamicsWorld->setGravity(gravity);
     getDeformableDynamicsWorld()->getWorldInfo().m_gravity = gravity;
-	getDeformableDynamicsWorld()->getWorldInfo().m_sparsesdf.setDefaultVoxelsz(0.25);
+	getDeformableDynamicsWorld()->getWorldInfo().m_sparsesdf.setDefaultVoxelsz((btScalar)0.25);
     getDeformableDynamicsWorld()->setSolverCallback(dynamics);
 	m_guiHelper->createPhysicsDebugDrawer(m_dynamicsWorld);
 
@@ -238,7 +238,7 @@ void Pinch::initPhysics()
         btScalar mass(0.);
 
         //rigidbody is dynamic if and only if mass is non zero, otherwise static
-        bool isDynamic = (mass != 0.f);
+        bool isDynamic = (mass != (btScalar)0.f);
 
         btVector3 localInertia(0, 0, 0);
         if (isDynamic)
@@ -248,7 +248,7 @@ void Pinch::initPhysics()
         btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
         btRigidBody* body = new btRigidBody(rbInfo);
-        body->setFriction(0.5);
+        body->setFriction((btScalar)0.5);
 
         //add the ground to the dynamics world
         m_dynamicsWorld->addRigidBody(body);
@@ -256,14 +256,14 @@ void Pinch::initPhysics()
     
     // create a soft block
     {
-        btScalar verts[24] = {0.f, 0.f, 0.f,
-            1.f, 0.f, 0.f,
-            0.f, 1.f, 0.f,
-            0.f, 0.f, 1.f,
-            1.f, 1.f, 0.f,
-            0.f, 1.f, 1.f,
-            1.f, 0.f, 1.f,
-            1.f, 1.f, 1.f
+        btScalar verts[24] = { (btScalar)0.f, (btScalar)0.f, (btScalar)0.f,
+            (btScalar)1.f, (btScalar)0.f, (btScalar)0.f,
+            (btScalar)0.f, (btScalar)1.f, (btScalar)0.f,
+            (btScalar)0.f, (btScalar)0.f, (btScalar)1.f,
+            (btScalar)1.f, (btScalar)1.f, (btScalar)0.f,
+            (btScalar)0.f, (btScalar)1.f, (btScalar)1.f,
+            (btScalar)1.f, (btScalar)0.f, (btScalar)1.f,
+            (btScalar)1.f, (btScalar)1.f, (btScalar)1.f
         };
         int triangles[60] = {0, 6, 3,
             0,1,6,
@@ -296,11 +296,11 @@ void Pinch::initPhysics()
         
         psb->scale(btVector3(2, 2, 2));
         psb->translate(btVector3(0, 4, 0));
-        psb->getCollisionShape()->setMargin(0.01);
-        psb->setTotalMass(1);
-        psb->m_cfg.kKHR = 1; // collision hardness with kinematic objects
-        psb->m_cfg.kCHR = 1; // collision hardness with rigid body
-        psb->m_cfg.kDF = .5;
+        psb->getCollisionShape()->setMargin((btScalar)0.01);
+        psb->setTotalMass((btScalar)1);
+        psb->m_cfg.kKHR = (btScalar)1; // collision hardness with kinematic objects
+        psb->m_cfg.kCHR = (btScalar)1; // collision hardness with rigid body
+        psb->m_cfg.kDF = (btScalar).5;
         psb->m_cfg.collisions = btSoftBody::fCollision::SDF_RD;
         psb->m_cfg.collisions |= btSoftBody::fCollision::SDF_RDF;
         getDeformableDynamicsWorld()->addSoftBody(psb);
@@ -310,11 +310,11 @@ void Pinch::initPhysics()
         getDeformableDynamicsWorld()->addForce(psb, gravity_force);
         m_forces.push_back(gravity_force);
         
-        btDeformableNeoHookeanForce* neohookean = new btDeformableNeoHookeanForce(8,3, 0.02);
-        neohookean->setPoissonRatio(0.3);
-        neohookean->setYoungsModulus(25);
-        neohookean->setDamping(0.01);
-        psb->m_cfg.drag = 0.001;
+        btDeformableNeoHookeanForce* neohookean = new btDeformableNeoHookeanForce((btScalar)8, (btScalar)3, (btScalar)0.02);
+        neohookean->setPoissonRatio((btScalar)0.3);
+        neohookean->setYoungsModulus((btScalar)25);
+        neohookean->setDamping((btScalar)0.01);
+        psb->m_cfg.drag = (btScalar)0.001;
         getDeformableDynamicsWorld()->addForce(psb, neohookean);
         m_forces.push_back(neohookean);
         // add a grippers

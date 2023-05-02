@@ -29,7 +29,7 @@ public:
 
 	void resetCamera();
 
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 
 	//for picking
 	b3Vector3 getRayTo(int x, int y);

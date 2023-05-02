@@ -53,24 +53,24 @@ int btMultiBodyTreeCreator::createFromBtMultiBody(const btMultiBody *btmb, const
 		link.body_T_parent_ref(2, 2) = transform.getBasis()[2][2];
 
 		// random unit vector. value not used for fixed or floating joints.
-		link.body_axis_of_motion(0) = 0;
-		link.body_axis_of_motion(1) = 0;
-		link.body_axis_of_motion(2) = 1;
+		link.body_axis_of_motion(0) = (btScalar)0;
+		link.body_axis_of_motion(1) = (btScalar)0;
+		link.body_axis_of_motion(2) = (btScalar)1;
 
 		link.mass = btmb->getBaseMass();
 		// link frame in the center of mass
-		link.body_r_body_com(0) = 0;
-		link.body_r_body_com(1) = 0;
-		link.body_r_body_com(2) = 0;
+		link.body_r_body_com(0) = (btScalar)0;
+		link.body_r_body_com(1) = (btScalar)0;
+		link.body_r_body_com(2) = (btScalar)0;
 		// BulletDynamics uses body-fixed frame in the cog, aligned with principal axes
 		link.body_I_body(0, 0) = btmb->getBaseInertia()[0];
-		link.body_I_body(0, 1) = 0.0;
-		link.body_I_body(0, 2) = 0.0;
-		link.body_I_body(1, 0) = 0.0;
+		link.body_I_body(0, 1) = (btScalar)0.0;
+		link.body_I_body(0, 2) = (btScalar)0.0;
+		link.body_I_body(1, 0) = (btScalar)0.0;
 		link.body_I_body(1, 1) = btmb->getBaseInertia()[1];
-		link.body_I_body(1, 2) = 0.0;
-		link.body_I_body(2, 0) = 0.0;
-		link.body_I_body(2, 1) = 0.0;
+		link.body_I_body(1, 2) = (btScalar)0.0;
+		link.body_I_body(2, 0) = (btScalar)0.0;
+		link.body_I_body(2, 1) = (btScalar)0.0;
 		link.body_I_body(2, 2) = btmb->getBaseInertia()[2];
 		// shift reference point to link origin (in joint axis)
 		mat33 tilde_r_com = tildeOperator(link.body_r_body_com);
@@ -117,13 +117,13 @@ int btMultiBodyTreeCreator::createFromBtMultiBody(const btMultiBody *btmb, const
 		}
 		// BulletDynamics uses a body-fixed frame in the CoM, aligned with principal axes
 		link.body_I_body(0, 0) = bt_link.m_inertiaLocal[0];
-		link.body_I_body(0, 1) = 0.0;
-		link.body_I_body(0, 2) = 0.0;
-		link.body_I_body(1, 0) = 0.0;
+		link.body_I_body(0, 1) = (btScalar)0.0;
+		link.body_I_body(0, 2) = (btScalar)0.0;
+		link.body_I_body(1, 0) = (btScalar)0.0;
 		link.body_I_body(1, 1) = bt_link.m_inertiaLocal[1];
-		link.body_I_body(1, 2) = 0.0;
-		link.body_I_body(2, 0) = 0.0;
-		link.body_I_body(2, 1) = 0.0;
+		link.body_I_body(1, 2) = (btScalar)0.0;
+		link.body_I_body(2, 0) = (btScalar)0.0;
+		link.body_I_body(2, 1) = (btScalar)0.0;
 		link.body_I_body(2, 2) = bt_link.m_inertiaLocal[2];
 		// shift reference point to link origin (in joint axis)
 		mat33 tilde_r_com = tildeOperator(link.body_r_body_com);
@@ -207,9 +207,9 @@ int btMultiBodyTreeCreator::createFromBtMultiBody(const btMultiBody *btmb, const
 				link.parent_r_parent_body_ref(1) = bt_link.m_eVector[1];
 				link.parent_r_parent_body_ref(2) = bt_link.m_eVector[2];
 				// random unit vector
-				link.body_axis_of_motion(0) = 0;
-				link.body_axis_of_motion(1) = 1;
-				link.body_axis_of_motion(2) = 0;
+				link.body_axis_of_motion(0) = (btScalar)0;
+				link.body_axis_of_motion(1) = (btScalar)1;
+				link.body_axis_of_motion(2) = (btScalar)0;
 				break;
 			case btMultibodyLink::ePlanar:
 				bt_id_error_message("planar joints not implemented\n");
@@ -217,9 +217,9 @@ int btMultiBodyTreeCreator::createFromBtMultiBody(const btMultiBody *btmb, const
 			case btMultibodyLink::eFixed:
 				link.joint_type = FIXED;
 				// random unit vector
-				link.body_axis_of_motion(0) = 0;
-				link.body_axis_of_motion(1) = 0;
-				link.body_axis_of_motion(2) = 1;
+				link.body_axis_of_motion(0) = (btScalar)0;
+				link.body_axis_of_motion(1) = (btScalar)0;
+				link.body_axis_of_motion(2) = (btScalar)1;
 
 				// for fixed joints, m_dVector = thisPivotToThisComOffset;
 				//                   m_eVector = parentComToThisPivotOffset;

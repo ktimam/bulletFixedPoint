@@ -12,8 +12,8 @@ btReducedDeformableStaticConstraint::btReducedDeformableStaticConstraint(
 	btScalar dt)
   : m_rsb(rsb), m_ri(ri), m_targetPos(x0), m_impulseDirection(dir), m_dt(dt), btDeformableStaticConstraint(node, infoGlobal)
 {
-	m_erp = 0.2;
-	m_appliedImpulse = 0;
+	m_erp = (btScalar)0.2;
+	m_appliedImpulse = (btScalar)0;
 
 	// get impulse factor
   m_impulseFactorMatrix = rsb->getImpulseFactor(m_node->index);
@@ -64,12 +64,12 @@ btReducedDeformableRigidContactConstraint::btReducedDeformableRigidContactConstr
   : m_rsb(rsb), m_dt(dt), btDeformableRigidContactConstraint(c, infoGlobal)
 {
 	m_nodeQueryIndex = 0;
-	m_appliedNormalImpulse = 0;
-  m_appliedTangentImpulse = 0;
-	m_rhs = 0;
-	m_rhs_tangent = 0;
+	m_appliedNormalImpulse = (btScalar)0;
+  m_appliedTangentImpulse = (btScalar)0;
+	m_rhs = (btScalar)0;
+	m_rhs_tangent = (btScalar)0;
 	m_cfm = infoGlobal.m_deformable_cfm;
-	m_cfm_friction = 0;
+	m_cfm_friction = (btScalar)0;
 	m_erp = infoGlobal.m_deformable_erp;
 	m_erp_friction = infoGlobal.m_deformable_erp;
 	m_friction = infoGlobal.m_friction;
@@ -148,10 +148,10 @@ btScalar btReducedDeformableRigidContactConstraint::solveConstraint(const btCont
 		// cumulative impulse that has been applied
 		btScalar sum = m_appliedNormalImpulse + deltaImpulse;
 		// if the cumulative impulse is pushing the object into the rigid body, set it zero
-		if (sum < 0)
+		if (sum < (btScalar)0)
 		{
 			deltaImpulse = -m_appliedNormalImpulse;
-			m_appliedNormalImpulse = 0;
+			m_appliedNormalImpulse = (btScalar)0;
 		}
 		else
 		{
@@ -171,8 +171,8 @@ btScalar btReducedDeformableRigidContactConstraint::solveConstraint(const btCont
 
 	
 	// apply Coulomb friction (based on delta velocity, |dv_t| = |dv_n * friction|)
-	btScalar deltaImpulse_tangent = 0;
-	btScalar deltaImpulse_tangent2 = 0;
+	btScalar deltaImpulse_tangent = (btScalar)0;
+	btScalar deltaImpulse_tangent2 = (btScalar)0;
 	{
 		// calculate how much impulse is needed
 		// btScalar deltaV_rel_tangent = btDot(deltaV_rel, m_contactTangent);
@@ -357,7 +357,7 @@ btReducedDeformableNodeRigidContactConstraint::btReducedDeformableNodeRigidConta
 	}
 
 	m_normalImpulseFactor = (m_impulseFactor * m_contactNormalA).dot(m_contactNormalA);
-	m_tangentImpulseFactor = 0;
+	m_tangentImpulseFactor = (btScalar)0;
 
 	warmStarting();
 }
@@ -377,8 +377,8 @@ void btReducedDeformableNodeRigidContactConstraint::warmStarting()
 	{
 		m_contactTangent = btVector3(0, 0, 0);
 		// tangent impulse factor
-		m_tangentImpulseFactor = 0;
-		m_tangentImpulseFactorInv = 0;
+		m_tangentImpulseFactor = (btScalar)0;
+		m_tangentImpulseFactorInv = (btScalar)0;
 	}
 	else
 	{
@@ -390,8 +390,8 @@ void btReducedDeformableNodeRigidContactConstraint::warmStarting()
 			m_tangentImpulseFactor = (m_impulseFactor * m_contactTangent).dot(m_contactTangent);
 			m_tangentImpulseFactorInv = btScalar(1) / m_tangentImpulseFactor;
 			// tangent impulse factor 2
-			m_tangentImpulseFactor2 = 0;
-			m_tangentImpulseFactorInv2 = 0;
+			m_tangentImpulseFactor2 = (btScalar)0;
+			m_tangentImpulseFactorInv2 = (btScalar)0;
 		}
 		else	// multibody requires 2 contact directions
 		{
@@ -411,8 +411,8 @@ void btReducedDeformableNodeRigidContactConstraint::warmStarting()
 	// initial guess for normal impulse
 	{
 		btScalar velocity_error = btDot(v_rel, m_contactNormalA);	// magnitude of relative velocity
-		btScalar position_error = 0;
-		if (m_penetration > 0)
+		btScalar position_error = (btScalar)0;
+		if (m_penetration > (btScalar)0)
 		{
 			velocity_error += m_penetration / m_dt;
 		}
@@ -475,7 +475,7 @@ btVector3 btReducedDeformableNodeRigidContactConstraint::getDeltaVa() const
 				const btScalar* J_t2 = &m_contact->jacobianData_t2.m_jacobians[0];
 				const btScalar* local_dv = multibodyLinkCol->m_multiBody->getDeltaVelocityVector();
 				// add in the normal component of the va
-				btScalar vel = 0;
+				btScalar vel = (btScalar)0;
 				for (int k = 0; k < ndof; ++k)
 				{
 					vel += local_dv[k] * J_n[k];
@@ -483,14 +483,14 @@ btVector3 btReducedDeformableNodeRigidContactConstraint::getDeltaVa() const
 				deltaVa = m_contact->m_cti.m_normal * vel;
 				
 				// add in the tangential components of the va
-				vel = 0;
+				vel = (btScalar)0;
 				for (int k = 0; k < ndof; ++k)
 				{
 					vel += local_dv[k] * J_t1[k];
 				}
 				deltaVa += m_contact->t1 * vel;
 
-				vel = 0;
+				vel = (btScalar)0;
 				for (int k = 0; k < ndof; ++k)
 				{
 					vel += local_dv[k] * J_t2[k];

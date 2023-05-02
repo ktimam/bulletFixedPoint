@@ -59,10 +59,10 @@ public:
 
 	inline void setIdentity()
 	{
-		m_el[0].setValue(1, 0, 0, 0);
-		m_el[1].setValue(0, 1, 0, 0);
-		m_el[2].setValue(0, 0, 1, 0);
-		m_el[3].setValue(0, 0, 0, 1);
+		m_el[0].setValue((btScalar)1, (btScalar)0, (btScalar)0, (btScalar)0);
+		m_el[1].setValue((btScalar)0, (btScalar)1, (btScalar)0, (btScalar)0);
+		m_el[2].setValue((btScalar)0, (btScalar)0, (btScalar)1, (btScalar)0);
+		m_el[3].setValue((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)1);
 	}
 	inline void setPureRotation(const btQuaternion& orn)
 	{
@@ -80,18 +80,18 @@ public:
 
 	inline void setPureScaling(const btVector3& scale)
 	{
-		m_el[0].setValue(scale[0], 0, 0, 0);
-		m_el[1].setValue(0, scale[1], 0, 0);
-		m_el[2].setValue(0, 0, scale[2], 0);
-		m_el[3].setValue(0, 0, 0, 1);
+		m_el[0].setValue(scale[0], (btScalar)0, (btScalar)0, (btScalar)0);
+		m_el[1].setValue((btScalar)0, scale[1], (btScalar)0, (btScalar)0);
+		m_el[2].setValue((btScalar)0, (btScalar)0, scale[2], (btScalar)0);
+		m_el[3].setValue((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)1);
 	}
 
 	inline void setPureTranslation(const btVector3& pos)
 	{
-		m_el[0].setValue(1, 0, 0, pos[0]);
-		m_el[1].setValue(0, 1, 0, pos[1]);
-		m_el[2].setValue(0, 0, 1, pos[2]);
-		m_el[3].setValue(0, 0, 0, 1);
+		m_el[0].setValue((btScalar)1, (btScalar)0, (btScalar)0, pos[0]);
+		m_el[1].setValue((btScalar)0, (btScalar)1, (btScalar)0, pos[1]);
+		m_el[2].setValue((btScalar)0, (btScalar)0, (btScalar)1, pos[2]);
+		m_el[3].setValue((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)1);
 	}
 	SIMD_FORCE_INLINE const btVector4& operator[](int i) const
 	{
@@ -135,7 +135,7 @@ inline btScalar btDot4(const btVector4& v0, const btVector4& v1)
 SIMD_FORCE_INLINE btVector3
 operator*(const btMatrix4x4& m, const btVector3& v1)
 {
-	btVector4 v(v1[0], v1[1], v1[2], 1);
+	btVector4 v(v1[0], v1[1], v1[2], (btScalar)1);
 	return btVector3(btDot4(m[0], v), btDot4(m[1], v), btDot4(m[2], v));
 }
 

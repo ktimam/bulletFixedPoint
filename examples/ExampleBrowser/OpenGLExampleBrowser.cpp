@@ -1166,7 +1166,7 @@ void OpenGLExampleBrowser::updateGraphics()
 	}
 }
 
-void OpenGLExampleBrowser::update(float deltaTime)
+void OpenGLExampleBrowser::update(btScalar deltaTime)
 {
 
 	b3ChromeUtilsEnableProfiling();
@@ -1233,11 +1233,11 @@ void OpenGLExampleBrowser::update(float deltaTime)
 			{
 				if (gFixedTimeStep > 0)
 				{
-					sCurrentDemo->stepSimulation(1.f / 60.f);//gFixedTimeStep);
+					sCurrentDemo->stepSimulation((btScalar)1.f / (btScalar)60.f);//gFixedTimeStep);
 				}
 				else
 				{
-					sCurrentDemo->stepSimulation(1.f / 60.f);//deltaTime);  //1./60.f);
+					sCurrentDemo->stepSimulation((btScalar)1.f / (btScalar)60.f);//deltaTime);  //1./60.f);
 				}
 			}
 		}

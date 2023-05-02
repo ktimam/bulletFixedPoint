@@ -29,7 +29,7 @@ class btDeformableMousePickingForce : public btDeformableLagrangianForce
 
 public:
 	typedef btAlignedObjectArray<btVector3> TVStack;
-	btDeformableMousePickingForce(btScalar k, btScalar d, const btSoftBody::Face& face, const btVector3& mouse_pos, btScalar maxForce = 0.3) : m_elasticStiffness(k), m_dampingStiffness(d), m_face(face), m_mouse_pos(mouse_pos), m_maxForce(maxForce)
+	btDeformableMousePickingForce(btScalar k, btScalar d, const btSoftBody::Face& face, const btVector3& mouse_pos, btScalar maxForce = (btScalar)0.3) : m_elasticStiffness(k), m_dampingStiffness(d), m_face(face), m_mouse_pos(mouse_pos), m_maxForce(maxForce)
 	{
 	}
 
@@ -92,9 +92,9 @@ public:
 
 	virtual void buildDampingForceDifferentialDiagonal(btScalar scale, TVStack& diagA) {}
 
-	virtual double totalElasticEnergy(btScalar dt)
+	virtual btScalar totalElasticEnergy(btScalar dt)
 	{
-		double energy = 0;
+		btScalar energy = (btScalar)0;
 		for (int i = 0; i < 3; ++i)
 		{
 			btVector3 dir = (m_face.m_n[i]->m_q - m_mouse_pos);
@@ -104,14 +104,14 @@ public:
 				scaled_force.safeNormalize();
 				scaled_force *= m_maxForce;
 			}
-			energy += 0.5 * scaled_force.dot(dir);
+			energy += (btScalar)0.5 * scaled_force.dot(dir);
 		}
 		return energy;
 	}
 
-	virtual double totalDampingEnergy(btScalar dt)
+	virtual btScalar totalDampingEnergy(btScalar dt)
 	{
-		double energy = 0;
+		btScalar energy = (btScalar)0;
 		for (int i = 0; i < 3; ++i)
 		{
 			btVector3 v_diff = m_face.m_n[i]->m_v;
@@ -136,7 +136,7 @@ public:
 			btVector3 dir_normalized = (dir_norm > SIMD_EPSILON) ? dir.normalized() : btVector3(0, 0, 0);
 			int id = m_face.m_n[i]->index;
 			btVector3 dx_diff = dx[id];
-			btScalar r = 0;  // rest length is 0 for picking spring
+			btScalar r = (btScalar)0;  // rest length is 0 for picking spring
 			btVector3 scaled_df = btVector3(0, 0, 0);
 			if (dir_norm > SIMD_EPSILON)
 			{

@@ -30,14 +30,14 @@ btMultiBodySolverConstraint
 {
 	BT_DECLARE_ALIGNED_ALLOCATOR();
 
-	inline btMultiBodySolverConstraint(const btMultiBodySolverConstraint&) noexcept
+	inline btMultiBodySolverConstraint(const btMultiBodySolverConstraint &slvr) noexcept
 	{
-
+		memcpy(this, &slvr, sizeof(btMultiBodySolverConstraint));
 	}
-	btMultiBodySolverConstraint& operator=(const btMultiBodySolverConstraint&)
+	/*btMultiBodySolverConstraint& operator=(const btMultiBodySolverConstraint&)
 	{
 		return *this;
-	}
+	}*/
 
 	btMultiBodySolverConstraint() : m_solverBodyIdA(-1), m_multiBodyA(0), m_linkA(-1), m_solverBodyIdB(-1), m_multiBodyB(0), m_linkB(-1), m_orgConstraint(0), m_orgDofIndex(-1)
 	{

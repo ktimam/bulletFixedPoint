@@ -142,6 +142,20 @@ bool SimpleOpenGL2Renderer::readSingleInstanceTransformToCPU(float* position, fl
 	return false;
 }
 
+void SimpleOpenGL2Renderer::writeSingleInstanceTransformToCPU(const btVector3 position, const btQuaternion orientation, int srcIndex)
+{
+	float pos[4];
+	float orn[4];
+	pos[0] = (float)position[0];
+	pos[1] = (float)position[1];
+	pos[2] = (float)position[2];
+	pos[3] = (float)position[3];
+	orn[0] = (float)orientation[0];
+	orn[1] = (float)orientation[1];
+	orn[2] = (float)orientation[2];
+	orn[3] = (float)orientation[3];
+	writeSingleInstanceTransformToCPU(pos, orn, srcIndex);
+}
 void SimpleOpenGL2Renderer::writeSingleInstanceColorToCPU(const float* color, int srcIndex)
 {
 }
@@ -511,6 +525,12 @@ int SimpleOpenGL2Renderer::registerGraphicsInstance(int shapeIndex, const float*
 	return newHandle;
 }
 
+void SimpleOpenGL2Renderer::drawLines(const btScalar* positions, const btScalar color[4], int numPoints, int pointStrideInBytes, const unsigned int* indices, int numIndices, float pointDrawSize)
+{
+	float pos[] = { (float)positions[0], (float)positions[1], (float)positions[2] };
+	float colorarr[] = { (float)color[0], (float)color[1], (float)color[2],  (float)color[3] };
+	drawLines(pos, colorarr,  numPoints,  pointStrideInBytes, indices, numIndices, pointDrawSize);
+}
 void SimpleOpenGL2Renderer::drawLines(const float* positions, const float color[4], int numPoints, int pointStrideInBytes, const unsigned int* indices, int numIndices, float pointDrawSize)
 {
 	int pointStrideInFloats = pointStrideInBytes / 4;
@@ -621,6 +641,14 @@ int SimpleOpenGL2Renderer::getScreenHeight()
 	return m_data->m_height;
 }
 
+void SimpleOpenGL2Renderer::drawLine(const btVector3 fromIn, const btVector3 toIn, const btVector3 colorIn, double lineWidthIn)
+{
+	float from[4] = { float(fromIn[0]), float(fromIn[1]), float(fromIn[2]), float(fromIn[3]) };
+	float to[4] = { float(toIn[0]), float(toIn[1]), float(toIn[2]), float(toIn[3]) };
+	float color[4] = { float(colorIn[0]), float(colorIn[1]), float(colorIn[2]), float(colorIn[3]) };
+	float lineWidth = float(lineWidthIn);
+	drawLine(from, to, color, lineWidth);
+}
 void SimpleOpenGL2Renderer::drawLine(const double from[4], const double to[4], const double color[4], double lineWidth)
 {
 	glLineWidth(lineWidth);

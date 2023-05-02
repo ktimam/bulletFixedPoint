@@ -76,7 +76,7 @@ public:
 	virtual void exitPhysics()
 	{
 	}
-	virtual void stepSimulation(float deltaTime)
+	virtual void stepSimulation(btScalar deltaTime)
 	{
 		m_x += 0.01f;
 		m_y += 0.01f;

@@ -57,7 +57,7 @@ public:
 
 	void exitPhysics();
 
-	virtual void stepSimulation(float deltaTime)
+	virtual void stepSimulation(btScalar deltaTime)
 	{
 		CommonRigidBodyBase::stepSimulation(deltaTime);
 
@@ -122,7 +122,7 @@ void FractureDemo::initPhysics()
 		btTransform groundTransform;
 		groundTransform.setIdentity();
 		groundTransform.setOrigin(btVector3(0, 0, 0));
-		createRigidBody(0.f, groundTransform, groundShape);
+		createRigidBody((btScalar)0.f, groundTransform, groundShape);
 	}
 
 	{
@@ -132,7 +132,7 @@ void FractureDemo::initPhysics()
 		btTransform tr;
 		tr.setIdentity();
 		tr.setOrigin(btVector3(5, 2, 0));
-		createRigidBody(0.f, tr, shape);
+		createRigidBody((btScalar)0.f, tr, shape);
 	}
 
 	{
@@ -151,7 +151,7 @@ void FractureDemo::initPhysics()
 		btScalar mass(1.f);
 
 		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
+		bool isDynamic = (mass != (btScalar)0.f);
 
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)
@@ -177,7 +177,7 @@ void FractureDemo::initPhysics()
 		}
 	}
 
-	fractureWorld->stepSimulation(1. / 60., 0);
+	fractureWorld->stepSimulation((btScalar)1. / (btScalar)60., 0);
 	fractureWorld->glueCallback();
 
 	m_guiHelper->autogenerateGraphicsObjects(m_dynamicsWorld);

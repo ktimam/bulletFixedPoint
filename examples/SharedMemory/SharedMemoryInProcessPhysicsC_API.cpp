@@ -198,7 +198,7 @@ public:
 		unsigned long long int dtMicro = curTime - m_prevTime;
 		m_prevTime = curTime;
 
-		double dt = double(dtMicro) / 1000000.;
+		btScalar dt = (btScalar)(dtMicro) / (btScalar)1000000.;
 
 		m_physicsServerExample->stepSimulation(dt);
 		{

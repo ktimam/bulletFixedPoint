@@ -79,7 +79,7 @@ public:
 			//			printf("numAllocas = %d\n",numAllocas);
 			for (int i = 0; i < n; i++)
 			{
-				volatile btScalar xx = m_x[i];
+				btScalar xx = m_x[i];
 				if (xx != m_x[i])
 					return false;
 				if (x[i] >= m_acceptableUpperLimitSolution)

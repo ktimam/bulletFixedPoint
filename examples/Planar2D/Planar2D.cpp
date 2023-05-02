@@ -148,7 +148,7 @@ void Planar2D::initPhysics()
 		btScalar mass(0.);
 
 		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
+		bool isDynamic = (mass != (btScalar)0.f);
 
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)
@@ -168,7 +168,7 @@ void Planar2D::initPhysics()
 		// Re-using the same collision is better for memory usage and performance
 
 		btScalar u = btScalar(1 * SCALING - 0.04);
-		btVector3 points[3] = {btVector3(0, u, 0), btVector3(-u, -u, 0), btVector3(u, -u, 0)};
+		btVector3 points[3] = {btVector3((btScalar)0, u, (btScalar)0), btVector3(-u, -u, (btScalar)0), btVector3(u, -u, (btScalar)0)};
 		btConvexShape* childShape0 = new btBoxShape(btVector3(btScalar(SCALING * 1), btScalar(SCALING * 1), btScalar(0.04)));
 		btConvexShape* colShape = new btConvex2dShape(childShape0);
 		//btCollisionShape* colShape = new btBox2dShape(btVector3(SCALING*1,SCALING*1,0.04));
@@ -196,7 +196,7 @@ void Planar2D::initPhysics()
 		btScalar mass(1.f);
 
 		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
+		bool isDynamic = (mass != (btScalar)0.f);
 
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)
@@ -221,7 +221,7 @@ void Planar2D::initPhysics()
 
 				//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
 				btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-				btRigidBody::btRigidBodyConstructionInfo rbInfo(0, 0, 0);
+				btRigidBody::btRigidBodyConstructionInfo rbInfo((btScalar)0, 0, 0);
 				switch (j % 3)
 				{
 #if 1

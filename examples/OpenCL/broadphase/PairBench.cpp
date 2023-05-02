@@ -49,7 +49,7 @@ public:
 	void createBroadphase(int xdim, int ydim, int zdim);
 	void deleteBroadphase();
 
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 
 	virtual void renderScene();
 
@@ -422,7 +422,7 @@ struct OverlappingPairSortPredicate
 	}
 };
 
-void PairBench::stepSimulation(float deltaTime)
+void PairBench::stepSimulation(btScalar deltaTime)
 {
 	//color all objects blue
 

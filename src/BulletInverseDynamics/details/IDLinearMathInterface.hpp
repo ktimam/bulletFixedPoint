@@ -48,7 +48,7 @@ public:
 	friend mat33 operator/(const mat33& a, const idScalar& s);
 };
 
-inline mat33 operator/(const mat33& a, const idScalar& s) { return a * (1.0 / s); }
+inline mat33 operator/(const mat33& a, const idScalar& s) { return a * ((btScalar)1.0 / s); }
 
 inline mat33 operator*(const idScalar& s, const mat33& a) { return a * s; }
 
@@ -168,9 +168,9 @@ inline vec3 operator*(const mat3x& a, const vecx& b)
 		bt_id_error_message("size missmatch. a.cols()= %d, b.size()= %d\n", a.cols(), b.size());
 		abort();
 	}
-	result(0) = 0.0;
-	result(1) = 0.0;
-	result(2) = 0.0;
+	result(0) = (btScalar)0.0;
+	result(1) = (btScalar)0.0;
+	result(2) = (btScalar)0.0;
 	for (int i = 0; i < b.size(); i++)
 	{
 		for (int k = 0; k < 3; k++)

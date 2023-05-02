@@ -101,7 +101,7 @@ public:
 			else
 				PolarDecomposition(F, R, S);  // this QR is not robust, consider using implicit shift svd
 			/*https://fuchuyuan.github.io/research/svd/paper.pdf*/
-			P += (F - R) * 2 * m_mu;
+			P += (F - R) * (btScalar)2 * m_mu;
 		}
 	}
 

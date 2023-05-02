@@ -10,7 +10,7 @@ static void scalarToDouble3(btScalar a[3], double b[3])
 {
 	for (int i = 0; i < 3; i++)
 	{
-		b[i] = a[i];
+		b[i] = (double)a[i];
 	}
 }
 
@@ -18,7 +18,7 @@ static void scalarToDouble4(btScalar a[4], double b[4])
 {
 	for (int i = 0; i < 4; i++)
 	{
-		b[i] = a[i];
+		b[i] = (double)a[i];
 	}
 }
 
@@ -140,7 +140,7 @@ void b3RobotSimulatorClientAPI_NoDirect::setGravity(const btVector3& gravityAcce
 
 	b3SharedMemoryCommandHandle command = b3InitPhysicsParamCommand(m_data->m_physicsClientHandle);
 	b3SharedMemoryStatusHandle statusHandle;
-	b3PhysicsParamSetGravity(command, gravityAcceleration[0], gravityAcceleration[1], gravityAcceleration[2]);
+	b3PhysicsParamSetGravity(command, (double)gravityAcceleration[0], (double)gravityAcceleration[1], (double)gravityAcceleration[2]);
 	statusHandle = b3SubmitClientCommandAndWaitStatus(m_data->m_physicsClientHandle, command);
 	//	btAssert(b3GetStatusType(statusHandle) == CMD_CLIENT_COMMAND_COMPLETED);
 }
@@ -212,12 +212,12 @@ bool b3RobotSimulatorClientAPI_NoDirect::changeVisualShape(const struct b3RobotS
 
 	if (args.m_hasSpecularColor)
 	{
-		double specularColor[3] = {args.m_specularColor[0], args.m_specularColor[1], args.m_specularColor[2]};
+		double specularColor[3] = { (double)args.m_specularColor[0], (double)args.m_specularColor[1], (double)args.m_specularColor[2]};
 		b3UpdateVisualShapeSpecularColor(commandHandle, specularColor);
 	}
 	if (args.m_hasRgbaColor)
 	{
-		double rgbaColor[4] = {args.m_rgbaColor[0], args.m_rgbaColor[1], args.m_rgbaColor[2], args.m_rgbaColor[3]};
+		double rgbaColor[4] = { (double)args.m_rgbaColor[0], (double)args.m_rgbaColor[1], (double)args.m_rgbaColor[2], (double)args.m_rgbaColor[3]};
 		b3UpdateVisualShapeRGBAColor(commandHandle, rgbaColor);
 	}
 
@@ -245,10 +245,10 @@ int b3RobotSimulatorClientAPI_NoDirect::loadURDF(const std::string& fileName, co
 
 	b3LoadUrdfCommandSetFlags(command, args.m_flags);
 
-	b3LoadUrdfCommandSetStartPosition(command, args.m_startPosition[0],
-									  args.m_startPosition[1],
-									  args.m_startPosition[2]);
-	b3LoadUrdfCommandSetStartOrientation(command, args.m_startOrientation[0], args.m_startOrientation[1], args.m_startOrientation[2], args.m_startOrientation[3]);
+	b3LoadUrdfCommandSetStartPosition(command, (double)args.m_startPosition[0],
+									  (double)args.m_startPosition[1],
+									  (double)args.m_startPosition[2]);
+	b3LoadUrdfCommandSetStartOrientation(command, (double)args.m_startOrientation[0], (double)args.m_startOrientation[1], (double)args.m_startOrientation[2], (double)args.m_startOrientation[3]);
 	if (args.m_forceOverrideFixedBase)
 	{
 		b3LoadUrdfCommandSetUseFixedBase(command, true);
@@ -454,14 +454,14 @@ bool b3RobotSimulatorClientAPI_NoDirect::getBasePositionAndOrientation(int bodyU
 		0 /*root_local_inertial_frame*/, &actualStateQ,
 		0 /* actual_state_q_dot */, 0 /* joint_reaction_forces */);
 
-	basePosition[0] = actualStateQ[0];
-	basePosition[1] = actualStateQ[1];
-	basePosition[2] = actualStateQ[2];
+	basePosition[0] = (btScalar)actualStateQ[0];
+	basePosition[1] = (btScalar)actualStateQ[1];
+	basePosition[2] = (btScalar)actualStateQ[2];
 
-	baseOrientation[0] = actualStateQ[3];
-	baseOrientation[1] = actualStateQ[4];
-	baseOrientation[2] = actualStateQ[5];
-	baseOrientation[3] = actualStateQ[6];
+	baseOrientation[0] = (btScalar)actualStateQ[3];
+	baseOrientation[1] = (btScalar)actualStateQ[4];
+	baseOrientation[2] = (btScalar)actualStateQ[5];
+	baseOrientation[3] = (btScalar)actualStateQ[6];
 	return true;
 }
 
@@ -477,9 +477,9 @@ bool b3RobotSimulatorClientAPI_NoDirect::resetBasePositionAndOrientation(int bod
 
 	commandHandle = b3CreatePoseCommandInit(m_data->m_physicsClientHandle, bodyUniqueId);
 
-	b3CreatePoseCommandSetBasePosition(commandHandle, basePosition[0], basePosition[1], basePosition[2]);
-	b3CreatePoseCommandSetBaseOrientation(commandHandle, baseOrientation[0], baseOrientation[1],
-										  baseOrientation[2], baseOrientation[3]);
+	b3CreatePoseCommandSetBasePosition(commandHandle, (double)basePosition[0], (double)basePosition[1], (double)basePosition[2]);
+	b3CreatePoseCommandSetBaseOrientation(commandHandle, (double)baseOrientation[0], (double)baseOrientation[1],
+										  (double)baseOrientation[2], (double)baseOrientation[3]);
 
 	b3SharedMemoryStatusHandle statusHandle;
 	statusHandle = b3SubmitClientCommandAndWaitStatus(m_data->m_physicsClientHandle, commandHandle);
@@ -511,13 +511,13 @@ bool b3RobotSimulatorClientAPI_NoDirect::getBaseVelocity(int bodyUniqueId, btVec
 						   0 /*root_local_inertial_frame*/, 0,
 						   &actualStateQdot, 0 /* joint_reaction_forces */);
 
-	baseLinearVelocity[0] = actualStateQdot[0];
-	baseLinearVelocity[1] = actualStateQdot[1];
-	baseLinearVelocity[2] = actualStateQdot[2];
+	baseLinearVelocity[0] = (btScalar)actualStateQdot[0];
+	baseLinearVelocity[1] = (btScalar)actualStateQdot[1];
+	baseLinearVelocity[2] = (btScalar)actualStateQdot[2];
 
-	baseAngularVelocity[0] = actualStateQdot[3];
-	baseAngularVelocity[1] = actualStateQdot[4];
-	baseAngularVelocity[2] = actualStateQdot[5];
+	baseAngularVelocity[0] = (btScalar)actualStateQdot[3];
+	baseAngularVelocity[1] = (btScalar)actualStateQdot[4];
+	baseAngularVelocity[2] = (btScalar)actualStateQdot[5];
 	return true;
 }
 
@@ -1184,7 +1184,8 @@ void b3RobotSimulatorClientAPI_NoDirect::resetDebugVisualizerCamera(double camer
 		{
 			btVector3FloatData camTargetPos;
 			targetPos.serializeFloat(camTargetPos);
-			b3ConfigureOpenGLVisualizerSetViewMatrix(commandHandle, cameraDistance, cameraPitch, cameraYaw, camTargetPos.m_floats);
+			float camtargetpos[] = { (float)camTargetPos.m_floats[0], (float)camTargetPos.m_floats[1] , (float)camTargetPos.m_floats[2] , (float)camTargetPos.m_floats[3] };
+			b3ConfigureOpenGLVisualizerSetViewMatrix(commandHandle, cameraDistance, cameraPitch, cameraYaw, camtargetpos);
 		}
 		b3SubmitClientCommandAndWaitStatus(m_data->m_physicsClientHandle, commandHandle);
 	}
@@ -1221,8 +1222,8 @@ void b3RobotSimulatorClientAPI_NoDirect::loadSoftBody(const std::string& fileNam
 	}
 
 	b3SharedMemoryCommandHandle command = b3LoadSoftBodyCommandInit(m_data->m_physicsClientHandle, fileName.c_str());
-	b3LoadSoftBodySetStartPosition(command, args.m_startPosition[0], args.m_startPosition[1], args.m_startPosition[2]);
-	b3LoadSoftBodySetStartOrientation(command, args.m_startOrientation[0], args.m_startOrientation[1], args.m_startOrientation[2], args.m_startOrientation[3]);
+	b3LoadSoftBodySetStartPosition(command, (double)args.m_startPosition[0], (double)args.m_startPosition[1], (double)args.m_startPosition[2]);
+	b3LoadSoftBodySetStartOrientation(command, (double)args.m_startOrientation[0], (double)args.m_startOrientation[1], (double)args.m_startOrientation[2], (double)args.m_startOrientation[3]);
 	b3LoadSoftBodySetScale(command, args.m_scale);
 	b3LoadSoftBodySetMass(command, args.m_mass);
 	b3LoadSoftBodySetCollisionMargin(command, args.m_collisionMargin);
@@ -1238,8 +1239,8 @@ void b3RobotSimulatorClientAPI_NoDirect::loadDeformableBody(const std::string& f
 	}
 
 	b3SharedMemoryCommandHandle command = b3LoadSoftBodyCommandInit(m_data->m_physicsClientHandle, fileName.c_str());
-	b3LoadSoftBodySetStartPosition(command, args.m_startPosition[0], args.m_startPosition[1], args.m_startPosition[2]);
-	b3LoadSoftBodySetStartOrientation(command, args.m_startOrientation[0], args.m_startOrientation[1], args.m_startOrientation[2], args.m_startOrientation[3]);
+	b3LoadSoftBodySetStartPosition(command, (double)args.m_startPosition[0], (double)args.m_startPosition[1], (double)args.m_startPosition[2]);
+	b3LoadSoftBodySetStartOrientation(command, (double)args.m_startOrientation[0], (double)args.m_startOrientation[1], (double)args.m_startOrientation[2], (double)args.m_startOrientation[3]);
 	b3LoadSoftBodySetScale(command, args.m_scale);
 	b3LoadSoftBodySetMass(command, args.m_mass);
 	b3LoadSoftBodySetCollisionMargin(command, args.m_collisionMargin);
@@ -1654,9 +1655,9 @@ int b3RobotSimulatorClientAPI_NoDirect::addUserDebugText(const char* text, doubl
 int b3RobotSimulatorClientAPI_NoDirect::addUserDebugText(const char* text, btVector3& textPosition, struct b3RobotSimulatorAddUserDebugTextArgs& args)
 {
 	double dposXYZ[3];
-	dposXYZ[0] = textPosition.x();
-	dposXYZ[1] = textPosition.y();
-	dposXYZ[2] = textPosition.z();
+	dposXYZ[0] = (double)textPosition.x();
+	dposXYZ[1] = (double)textPosition.y();
+	dposXYZ[2] = (double)textPosition.z();
 
 	return addUserDebugText(text, &dposXYZ[0], args);
 }
@@ -1696,13 +1697,13 @@ int b3RobotSimulatorClientAPI_NoDirect::addUserDebugLine(btVector3& fromXYZ, btV
 {
 	double dfromXYZ[3];
 	double dtoXYZ[3];
-	dfromXYZ[0] = fromXYZ.x();
-	dfromXYZ[1] = fromXYZ.y();
-	dfromXYZ[2] = fromXYZ.z();
+	dfromXYZ[0] = (double)fromXYZ.x();
+	dfromXYZ[1] = (double)fromXYZ.y();
+	dfromXYZ[2] = (double)fromXYZ.z();
 
-	dtoXYZ[0] = toXYZ.x();
-	dtoXYZ[1] = toXYZ.y();
-	dtoXYZ[2] = toXYZ.z();
+	dtoXYZ[0] = (double)toXYZ.x();
+	dtoXYZ[1] = (double)toXYZ.y();
+	dtoXYZ[2] = (double)toXYZ.z();
 	return addUserDebugLine(&dfromXYZ[0], &dtoXYZ[0], args);
 }
 
@@ -1939,13 +1940,13 @@ bool b3RobotSimulatorClientAPI_NoDirect::applyExternalForce(int objectUniqueId, 
 	double dforce[3];
 	double dposition[3];
 
-	dforce[0] = force.x();
-	dforce[1] = force.y();
-	dforce[2] = force.z();
+	dforce[0] = (double)force.x();
+	dforce[1] = (double)force.y();
+	dforce[2] = (double)force.z();
 
-	dposition[0] = position.x();
-	dposition[1] = position.y();
-	dposition[2] = position.z();
+	dposition[0] = (double)position.x();
+	dposition[1] = (double)position.y();
+	dposition[2] = (double)position.z();
 
 	return applyExternalForce(objectUniqueId, linkIndex, &dforce[0], &dposition[0], flags);
 }
@@ -1971,9 +1972,9 @@ bool b3RobotSimulatorClientAPI_NoDirect::applyExternalTorque(int objectUniqueId,
 {
 	double dtorque[3];
 
-	dtorque[0] = torque.x();
-	dtorque[1] = torque.y();
-	dtorque[2] = torque.z();
+	dtorque[0] = (double)torque.x();
+	dtorque[1] = (double)torque.y();
+	dtorque[2] = (double)torque.z();
 
 	return applyExternalTorque(objectUniqueId, linkIndex, &dtorque[0], flags);
 }
@@ -2134,13 +2135,13 @@ bool b3RobotSimulatorClientAPI_NoDirect::getOverlappingObjects(btVector3& aabbMi
 	double daabbMin[3];
 	double daabbMax[3];
 
-	daabbMin[0] = aabbMin.x();
-	daabbMin[1] = aabbMin.y();
-	daabbMin[2] = aabbMin.z();
+	daabbMin[0] = (double)aabbMin.x();
+	daabbMin[1] = (double)aabbMin.y();
+	daabbMin[2] = (double)aabbMin.z();
 
-	daabbMax[0] = aabbMax.x();
-	daabbMax[1] = aabbMax.y();
-	daabbMax[2] = aabbMax.z();
+	daabbMax[0] = (double)aabbMax.x();
+	daabbMax[1] = (double)aabbMax.y();
+	daabbMax[2] = (double)aabbMax.z();
 
 	return getOverlappingObjects(&daabbMin[0], &daabbMax[0], overlapData);
 }
@@ -2197,13 +2198,13 @@ bool b3RobotSimulatorClientAPI_NoDirect::getAABB(int bodyUniqueId, int linkIndex
 
 	bool status = getAABB(bodyUniqueId, linkIndex, &daabbMin[0], &daabbMax[0]);
 
-	aabbMin[0] = (float)daabbMin[0];
-	aabbMin[1] = (float)daabbMin[1];
-	aabbMin[2] = (float)daabbMin[2];
+	aabbMin[0] = (btScalar)daabbMin[0];
+	aabbMin[1] = (btScalar)daabbMin[1];
+	aabbMin[2] = (btScalar)daabbMin[2];
 
-	aabbMax[0] = (float)daabbMax[0];
-	aabbMax[1] = (float)daabbMax[1];
-	aabbMax[2] = (float)daabbMax[2];
+	aabbMax[0] = (btScalar)daabbMax[0];
+	aabbMax[1] = (btScalar)daabbMax[1];
+	aabbMax[2] = (btScalar)daabbMax[2];
 
 	return status;
 }
@@ -2387,9 +2388,9 @@ int b3RobotSimulatorClientAPI_NoDirect::createMultiBody(struct b3RobotSimulatorC
 		btAlignedObjectArray<double> positionArray;
 		for (int i = 0; i < args.m_batchPositions.size(); i++)
 		{
-			positionArray.push_back(args.m_batchPositions[i][0]);
-			positionArray.push_back(args.m_batchPositions[i][1]);
-			positionArray.push_back(args.m_batchPositions[i][2]);
+			positionArray.push_back((double)args.m_batchPositions[i][0]);
+			positionArray.push_back((double)args.m_batchPositions[i][1]);
+			positionArray.push_back((double)args.m_batchPositions[i][2]);
 		}
 		b3CreateMultiBodySetBatchPositions(sm, command, &positionArray[0], args.m_batchPositions.size());
 	}

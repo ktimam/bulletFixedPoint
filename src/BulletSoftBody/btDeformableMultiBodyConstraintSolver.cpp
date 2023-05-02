@@ -59,7 +59,7 @@ btScalar btDeformableMultiBodyConstraintSolver::solveDeformableGroupIterations(b
 					m_analyticsData.m_islandId = bodies[0]->getCompanionId();
 				m_analyticsData.m_numBodies = numBodies;
 				m_analyticsData.m_numContactManifolds = numManifolds;
-				m_analyticsData.m_remainingLeastSquaresResidual = m_leastSquaresResidual;
+				m_analyticsData.m_remainingLeastSquaresResidual = (float)m_leastSquaresResidual;
 				
 				m_deformableSolver->deformableBodyInternalWriteBack();
 				// std::cout << "[===================Next Step===================]\n";
@@ -67,7 +67,7 @@ btScalar btDeformableMultiBodyConstraintSolver::solveDeformableGroupIterations(b
 			}
 		}
 	}
-	return 0.f;
+	return (btScalar)0.f;
 }
 
 void btDeformableMultiBodyConstraintSolver::solveDeformableBodyGroup(btCollisionObject** bodies, int numBodies, btCollisionObject** deformableBodies, int numDeformableBodies, btPersistentManifold** manifold, int numManifolds, btTypedConstraint** constraints, int numConstraints, btMultiBodyConstraint** multiBodyConstraints, int numMultiBodyConstraints, const btContactSolverInfo& info, btIDebugDraw* debugDrawer, btDispatcher* dispatcher)
@@ -185,7 +185,7 @@ void btDeformableMultiBodyConstraintSolver::solveGroupCacheFriendlySplitImpulseI
 		{
 			for (iteration = 0; iteration < infoGlobal.m_numIterations; iteration++)
 			{
-				btScalar leastSquaresResidual = 0.f;
+				btScalar leastSquaresResidual = (btScalar)0.f;
 				{
 					int numPoolConstraints = m_tmpSolverContactConstraintPool.size();
 					int j;

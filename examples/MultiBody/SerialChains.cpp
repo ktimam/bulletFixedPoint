@@ -30,7 +30,7 @@ public:
 
 	virtual void initPhysics();
 
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 
 	virtual void resetCamera()
 	{
@@ -63,10 +63,10 @@ SerialChains::~SerialChains()
 	// Do nothing
 }
 
-void SerialChains::stepSimulation(float deltaTime)
+void SerialChains::stepSimulation(btScalar deltaTime)
 {
 	//use a smaller internal timestep, there are stability issues
-	float internalTimeStep = 1. / 240.f;
+	btScalar internalTimeStep = (btScalar)1. / (btScalar)240.f;
 	m_dynamicsWorld->stepSimulation(deltaTime, 10, internalTimeStep);
 }
 
@@ -76,7 +76,7 @@ void SerialChains::initPhysics()
 
 	if (g_firstInit)
 	{
-		m_guiHelper->getRenderInterface()->getActiveCamera()->setCameraDistance(btScalar(10. * scaling));
+		m_guiHelper->getRenderInterface()->getActiveCamera()->setCameraDistance(float((btScalar)10. * (btScalar)scaling));
 		m_guiHelper->getRenderInterface()->getActiveCamera()->setCameraPitch(50);
 		g_firstInit = false;
 	}
@@ -151,20 +151,20 @@ void SerialChains::initPhysics()
 
 	if (!damping)
 	{
-		mbC1->setLinearDamping(0.f);
-		mbC1->setAngularDamping(0.f);
+		mbC1->setLinearDamping((btScalar)0.f);
+		mbC1->setAngularDamping((btScalar)0.f);
 	}
 	else
 	{
-		mbC1->setLinearDamping(0.1f);
-		mbC1->setAngularDamping(0.9f);
+		mbC1->setLinearDamping((btScalar)0.1f);
+		mbC1->setAngularDamping((btScalar)0.9f);
 	}
 	//
 	m_dynamicsWorld->setGravity(btVector3(0, -9.81, 0));
 	//////////////////////////////////////////////
 	if (numLinks > 0)
 	{
-		btScalar q0 = 45.f * SIMD_PI / 180.f;
+		btScalar q0 = (btScalar)45.f * SIMD_PI / (btScalar)180.f;
 		if (!spherical)
 		{
 			mbC1->setJointPosMultiDof(0, &q0);
@@ -185,20 +185,20 @@ void SerialChains::initPhysics()
 	//
 	if (!damping)
 	{
-		mbC2->setLinearDamping(0.f);
-		mbC2->setAngularDamping(0.f);
+		mbC2->setLinearDamping((btScalar)0.f);
+		mbC2->setAngularDamping((btScalar)0.f);
 	}
 	else
 	{
-		mbC2->setLinearDamping(0.1f);
-		mbC2->setAngularDamping(0.9f);
+		mbC2->setLinearDamping((btScalar)0.1f);
+		mbC2->setAngularDamping((btScalar)0.9f);
 	}
 	//
 	m_dynamicsWorld->setGravity(btVector3(0, -9.81, 0));
 	//////////////////////////////////////////////
 	if (numLinks > 0)
 	{
-		btScalar q0 = -45.f * SIMD_PI / 180.f;
+		btScalar q0 = (btScalar)-45.f * SIMD_PI / (btScalar)180.f;
 		if (!spherical)
 		{
 			mbC2->setJointPosMultiDof(0, &q0);
@@ -214,11 +214,11 @@ void SerialChains::initPhysics()
 	addColliders(mbC2, world, baseHalfExtents, linkHalfExtents);
 
 	/////////////////////////////////////////////////////////////////
-	btScalar groundHeight = -51.55;
+	btScalar groundHeight = (btScalar)-51.55;
 	btScalar mass(0.);
 
 	//rigidbody is dynamic if and only if mass is non zero, otherwise static
-	bool isDynamic = (mass != 0.f);
+	bool isDynamic = (mass != (btScalar)0.f);
 
 	btVector3 localInertia(0, 0, 0);
 	if (isDynamic)
@@ -226,7 +226,7 @@ void SerialChains::initPhysics()
 
 	//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
 	groundTransform.setIdentity();
-	groundTransform.setOrigin(btVector3(0, groundHeight, 0));
+	groundTransform.setOrigin(btVector3((btScalar)0, groundHeight, (btScalar)0));
 	btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
 	btRigidBody* body = new btRigidBody(rbInfo);
@@ -251,15 +251,15 @@ btMultiBody* SerialChains::createFeatherstoneMultiBody(btMultiBodyDynamicsWorld*
 	if (baseMass)
 	{
 		btCollisionShape* pTempBox = new btBoxShape(btVector3(baseHalfExtents[0], baseHalfExtents[1], baseHalfExtents[2]));
-		pTempBox->calculateLocalInertia(baseMass, baseInertiaDiag);
+		pTempBox->calculateLocalInertia((btScalar)baseMass, baseInertiaDiag);
 		delete pTempBox;
 	}
 
 	bool canSleep = false;
 
-	btMultiBody* pMultiBody = new btMultiBody(numLinks, baseMass, baseInertiaDiag, fixedBase, canSleep);
+	btMultiBody* pMultiBody = new btMultiBody(numLinks, (btScalar)baseMass, baseInertiaDiag, fixedBase, canSleep);
 
-	btQuaternion baseOriQuat(0.f, 0.f, 0.f, 1.f);
+	btQuaternion baseOriQuat((btScalar)0.f, (btScalar)0.f, (btScalar)0.f, (btScalar)1.f);
 	pMultiBody->setBasePos(basePosition);
 	pMultiBody->setWorldToBaseRot(baseOriQuat);
 	btVector3 vel(0, 0, 0);
@@ -270,16 +270,16 @@ btMultiBody* SerialChains::createFeatherstoneMultiBody(btMultiBodyDynamicsWorld*
 	btVector3 linkInertiaDiag(0.f, 0.f, 0.f);
 
 	btCollisionShape* pTempBox = new btBoxShape(btVector3(linkHalfExtents[0], linkHalfExtents[1], linkHalfExtents[2]));
-	pTempBox->calculateLocalInertia(linkMass, linkInertiaDiag);
+	pTempBox->calculateLocalInertia((btScalar)linkMass, linkInertiaDiag);
 	delete pTempBox;
 
 	//y-axis assumed up
-	btVector3 parentComToCurrentCom(0, -linkHalfExtents[1] * 2.f, 0);                      //par body's COM to cur body's COM offset
-	btVector3 currentPivotToCurrentCom(0, -linkHalfExtents[1], 0);                         //cur body's COM to cur body's PIV offset
+	btVector3 parentComToCurrentCom((btScalar)0, -linkHalfExtents[1] * (btScalar)2.f, (btScalar)0);                      //par body's COM to cur body's COM offset
+	btVector3 currentPivotToCurrentCom((btScalar)0, -linkHalfExtents[1], (btScalar)0);                         //cur body's COM to cur body's PIV offset
 	btVector3 parentComToCurrentPivot = parentComToCurrentCom - currentPivotToCurrentCom;  //par body's COM to cur body's PIV offset
 
 	//////
-	btScalar q0 = 0.f * SIMD_PI / 180.f;
+	btScalar q0 = (btScalar)0.f * SIMD_PI / (btScalar)180.f;
 	btQuaternion quat0(btVector3(0, 1, 0).normalized(), q0);
 	quat0.normalize();
 	/////
@@ -287,10 +287,10 @@ btMultiBody* SerialChains::createFeatherstoneMultiBody(btMultiBodyDynamicsWorld*
 	for (int i = 0; i < numLinks; ++i)
 	{
 		if (!spherical)
-			pMultiBody->setupRevolute(i, linkMass, linkInertiaDiag, i - 1, btQuaternion(0.f, 0.f, 0.f, 1.f), hingeJointAxis, parentComToCurrentPivot, currentPivotToCurrentCom, true);
+			pMultiBody->setupRevolute(i, (btScalar)linkMass, linkInertiaDiag, i - 1, btQuaternion((btScalar)0.f, (btScalar)0.f, (btScalar)0.f, (btScalar)1.f), hingeJointAxis, parentComToCurrentPivot, currentPivotToCurrentCom, true);
 		else
 			//pMultiBody->setupPlanar(i, linkMass, linkInertiaDiag, i - 1, btQuaternion(0.f, 0.f, 0.f, 1.f)/*quat0*/, btVector3(1, 0, 0), parentComToCurrentPivot*2, false);
-			pMultiBody->setupSpherical(i, linkMass, linkInertiaDiag, i - 1, btQuaternion(0.f, 0.f, 0.f, 1.f), parentComToCurrentPivot, currentPivotToCurrentCom, true);
+			pMultiBody->setupSpherical(i, (btScalar)linkMass, linkInertiaDiag, i - 1, btQuaternion((btScalar)0.f, (btScalar)0.f, (btScalar)0.f, (btScalar)1.f), parentComToCurrentPivot, currentPivotToCurrentCom, true);
 	}
 
 	pMultiBody->finalizeMultiDof();
@@ -308,7 +308,7 @@ void SerialChains::createGround(const btVector3& halfExtents, btScalar zOffSet)
 
 	// rigidbody is dynamic if and only if mass is non zero, otherwise static
 	btScalar mass(0.);
-	const bool isDynamic = (mass != 0.f);
+	const bool isDynamic = (mass != (btScalar)0.f);
 
 	btVector3 localInertia(0, 0, 0);
 	if (isDynamic)
@@ -317,7 +317,7 @@ void SerialChains::createGround(const btVector3& halfExtents, btScalar zOffSet)
 	// using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
 	btTransform groundTransform;
 	groundTransform.setIdentity();
-	groundTransform.setOrigin(btVector3(0, -halfExtents.z() + zOffSet, 0));
+	groundTransform.setOrigin(btVector3((btScalar)0, -halfExtents.z() + zOffSet, (btScalar)0));
 	btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
 	btRigidBody* body = new btRigidBody(rbInfo);
@@ -353,7 +353,7 @@ void SerialChains::addColliders(btMultiBody* pMultiBody, btMultiBodyDynamicsWorl
 
 			pWorld->addCollisionObject(col, 2, 1 + 2);
 
-			col->setFriction(friction);
+			col->setFriction((btScalar)friction);
 			pMultiBody->setBaseCollider(col);
 		}
 	}
@@ -380,7 +380,7 @@ void SerialChains::addColliders(btMultiBody* pMultiBody, btMultiBodyDynamicsWorl
 		tr.setOrigin(posr);
 		tr.setRotation(btQuaternion(quat[0], quat[1], quat[2], quat[3]));
 		col->setWorldTransform(tr);
-		col->setFriction(friction);
+		col->setFriction((btScalar)friction);
 		pWorld->addCollisionObject(col, 2, 1 + 2);
 
 		pMultiBody->getLink(i).m_collider = col;

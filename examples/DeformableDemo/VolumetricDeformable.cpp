@@ -27,10 +27,10 @@
 #include "../Utils/b3ResourcePath.h"
 
 ///The VolumetricDeformable shows the contact between volumetric deformable objects and rigid objects.
-static btScalar E = 50;
-static btScalar nu = 0.3;
-static btScalar damping_alpha = 0.1;
-static btScalar damping_beta = 0.01;
+static btScalar E = (btScalar)50;
+static btScalar nu = (btScalar)0.3;
+static btScalar damping_alpha = (btScalar)0.1;
+static btScalar damping_beta = (btScalar)0.01;
 
 struct TetraCube
 {
@@ -46,9 +46,9 @@ public:
 		: CommonDeformableBodyBase(helper)
 	{
         m_linearElasticity = 0;
-		m_pickingForceElasticStiffness = 100;
-		m_pickingForceDampingStiffness = 0;
-		m_maxPickingForce = 1e10; // allow large picking force with implicit scheme.
+		m_pickingForceElasticStiffness = (btScalar)100;
+		m_pickingForceDampingStiffness = (btScalar)0;
+		m_maxPickingForce = (btScalar)1e10; // allow large picking force with implicit scheme.
 	}
 	virtual ~VolumetricDeformable()
 	{
@@ -66,13 +66,13 @@ public:
 		m_guiHelper->resetCamera(dist, yaw, pitch, targetPos[0], targetPos[1], targetPos[2]);
 	}
     
-    void stepSimulation(float deltaTime)
+    void stepSimulation(btScalar deltaTime)
     {
 		m_linearElasticity->setPoissonRatio(nu);
 		m_linearElasticity->setYoungsModulus(E);
 		m_linearElasticity->setDamping(damping_alpha, damping_beta);
         //use a smaller internal timestep, there are stability issues
-        float internalTimeStep = 1. / 240;
+        btScalar internalTimeStep = (btScalar)1. / (btScalar)240;
         m_dynamicsWorld->stepSimulation(deltaTime, 4, internalTimeStep);
     }
     
@@ -84,11 +84,11 @@ public:
         btTransform Transform;
         Transform.setIdentity();
         Transform.setOrigin(translation);
-        Transform.setRotation(btQuaternion(btVector3(1, 0, 0), SIMD_PI * 0.0));
+        Transform.setRotation(btQuaternion(btVector3(1, 0, 0), SIMD_PI * (btScalar)0.0));
         //We can also use DemoApplication::localCreateRigidBody, but for clarity it is provided here:
         btScalar mass(0.);
         //rigidbody is dynamic if and only if mass is non zero, otherwise static
-        bool isDynamic = (mass != 0.f);
+        bool isDynamic = (mass != (btScalar)0.f);
         btVector3 localInertia(0, 0, 0);
         if (isDynamic)
             box->calculateLocalInertia(mass, localInertia);
@@ -96,7 +96,7 @@ public:
         btDefaultMotionState* myMotionState = new btDefaultMotionState(Transform);
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, box, localInertia);
         btRigidBody* body = new btRigidBody(rbInfo);
-        body->setFriction(0.5);
+        body->setFriction((btScalar)0.5);
         
         //add the ground to the dynamics world
         m_dynamicsWorld->addRigidBody(body);
@@ -112,7 +112,7 @@ public:
         btTransform localTransform;
         localTransform.setIdentity();
         cylinderCompound->addChildShape(localTransform, boxShape);
-        btQuaternion orn(SIMD_HALF_PI, 0, 0);
+        btQuaternion orn(SIMD_HALF_PI, (btScalar)0, (btScalar)0);
         localTransform.setRotation(orn);
         //    localTransform.setOrigin(btVector3(1,1,1));
         cylinderCompound->addChildShape(localTransform, cylinderShape);
@@ -126,7 +126,7 @@ public:
             btTransform startTransform;
             startTransform.setIdentity();
             startTransform.setOrigin(btVector3(i, 10 + 2 * i, i-1));
-            createRigidBody(mass, startTransform, shape[i % nshapes]);
+            createRigidBody((btScalar)mass, startTransform, shape[i % nshapes]);
         }
     }
     
@@ -167,7 +167,7 @@ void VolumetricDeformable::initPhysics()
     btVector3 gravity = btVector3(0, -100, 0);
 	m_dynamicsWorld->setGravity(gravity);
     getDeformableDynamicsWorld()->getWorldInfo().m_gravity = gravity;
-	getDeformableDynamicsWorld()->getWorldInfo().m_sparsesdf.setDefaultVoxelsz(0.25);
+	getDeformableDynamicsWorld()->getWorldInfo().m_sparsesdf.setDefaultVoxelsz((btScalar)0.25);
 	getDeformableDynamicsWorld()->getWorldInfo().m_sparsesdf.Reset();
 	m_guiHelper->createPhysicsDebugDrawer(m_dynamicsWorld);
 
@@ -179,11 +179,11 @@ void VolumetricDeformable::initPhysics()
         btTransform groundTransform;
         groundTransform.setIdentity();
         groundTransform.setOrigin(btVector3(0, -50, 0));
-        groundTransform.setRotation(btQuaternion(btVector3(1, 0, 0), SIMD_PI * 0.0));
+        groundTransform.setRotation(btQuaternion(btVector3(1, 0, 0), SIMD_PI * (btScalar)0.0));
         //We can also use DemoApplication::localCreateRigidBody, but for clarity it is provided here:
         btScalar mass(0.);
         //rigidbody is dynamic if and only if mass is non zero, otherwise static
-        bool isDynamic = (mass != 0.f);
+        bool isDynamic = (mass != (btScalar)0.f);
         btVector3 localInertia(0, 0, 0);
         if (isDynamic)
             groundShape->calculateLocalInertia(mass, localInertia);
@@ -191,7 +191,7 @@ void VolumetricDeformable::initPhysics()
         btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
         btRigidBody* body = new btRigidBody(rbInfo);
-        body->setFriction(1);
+        body->setFriction((btScalar)1);
 
         //add the ground to the dynamics world
         m_dynamicsWorld->addRigidBody(body);
@@ -212,20 +212,20 @@ void VolumetricDeformable::initPhysics()
         getDeformableDynamicsWorld()->addSoftBody(psb);
         psb->scale(btVector3(2, 2, 2));
         psb->translate(btVector3(0, 5, 0));
-        psb->getCollisionShape()->setMargin(0.1);
-        psb->setTotalMass(0.5);
-        psb->m_cfg.kKHR = 1; // collision hardness with kinematic objects
-        psb->m_cfg.kCHR = 1; // collision hardness with rigid body
-		psb->m_cfg.kDF = 2;
+        psb->getCollisionShape()->setMargin((btScalar)0.1);
+        psb->setTotalMass((btScalar)0.5);
+        psb->m_cfg.kKHR = (btScalar)1; // collision hardness with kinematic objects
+        psb->m_cfg.kCHR = (btScalar)1; // collision hardness with rigid body
+		psb->m_cfg.kDF = (btScalar)2;
         psb->m_cfg.collisions = btSoftBody::fCollision::SDF_RD;
         psb->m_cfg.collisions |= btSoftBody::fCollision::SDF_RDN;
-		psb->m_sleepingThreshold = 0;
+		psb->m_sleepingThreshold = (btScalar)0;
         btSoftBodyHelpers::generateBoundaryFaces(psb);
         btDeformableGravityForce* gravity_force =  new btDeformableGravityForce(gravity);
         getDeformableDynamicsWorld()->addForce(psb, gravity_force);
         m_forces.push_back(gravity_force);
         
-        btDeformableLinearElasticityForce* linearElasticity = new btDeformableLinearElasticityForce(100,100,0.01);
+        btDeformableLinearElasticityForce* linearElasticity = new btDeformableLinearElasticityForce((btScalar)100, (btScalar)100, (btScalar)0.01);
 		m_linearElasticity = linearElasticity;
         getDeformableDynamicsWorld()->addForce(psb, linearElasticity);
         m_forces.push_back(linearElasticity);
@@ -233,9 +233,9 @@ void VolumetricDeformable::initPhysics()
     getDeformableDynamicsWorld()->setImplicit(true);
     getDeformableDynamicsWorld()->setLineSearch(false);
     getDeformableDynamicsWorld()->setUseProjection(true);
-    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_erp = 0.3;
+    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_erp = (btScalar)0.3;
     getDeformableDynamicsWorld()->getSolverInfo().m_deformable_maxErrorReduction = btScalar(200);
-    getDeformableDynamicsWorld()->getSolverInfo().m_leastSquaresResidualThreshold = 1e-3;
+    getDeformableDynamicsWorld()->getSolverInfo().m_leastSquaresResidualThreshold = (btScalar)1e-3;
     getDeformableDynamicsWorld()->getSolverInfo().m_splitImpulse = true;
     getDeformableDynamicsWorld()->getSolverInfo().m_numIterations = 100;
     // add a few rigid bodies

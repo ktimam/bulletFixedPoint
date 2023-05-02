@@ -52,7 +52,7 @@ struct KinematicRigidBodyExample : public CommonRigidBodyBase
 	{
 	}
 
-	virtual void stepSimulation(float deltaTime)
+	virtual void stepSimulation(btScalar deltaTime)
 	{
 		if (m_dynamicsWorld)
 		{
@@ -84,14 +84,14 @@ void KinematicRigidBodyExample::initPhysics()
 		m_dynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawWireframe + btIDebugDraw::DBG_DrawContactPoints);
 
 	///create a few basic rigid bodies
-	btScalar halfExtentsX = 10.0;
-	btScalar halfExtentsY = 0.1;
-	btScalar halfExtentsZ = 10.0;
+	btScalar halfExtentsX = (btScalar)10.0;
+	btScalar halfExtentsY = (btScalar)0.1;
+	btScalar halfExtentsZ = (btScalar)10.0;
 
 	btBoxShape* groundShape = createBoxShape(btVector3(btScalar(10.), btScalar(0.1), btScalar(10.)));
 	btTransform groundTransform;
 	groundTransform.setIdentity();
-	groundTransform.setOrigin(btVector3(0, -halfExtentsY, 0));
+	groundTransform.setOrigin(btVector3((btScalar)0, -halfExtentsY, (btScalar)0));
 	m_collisionShapes.push_back(groundShape);
 
 
@@ -99,7 +99,7 @@ void KinematicRigidBodyExample::initPhysics()
 	{
 		btScalar mass(0.);
 		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
+		bool isDynamic = (mass != (btScalar)0.f);
 
 		btVector3 localInertia(0, 0, 0);
 
@@ -124,20 +124,20 @@ void KinematicRigidBodyExample::initPhysics()
 		int strideInBytes = 9 * sizeof(float);
 		int numVertices = sizeof(cube_vertices_textured) / strideInBytes;
 		int numIndices = sizeof(cube_indices) / sizeof(int);
-		btScalar textureScaling = 40.0;
+		btScalar textureScaling = (btScalar)40.0;
 		btAlignedObjectArray<GfxVertexFormat1> verts;
 		verts.resize(numVertices);
 		for (int i = 0; i < numVertices; i++)
 		{
-			verts[i].x = halfExtentsX * cube_vertices_textured[i * 9];
-			verts[i].y = halfExtentsY * cube_vertices_textured[i * 9 + 1];
-			verts[i].z = halfExtentsZ * cube_vertices_textured[i * 9 + 2];
+			verts[i].x = (float)halfExtentsX * cube_vertices_textured[i * 9];
+			verts[i].y = (float)halfExtentsY * cube_vertices_textured[i * 9 + 1];
+			verts[i].z = (float)halfExtentsZ * cube_vertices_textured[i * 9 + 2];
 			verts[i].w = cube_vertices_textured[i * 9 + 3];
 			verts[i].nx = cube_vertices_textured[i * 9 + 4];
 			verts[i].ny = cube_vertices_textured[i * 9 + 5];
 			verts[i].nz = cube_vertices_textured[i * 9 + 6];
-			verts[i].u = cube_vertices_textured[i * 9 + 7] * textureScaling;
-			verts[i].v = cube_vertices_textured[i * 9 + 8] * textureScaling;
+			verts[i].u = cube_vertices_textured[i * 9 + 7] * (float)textureScaling;
+			verts[i].v = cube_vertices_textured[i * 9 + 8] * (float)textureScaling;
 		}
 
 		int red = 173;
@@ -168,11 +168,32 @@ void KinematicRigidBodyExample::initPhysics()
 		bool flipPixelsY = false;
 		int textureIndex = m_guiHelper->getRenderInterface()->registerTexture(&rgbaTexture[0], textureWidth, textureHeight, flipPixelsY);
 		int shapeId = m_guiHelper->getRenderInterface()->registerShape(&verts[0].x, numVertices, cube_indices, numIndices, B3_GL_TRIANGLES, textureIndex);
-		btVector3 scaling(1, 1, 1);
-		btVector4 color(1, 1, 1, 1);
+		float scaling[] = { 1, 1, 1, 1 };
+		float color[] = { 1, 1, 1, 1 };
 		btQuaternion orn;
 		groundTransform.getBasis().getRotation(orn);
-		int graphicsInstanceId = m_guiHelper->getRenderInterface()->registerGraphicsInstance(shapeId, groundTransform.getOrigin(), orn, color, scaling);
+
+		;
+		btVector3 org = groundTransform.getOrigin();
+
+		float pos[4];
+		float rot[4];
+		pos[0] = (float)org[0];
+		pos[1] = (float)org[1];
+		pos[2] = (float)org[2];
+		pos[3] = (float)org[3];
+		rot[0] = (float)orn[0];
+		rot[1] = (float)orn[1];
+		rot[2] = (float)orn[2];
+		rot[3] = (float)orn[3];
+
+		float clr[4];
+		clr[0] = (float)color[0];
+		clr[1] = (float)color[1];
+		clr[2] = (float)color[2];
+		clr[3] = (float)color[3];
+
+		int graphicsInstanceId = m_guiHelper->getRenderInterface()->registerGraphicsInstance(shapeId, pos, rot, color, scaling);
 		groundShape->setUserIndex(shapeId);
 		m_groundBody->setUserIndex(graphicsInstanceId);
 	
@@ -195,7 +216,7 @@ void KinematicRigidBodyExample::initPhysics()
 		btScalar mass(1.f);
 
 		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
+		bool isDynamic = (mass != (btScalar)0.f);
 
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)

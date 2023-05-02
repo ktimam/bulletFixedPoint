@@ -103,17 +103,17 @@ public:
 			b3RobotSimulatorLoadFileResults results;
 			{
 				args.m_startPosition.setValue(0, 0, 2.5);
-				args.m_startOrientation.setEulerZYX(0, 0.2, 0);
+				args.m_startOrientation.setEulerZYX((btScalar)0, (btScalar)0.2, (btScalar)0);
 				m_r2d2Index = m_robotSim.loadURDF("cube_soft.urdf", args);
 			}
 			{
 				args.m_startPosition.setValue(0, 2, 2.5);
-				args.m_startOrientation.setEulerZYX(0, 0.2, 0);
+				args.m_startOrientation.setEulerZYX((btScalar)0, (btScalar)0.2, (btScalar)0);
 				m_robotSim.loadURDF("cube_no_friction.urdf", args);
 			}
 			{
 				args.m_startPosition.setValue(0, 0, 0);
-				args.m_startOrientation.setEulerZYX(0, 0.2, 0);
+				args.m_startOrientation.setEulerZYX((btScalar)0, (btScalar)0.2, (btScalar)0);
 				args.m_forceOverrideFixedBase = true;
 				m_robotSim.loadURDF("plane.urdf", args);
 			}
@@ -127,19 +127,19 @@ public:
 			b3RobotSimulatorLoadFileResults results;
 			{
 				args.m_startPosition.setValue(0, 0, 2.5);
-				args.m_startOrientation.setEulerZYX(0, 0, 0);
+				args.m_startOrientation.setEulerZYX((btScalar)0, (btScalar)0, (btScalar)0);
 				args.m_useMultiBody = true;
 				m_robotSim.loadURDF("sphere2_rolling_friction.urdf", args);
 			}
 			{
 				args.m_startPosition.setValue(0, 2, 2.5);
-				args.m_startOrientation.setEulerZYX(0, 0, 0);
+				args.m_startOrientation.setEulerZYX((btScalar)0, (btScalar)0, (btScalar)0);
 				args.m_useMultiBody = true;
 				m_robotSim.loadURDF("sphere2.urdf", args);
 			}
 			{
 				args.m_startPosition.setValue(0, 0, 0);
-				args.m_startOrientation.setEulerZYX(0, 0.2, 0);
+				args.m_startOrientation.setEulerZYX((btScalar)0, (btScalar)0.2, (btScalar)0);
 				args.m_useMultiBody = true;
 				args.m_forceOverrideFixedBase = true;
 				m_robotSim.loadURDF("plane.urdf", args);
@@ -152,7 +152,7 @@ public:
 	{
 		m_robotSim.disconnect();
 	}
-	virtual void stepSimulation(float deltaTime)
+	virtual void stepSimulation(btScalar deltaTime)
 	{
 		m_robotSim.stepSimulation();
 	}

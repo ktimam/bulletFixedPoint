@@ -62,7 +62,7 @@ public:
 
 	virtual SIMD_FORCE_INLINE btScalar norm(const TVStack& a)
 	{
-		btScalar ret = 0;
+		btScalar ret = (btScalar)0;
 		for (int i = 0; i < a.size(); ++i)
 		{
 			for (int d = 0; d < 3; ++d)

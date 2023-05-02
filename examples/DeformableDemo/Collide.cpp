@@ -27,11 +27,11 @@
 #include "../Utils/b3ResourcePath.h"
 
 ///The Collide shows the contact between volumetric deformable objects and rigid objects.
-static btScalar E = 50;
-static btScalar nu = 0.3;
-static btScalar damping_alpha = 0.1;
-static btScalar damping_beta = 0.01;
-static btScalar COLLIDING_VELOCITY = 15;
+static btScalar E = (btScalar)50;
+static btScalar nu = (btScalar)0.3;
+static btScalar damping_alpha = (btScalar)0.1;
+static btScalar damping_beta = (btScalar)0.01;
+static btScalar COLLIDING_VELOCITY = (btScalar)15;
 
 struct TetraCube
 {
@@ -71,16 +71,16 @@ public:
         btTransform startTransform;
         startTransform.setIdentity();
         startTransform.setOrigin(btVector3(0,-2,0));
-        btRigidBody* rb = createRigidBody(mass, startTransform, shape);
-        rb->setLinearVelocity(btVector3(0,+COLLIDING_VELOCITY, 0));
+        btRigidBody* rb = createRigidBody((btScalar)mass, startTransform, shape);
+        rb->setLinearVelocity(btVector3((btScalar)0,COLLIDING_VELOCITY, (btScalar)0));
     }
     
-    void stepSimulation(float deltaTime)
+    void stepSimulation(btScalar deltaTime)
     {
 		m_linearElasticity->setPoissonRatio(nu);
 		m_linearElasticity->setYoungsModulus(E);
 		m_linearElasticity->setDamping(damping_alpha, damping_beta);
-        float internalTimeStep = 1. / 60.f;
+        btScalar internalTimeStep = (btScalar)1. / (btScalar)60.f;
         m_dynamicsWorld->stepSimulation(deltaTime, 1, internalTimeStep);
     }
     
@@ -132,19 +132,19 @@ void Collide::initPhysics()
         getDeformableDynamicsWorld()->addSoftBody(psb);
         psb->scale(btVector3(2, 2, 2));
         psb->translate(btVector3(0, 7, 0));
-        psb->getCollisionShape()->setMargin(0.1);
-        psb->setTotalMass(0.5);
-        psb->m_cfg.kKHR = 1; // collision hardness with kinematic objects
-        psb->m_cfg.kCHR = 1; // collision hardness with rigid body
-		psb->m_cfg.kDF = 0;
+        psb->getCollisionShape()->setMargin((btScalar)0.1);
+        psb->setTotalMass((btScalar)0.5);
+        psb->m_cfg.kKHR = (btScalar)1; // collision hardness with kinematic objects
+        psb->m_cfg.kCHR = (btScalar)1; // collision hardness with rigid body
+		psb->m_cfg.kDF = (btScalar)0;
         psb->m_cfg.collisions = btSoftBody::fCollision::SDF_RD;
         psb->m_cfg.collisions |= btSoftBody::fCollision::SDF_RDN;
-		psb->m_sleepingThreshold = 0;
+		psb->m_sleepingThreshold = (btScalar)0;
         btSoftBodyHelpers::generateBoundaryFaces(psb);
         
-        psb->setVelocity(btVector3(0, -COLLIDING_VELOCITY, 0));
+        psb->setVelocity(btVector3((btScalar)0, -COLLIDING_VELOCITY, (btScalar)0));
         
-        btDeformableLinearElasticityForce* linearElasticity = new btDeformableLinearElasticityForce(100,100,0.01);
+        btDeformableLinearElasticityForce* linearElasticity = new btDeformableLinearElasticityForce((btScalar)100, (btScalar)100, (btScalar)0.01);
 		m_linearElasticity = linearElasticity;
         getDeformableDynamicsWorld()->addForce(psb, linearElasticity);
         m_forces.push_back(linearElasticity);
@@ -152,9 +152,9 @@ void Collide::initPhysics()
     getDeformableDynamicsWorld()->setImplicit(true);
     getDeformableDynamicsWorld()->setLineSearch(false);
     getDeformableDynamicsWorld()->setUseProjection(true);
-    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_erp = 0.3;
+    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_erp = (btScalar)0.3;
     getDeformableDynamicsWorld()->getSolverInfo().m_deformable_maxErrorReduction = btScalar(200);
-    getDeformableDynamicsWorld()->getSolverInfo().m_leastSquaresResidualThreshold = 1e-3;
+    getDeformableDynamicsWorld()->getSolverInfo().m_leastSquaresResidualThreshold = (btScalar)1e-3;
     getDeformableDynamicsWorld()->getSolverInfo().m_splitImpulse = true;
     getDeformableDynamicsWorld()->getSolverInfo().m_numIterations = 100;
     // add a few rigid bodies

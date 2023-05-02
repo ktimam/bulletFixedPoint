@@ -26,8 +26,8 @@
 #include "../CommonInterfaces/CommonDeformableBodyBase.h"
 #include "../Utils/b3ResourcePath.h"
 
-static btScalar damping_alpha = 0.0;
-static btScalar damping_beta = 0.0001;
+static btScalar damping_alpha = (btScalar)0.0;
+static btScalar damping_beta = (btScalar)0.0001;
 static int num_modes = 20;
 
 class Springboard : public CommonDeformableBodyBase
@@ -39,7 +39,7 @@ public:
     Springboard(struct GUIHelperInterface* helper)
         : CommonDeformableBodyBase(helper)
     {
-        sim_time = 0;
+        sim_time = (btScalar)0;
         first_step = true;
     }
     virtual ~Springboard()
@@ -70,13 +70,13 @@ public:
         btTransform startTransform;
         startTransform.setIdentity();
         startTransform.setOrigin(btVector3(0,8,1));
-        btRigidBody* rb1 = createRigidBody(mass, startTransform, shape);
+        btRigidBody* rb1 = createRigidBody((btScalar)mass, startTransform, shape);
         rb1->setActivationState(DISABLE_DEACTIVATION);
     }
     
-    void stepSimulation(float deltaTime)
+    void stepSimulation(btScalar deltaTime)
     {      
-      float internalTimeStep = 1. / 60.f;
+      btScalar internalTimeStep = (btScalar)1. / (btScalar)60.f;
       m_dynamicsWorld->stepSimulation(deltaTime, 1, internalTimeStep);
 
       {
@@ -105,7 +105,7 @@ public:
 
                 for (int p = 0; p < rsb->m_fixedNodes.size(); ++p)
                 {
-                    deformableWorld->getDebugDrawer()->drawSphere(rsb->m_nodes[rsb->m_fixedNodes[p]].m_x, 0.2, btVector3(1, 0, 0));
+                    deformableWorld->getDebugDrawer()->drawSphere(rsb->m_nodes[rsb->m_fixedNodes[p]].m_x, (btScalar)0.2, btVector3(1, 0, 0));
                     // std::cout << rsb->m_nodes[rsb->m_fixedNodes[p]].m_x[0] << "\t" << rsb->m_nodes[rsb->m_fixedNodes[p]].m_x[1] << "\t" << rsb->m_nodes[rsb->m_fixedNodes[p]].m_x[2] << "\n";
                 }
                 // deformableWorld->getDebugDrawer()->drawSphere(btVector3(0, 0, 0), 0.1, btVector3(1, 1, 1));
@@ -151,7 +151,7 @@ void Springboard::initPhysics()
                                             false);
 
         getDeformableDynamicsWorld()->addSoftBody(rsb);
-        rsb->getCollisionShape()->setMargin(0.1);
+        rsb->getCollisionShape()->setMargin((btScalar)0.1);
         
         btTransform init_transform;
         init_transform.setIdentity();
@@ -159,7 +159,7 @@ void Springboard::initPhysics()
         // init_transform.setRotation(btQuaternion(btVector3(0, 1, 0), SIMD_PI / 2.0));
         rsb->transform(init_transform);
 
-        rsb->setStiffnessScale(200);
+        rsb->setStiffnessScale((btScalar)200);
         rsb->setDamping(damping_alpha, damping_beta);
         
         // set fixed nodes
@@ -168,12 +168,12 @@ void Springboard::initPhysics()
         rsb->setFixedNodes(2);
         rsb->setFixedNodes(3);
         
-        rsb->m_cfg.kKHR = 1; // collision hardness with kinematic objects
-        rsb->m_cfg.kCHR = 1; // collision hardness with rigid body
-        rsb->m_cfg.kDF = 0;
+        rsb->m_cfg.kKHR = (btScalar)1; // collision hardness with kinematic objects
+        rsb->m_cfg.kCHR = (btScalar)1; // collision hardness with rigid body
+        rsb->m_cfg.kDF = (btScalar)0;
         rsb->m_cfg.collisions = btSoftBody::fCollision::SDF_RD;
         rsb->m_cfg.collisions |= btSoftBody::fCollision::SDF_RDN;
-        rsb->m_sleepingThreshold = 0;
+        rsb->m_sleepingThreshold = (btScalar)0;
         btSoftBodyHelpers::generateBoundaryFaces(rsb);
         
         // rsb->setVelocity(btVector3(0, -COLLIDING_VELOCITY, 0));
@@ -183,10 +183,10 @@ void Springboard::initPhysics()
     getDeformableDynamicsWorld()->setImplicit(false);
     getDeformableDynamicsWorld()->setLineSearch(false);
     getDeformableDynamicsWorld()->setUseProjection(false);
-    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_erp = 0.3;
-    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_cfm = 0.2;
+    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_erp = (btScalar)0.3;
+    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_cfm = (btScalar)0.2;
     getDeformableDynamicsWorld()->getSolverInfo().m_deformable_maxErrorReduction = btScalar(200);
-    getDeformableDynamicsWorld()->getSolverInfo().m_leastSquaresResidualThreshold = 1e-3;
+    getDeformableDynamicsWorld()->getSolverInfo().m_leastSquaresResidualThreshold = (btScalar)1e-3;
     getDeformableDynamicsWorld()->getSolverInfo().m_splitImpulse = false;
     getDeformableDynamicsWorld()->getSolverInfo().m_numIterations = 100;
     // add a few rigid bodies
@@ -203,7 +203,7 @@ void Springboard::initPhysics()
         groundTransform.setOrigin(btVector3(0, 0, 0));
         {
             btScalar mass(0.);
-            createRigidBody(mass, groundTransform, groundShape, btVector4(0,0,0,0));
+            createRigidBody(mass, groundTransform, groundShape, btVector4((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)0));
         }
     }
 

@@ -39,9 +39,9 @@ void BspConverter::convertBsp(BspLoader& bspLoader, float scaling)
 
 		btVector3 playerStart(playstartf[0], playstartf[1], playstartf[2]);
 
-		playerStart[2] += 20.f;  //start a bit higher
+		playerStart[2] += (btScalar)20.f;  //start a bit higher
 
-		playerStart *= scaling;
+		playerStart *= (btScalar)scaling;
 
 		//progressBegin("Loading bsp");
 
@@ -77,7 +77,7 @@ void BspConverter::convertBsp(BspLoader& bspLoader, float scaling)
 								plane.normal[0],
 								plane.normal[1],
 								plane.normal[2]);
-							planeEq[3] = scaling * -plane.dist;
+							planeEq[3] = (btScalar)scaling * (btScalar)-plane.dist;
 
 							planeEquations.push_back(planeEq);
 							isValidBrush = true;
@@ -155,7 +155,7 @@ void BspConverter::convertBsp(BspLoader& bspLoader, float scaling)
 													plane.normal[0],
 													plane.normal[1],
 													plane.normal[2]);
-												planeEq[3] = scaling * -plane.dist;
+												planeEq[3] = (btScalar)scaling * (btScalar)-plane.dist;
 												planeEquations.push_back(planeEq);
 												isValidBrush = true;
 											}

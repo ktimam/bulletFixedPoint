@@ -27,18 +27,18 @@ subject to the following restrictions:
 #include "stb_image/stb_image.h"
 
 // constants -------------------------------------------------------------------
-static const btScalar s_gravity = 9.8;		// 9.8 m/s^2
+static const btScalar s_gravity = (btScalar)9.8;		// 9.8 m/s^2
 
 static int s_gridSize = 16 + 1;  // must be (2^N) + 1
-static btScalar s_gridSpacing = 0.5;
-static btScalar s_gridHeightScale = 0.02;
+static btScalar s_gridSpacing = (btScalar)0.5;
+static btScalar s_gridHeightScale = (btScalar)0.02;
 
 // the singularity at the center of the radial model means we need a lot of
 //   finely-spaced time steps to get the physics right.
 // These numbers are probably too aggressive for a real game!
 
 // delta phase: radians per second
-static const btScalar s_deltaPhase = 0.25 * 2.0 * SIMD_PI;
+static const btScalar s_deltaPhase = (btScalar)0.25 * (btScalar)2.0 * (btScalar)SIMD_PI;
 
 // what type of terrain is generated?
 enum eTerrainModel {
@@ -171,7 +171,7 @@ convertToFloat
 		btAssert(!"bad type");
 	}
 
-	return 0;
+	return (btScalar)0;
 }
 
 
@@ -248,43 +248,43 @@ setRadial
 	byte_t * grid,
 	int bytesPerElement,
 	PHY_ScalarType type,
-	btScalar phase = 0.0
+	btScalar phase = (btScalar)0.0
 )
 {
 	btAssert(grid);
 	btAssert(bytesPerElement > 0);
 
 	// min/max
-	btScalar period = 0.5 / s_gridSpacing;
-	btScalar floor = 0.0;
-	btScalar min_r = 3.0 * btSqrt(s_gridSpacing);
-	btScalar magnitude = 5.0 * btSqrt(s_gridSpacing);
+	btScalar period = (btScalar)0.5 / s_gridSpacing;
+	btScalar floor = (btScalar)0.0;
+	btScalar min_r = (btScalar)3.0 * btSqrt(s_gridSpacing);
+	btScalar magnitude = (btScalar)5.0 * btSqrt(s_gridSpacing);
 
 	// pick a base_phase such that phase = 0 results in max height
 	//   (this way, if you create a heightfield with phase = 0,
 	//    you can rely on the min/max heights that result)
-	btScalar base_phase = (0.5 * SIMD_PI) - (period * min_r);
+	btScalar base_phase = ((btScalar)0.5 * SIMD_PI) - (period * min_r);
 	phase += base_phase;
 
 	// center of grid
-	btScalar cx = 0.5 * s_gridSize * s_gridSpacing;
+	btScalar cx = (btScalar)0.5 * s_gridSize * s_gridSpacing;
 	btScalar cy = cx;		// assume square grid
 	byte_t * p = grid;
 	for (int i = 0; i < s_gridSize; ++i) {
-		float x = i * s_gridSpacing;
+		btScalar x = i * s_gridSpacing;
 		for (int j = 0; j < s_gridSize; ++j) {
-			float y = j * s_gridSpacing;
+			btScalar y = j * s_gridSpacing;
 
-			float dx = x - cx;
-			float dy = y - cy;
+			btScalar dx = x - cx;
+			btScalar dy = y - cy;
 
-			float r = sqrt((dx * dx) + (dy * dy));
+			btScalar r = sqrt((dx * dx) + (dy * dy));
 
-			float z = period;
+			btScalar z = period;
 			if (r < min_r) {
 				r = min_r;
 			}
-			z = (1.0 / r) * sin(period * r + phase);
+			z = ((btScalar)1.0 / r) * sin(period * r + phase);
 			if (z > period) {
 				z = period;
 			}
@@ -301,13 +301,13 @@ setRadial
 
 
 
-static float
+static btScalar
 randomHeight
 (
 	int step
 )
 {
-	return (0.33 * s_gridSpacing * s_gridSize * step * (rand() - (0.5 * RAND_MAX))) / (1.0 * RAND_MAX * s_gridSize);
+	return ((btScalar)0.33 * s_gridSpacing * s_gridSize * step * (rand() - ((btScalar)0.5 * RAND_MAX))) / ((btScalar)1.0 * RAND_MAX * s_gridSize);
 }
 
 
@@ -391,19 +391,19 @@ setFractal
 	btScalar c11 = convertToFloat(grid + (step * s_gridSize + step) * bytesPerElement, type);
 
 	// set top middle
-	updateHeight(grid + newStep * bytesPerElement, 0.5 * (c00 + c01) + randomHeight(step), type);
+	updateHeight(grid + newStep * bytesPerElement, (btScalar)0.5 * (c00 + c01) + randomHeight(step), type);
 
 	// set left middle
-	updateHeight(grid + (newStep * s_gridSize) * bytesPerElement, 0.5 * (c00 + c10) + randomHeight(step), type);
+	updateHeight(grid + (newStep * s_gridSize) * bytesPerElement, (btScalar)0.5 * (c00 + c10) + randomHeight(step), type);
 
 	// set right middle
-	updateHeight(grid + (newStep * s_gridSize + step) * bytesPerElement, 0.5 * (c01 + c11) + randomHeight(step), type);
+	updateHeight(grid + (newStep * s_gridSize + step) * bytesPerElement, (btScalar)0.5 * (c01 + c11) + randomHeight(step), type);
 
 	// set bottom middle
-	updateHeight(grid + (step * s_gridSize + newStep) * bytesPerElement, 0.5 * (c10 + c11) + randomHeight(step), type);
+	updateHeight(grid + (step * s_gridSize + newStep) * bytesPerElement, (btScalar)0.5 * (c10 + c11) + randomHeight(step), type);
 
 	// set middle
-	updateHeight(grid + (newStep * s_gridSize + newStep) * bytesPerElement, 0.25 * (c00 + c01 + c10 + c11) + randomHeight(step), type);
+	updateHeight(grid + (newStep * s_gridSize + newStep) * bytesPerElement, (btScalar)0.25 * (c00 + c01 + c10 + c11) + randomHeight(step), type);
 
 	//	std::cerr << "Computing grid with step = " << step << ": after\n";
 	//	dumpGrid(grid, bytesPerElement, type, step + 1);
@@ -469,8 +469,8 @@ getRawHeightfieldData
             {
                 printf("width=%d, height=%d at %d channels\n", width,height, n);
                 s_gridSize = width;
-                s_gridSpacing = 0.2;
-                s_gridHeightScale = 0.2;
+                s_gridSpacing = (btScalar)0.2;
+                s_gridHeightScale = (btScalar)0.2;
                 fileIO.fileClose(fileId);
                 long nElements = ((long)s_gridSize) * s_gridSize;
                 //	std::cerr << "  nElements = " << nElements << "\n";
@@ -491,10 +491,10 @@ getRawHeightfieldData
                     
 					for (int i = 0; i < width; ++i)
                     {
-						float x = i * s_gridSpacing;
-                        float y = j * s_gridSpacing;
-						float heightScaling = (14. / 256.);
-						float z = double(image[(width - 1 - i) * 3 + width*j * 3]) * heightScaling;
+						btScalar x = i * s_gridSpacing;
+                        btScalar y = j * s_gridSpacing;
+						btScalar heightScaling = ((btScalar)14. / (btScalar)256.);
+						btScalar z = (btScalar)(image[(width - 1 - i) * 3 + width*j * 3]) * (btScalar)heightScaling;
                         convertFromFloat(p, z, type);
 						// update min/max
 						if (!i && !j) {
@@ -567,8 +567,8 @@ getRawHeightfieldData
                 printf("done, rows=%d, cols=%d\n", rows, cols);
                 int width = rows-1;
                 s_gridSize = rows;
-                s_gridSpacing = 0.2;
-                s_gridHeightScale = 0.2;
+                s_gridSpacing = (btScalar)0.2;
+                s_gridHeightScale = (btScalar)0.2;
                 fileIO.fileClose(slot);
                 long nElements = ((long)s_gridSize) * s_gridSize;
                 //	std::cerr << "  nElements = " << nElements << "\n";
@@ -585,11 +585,11 @@ getRawHeightfieldData
                 byte_t * p = raw;
                 for (int i = 0; i < width; ++i)
                 {
-                    float x = i * s_gridSpacing;
+                    btScalar x = i * s_gridSpacing;
                     for (int j = 0; j < width; ++j)
                     {
-                        float y = j * s_gridSpacing;
-                        float z = allValues[i+width*j];
+                        btScalar y = j * s_gridSpacing;
+                        btScalar z = (btScalar)allValues[i+width*j];
                         convertFromFloat(p, z, type);
 						// update min/max
 						if (!i && !j) {
@@ -616,13 +616,13 @@ getRawHeightfieldData
         if (model==eRadial)
         {
             s_gridSize = 16 + 1;  // must be (2^N) + 1
-            s_gridSpacing = 0.5;
-            s_gridHeightScale = 0.02;
+            s_gridSpacing = (btScalar)0.5;
+            s_gridHeightScale = (btScalar)0.02;
         } else
         {
             s_gridSize = 256 + 1;  // must be (2^N) + 1
-            s_gridSpacing = 0.5;
-            s_gridHeightScale = 0.02;
+            s_gridSpacing = (btScalar)0.5;
+            s_gridHeightScale = (btScalar)0.02;
         }
         //	std::cerr << "\nRegenerating terrain\n";
         //	std::cerr << "  model = " << model << "\n";
@@ -722,7 +722,7 @@ public:
 
 	void castRays();
 
-	void stepSimulation(float deltaTime);
+	void stepSimulation(btScalar deltaTime);
 
 	void resetCamera()
 	{
@@ -745,7 +745,7 @@ private:
 	byte_t *				m_rawHeightfieldData;
 	btScalar				m_minHeight;
 	btScalar				m_maxHeight;
-	float					m_phase;	// for dynamics
+	btScalar					m_phase;	// for dynamics
 	bool					m_isDynamic;
 	btHeightfieldTerrainShape * m_heightfieldShape;
 };
@@ -830,8 +830,8 @@ public:
 			normal.safeNormalize();
 			for (int l = 0; l < 3; l++)
 			{
-				v.xyzw[l] = tris[k][l];
-				v.normal[l] = normal[l];
+				v.xyzw[l] = (float)tris[k][l];
+				v.normal[l] = (float)normal[l];
 			}
 			m_pIndicesOut->push_back(m_pVerticesOut->size());
 			m_pVerticesOut->push_back(v);
@@ -890,18 +890,18 @@ public:
 		min_ms = 9999;
 		sum_ms_samples = 0;
 		sum_ms = 0;
-		dx = 10.0;
-		min_x = 0;
-		max_x = 0;
+		dx = (btScalar)10.0;
+		min_x = (btScalar)0;
+		max_x = (btScalar)0;
 		this->max_y = max_y;
-		sign = 1.0;
+		sign = (btScalar)1.0;
 		btScalar dalpha = 2 * SIMD_2_PI / NUMRAYS2;
 		for (int i = 0; i < NUMRAYS2; i++)
 		{
 			btScalar alpha = dalpha * i;
 			// rotate around by alpha degrees y
 			btVector3 upAxis(0, 0, 0);
-			upAxis[upAxisIndex] = 1;
+			upAxis[upAxisIndex] = (btScalar)1;
 
 			btQuaternion q(upAxis, alpha);
 			direction[i] = btVector3(1.0, 0.0, 0.0);
@@ -917,7 +917,7 @@ public:
 				source[i] = btVector3(min_x, z, max_y);
 			}
 			dest[i] = source[i] + direction[i];
-			dest[i][upAxisIndex] = -1000;
+			dest[i][upAxisIndex] = (btScalar)-1000;
 			normal[i] = btVector3(1.0, 0.0, 0.0);
 		}
 	}
@@ -932,9 +932,9 @@ public:
 			dest[i][0] += dx * dt * sign;
 		}
 		if (source[0][0] < min_x)
-			sign = 1.0;
+			sign = (btScalar)1.0;
 		else if (source[0][0] > max_x)
-			sign = -1.0;
+			sign = (btScalar)-1.0;
 	}
 
 	void castRays(btCollisionWorld* cw, int iBegin, int iEnd)
@@ -1043,7 +1043,7 @@ public:
 			btAlignedObjectArray<unsigned int> indices;
 			btAlignedObjectArray<btVector3FloatData> points;
 
-			float lineColor[4] = { 1, 0.4, .4, 1 };
+			btScalar lineColor[4] = { (btScalar)1, (btScalar)0.4, (btScalar).4,(btScalar)1 };
 
 			for (int i = 0; i < NUMRAYS2; i++)
 			{
@@ -1060,7 +1060,7 @@ public:
 				indices.push_back(indices.size());
 			}
 
-			m_guiHelper->getRenderInterface()->drawLines(&points[0].m_floats[0], lineColor, points.size(), sizeof(btVector3FloatData), &indices[0], indices.size(), 1);
+			m_guiHelper->getRenderInterface()->drawLines(points[0].m_floats, lineColor, points.size(), sizeof(btVector3FloatData), &indices[0], indices.size(), 1);
 		}
 
 	}
@@ -1077,7 +1077,7 @@ void HeightfieldExample::castRays()
 #endif
 }
 
-void HeightfieldExample::stepSimulation(float deltaTime)
+void HeightfieldExample::stepSimulation(btScalar deltaTime)
 {
 	castRays();
 
@@ -1091,8 +1091,8 @@ void HeightfieldExample::stepSimulation(float deltaTime)
 		int strideInBytes = 9 * sizeof(float);
 
 		m_phase += s_deltaPhase * deltaTime;
-		if (m_phase > 2.0 * SIMD_PI) {
-			m_phase -= 2.0 * SIMD_PI;
+		if (m_phase > (btScalar)2.0 * SIMD_PI) {
+			m_phase -= (btScalar)2.0 * SIMD_PI;
 		}
 		int bpe = getByteSize(m_type);
 		btAssert(bpe > 0 && "Bad bytes per element");
@@ -1104,8 +1104,8 @@ void HeightfieldExample::stepSimulation(float deltaTime)
 		btVector3 aabbMin, aabbMax;
 		for (int k = 0; k < 3; k++)
 		{
-			aabbMin[k] = -BT_LARGE_FLOAT;
-			aabbMax[k] = BT_LARGE_FLOAT;
+			aabbMin[k] = (btScalar)-BT_LARGE_FLOAT;
+			aabbMax[k] = (btScalar)BT_LARGE_FLOAT;
 		}
 		m_heightfieldShape->processAllTriangles(&col, aabbMin, aabbMax);
 		if (gfxVertices.size() && indices.size())
@@ -1138,7 +1138,7 @@ void HeightfieldExample::initPhysics()
 	m_upAxis = 2;		// start with Y-axis as "up"
 	m_guiHelper->setUpAxis(m_upAxis);
 
-	raycastBar = btRaycastBar3(2500.0, 0, 2.0, m_guiHelper, m_upAxis);
+	raycastBar = btRaycastBar3((btScalar)2500.0, (btScalar)0, (btScalar)2.0, m_guiHelper, m_upAxis);
 	// set up basic state
 
 
@@ -1170,7 +1170,7 @@ void HeightfieldExample::resetPhysics(void)
 	clearWorld();
 
 	// reset gravity to point in appropriate direction
-	m_dynamicsWorld->setGravity(getUpVector(m_upAxis, 0.0, -s_gravity));
+	m_dynamicsWorld->setGravity(getUpVector(m_upAxis, (btScalar)0.0, -s_gravity));
 
 	// get new heightfield of appropriate type
 	m_rawHeightfieldData =
@@ -1236,7 +1236,7 @@ void HeightfieldExample::resetPhysics(void)
 	m_heightfieldShape->buildAccelerator();
 
 	// scale the shape
-	btVector3 localScaling = getUpVector(m_upAxis, s_gridSpacing, 1.0);
+	btVector3 localScaling = getUpVector(m_upAxis, s_gridSpacing, (btScalar)1.0);
 	m_heightfieldShape->setLocalScaling(localScaling);
 
 	// stash this shape away

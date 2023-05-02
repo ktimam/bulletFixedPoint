@@ -92,14 +92,14 @@ public:
 	BT_DECLARE_ALIGNED_ALLOCATOR();
 
 	inline btMultiBodyConstraintSolver() noexcept = default;
-	inline btMultiBodyConstraintSolver(const btMultiBodyConstraintSolver&) noexcept
+	inline btMultiBodyConstraintSolver(const btMultiBodyConstraintSolver &slvr) noexcept
 	{
-
+		memcpy(this, &slvr, sizeof(btMultiBodyConstraintSolver));
 	}
-	btMultiBodyConstraintSolver& operator=(const btMultiBodyConstraintSolver&)
+	/*btMultiBodyConstraintSolver& operator=(const btMultiBodyConstraintSolver&)
 	{
 		return *this;
-	}
+	}*/
 
 	///this method should not be called, it was just used during porting/integration of Featherstone btMultiBody, providing backwards compatibility but no support for btMultiBodyConstraint (only contact constraints)
 	virtual btScalar solveGroup(btCollisionObject * *bodies, int numBodies, btPersistentManifold** manifold, int numManifolds, btTypedConstraint** constraints, int numConstraints, const btContactSolverInfo& info, btIDebugDraw* debugDrawer, btDispatcher* dispatcher);

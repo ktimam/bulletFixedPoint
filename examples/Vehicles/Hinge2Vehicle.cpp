@@ -72,7 +72,7 @@ public:
 
 	virtual ~Hinge2Vehicle();
 
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 
 	virtual void resetForklift();
 
@@ -112,7 +112,7 @@ public:
 	*/
 };
 
-static btScalar maxMotorImpulse = 4000.f;
+static btScalar maxMotorImpulse = (btScalar)4000.f;
 
 
 #ifndef M_PI
@@ -293,7 +293,7 @@ void Hinge2Vehicle::initPhysics()
 	//either use heightfield or triangle mesh
 
 	//create ground object
-	localCreateRigidBody(0, tr, groundShape);
+	localCreateRigidBody((btScalar)0, tr, groundShape);
 
 	btCollisionShape* chassisShape = new btBoxShape(btVector3(1.f, 0.5f, 2.f));
 	m_collisionShapes.push_back(chassisShape);
@@ -316,11 +316,11 @@ void Hinge2Vehicle::initPhysics()
 		compound->addChildShape(suppLocalTrans, suppShape);
 	}
 
-	const btScalar FALLHEIGHT = 5;
-	tr.setOrigin(btVector3(0, FALLHEIGHT, 0));
+	const btScalar FALLHEIGHT = (btScalar)5;
+	tr.setOrigin(btVector3((btScalar)0, FALLHEIGHT, (btScalar)0));
 
-	const btScalar chassisMass = 2.0f;
-	const btScalar wheelMass = 1.0f;
+	const btScalar chassisMass = (btScalar)2.0f;
+	const btScalar wheelMass = (btScalar)1.0f;
 	m_carChassis = localCreateRigidBody(chassisMass, tr, compound);  //chassisShape);
 	//m_carChassis->setDamping(0.2,0.2);
 
@@ -328,10 +328,10 @@ void Hinge2Vehicle::initPhysics()
 	m_wheelShape = new btCylinderShapeX(btVector3(wheelWidth, wheelRadius, wheelRadius));
 
 	btVector3 wheelPos[4] = {
-		btVector3(btScalar(-1.), btScalar(FALLHEIGHT-0.25), btScalar(1.25)),
-		btVector3(btScalar(1.), btScalar(FALLHEIGHT-0.25), btScalar(1.25)),
-		btVector3(btScalar(1.), btScalar(FALLHEIGHT-0.25), btScalar(-1.25)),
-		btVector3(btScalar(-1.), btScalar(FALLHEIGHT-0.25), btScalar(-1.25))};
+		btVector3(btScalar(-1.), btScalar(FALLHEIGHT- (btScalar)0.25), btScalar(1.25)),
+		btVector3(btScalar(1.), btScalar(FALLHEIGHT-(btScalar) (btScalar)0.25), btScalar(1.25)),
+		btVector3(btScalar(1.), btScalar(FALLHEIGHT- (btScalar)0.25), btScalar(-1.25)),
+		btVector3(btScalar(-1.), btScalar(FALLHEIGHT- (btScalar)0.25), btScalar(-1.25))};
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -347,7 +347,7 @@ void Hinge2Vehicle::initPhysics()
 		tr.setOrigin(wheelPos[i]);
 
 		btRigidBody* pBodyB = createRigidBody(wheelMass, tr, m_wheelShape);
-		pBodyB->setFriction(1110);
+		pBodyB->setFriction((btScalar)1110);
 		pBodyB->setActivationState(DISABLE_DEACTIVATION);
 		// add some data to build constraint frames
 		btVector3 parentAxis(0.f, 1.f, 0.f);
@@ -365,19 +365,19 @@ void Hinge2Vehicle::initPhysics()
 
 		// Drive engine.
 		pHinge2->enableMotor(3, true);
-		pHinge2->setMaxMotorForce(3, 1000);
-		pHinge2->setTargetVelocity(3, 0);
+		pHinge2->setMaxMotorForce(3, (btScalar)1000);
+		pHinge2->setTargetVelocity(3, (btScalar)0);
 
 		// Steering engine.
 		pHinge2->enableMotor(5, true);
-		pHinge2->setMaxMotorForce(5, 1000);
-		pHinge2->setTargetVelocity(5, 0);
+		pHinge2->setMaxMotorForce(5, (btScalar)1000);
+		pHinge2->setTargetVelocity(5, (btScalar)0);
 
-		pHinge2->setParam( BT_CONSTRAINT_CFM, 0.15f, 2 );
-		pHinge2->setParam( BT_CONSTRAINT_ERP, 0.35f, 2 );
+		pHinge2->setParam( BT_CONSTRAINT_CFM, (btScalar)0.15f, 2 );
+		pHinge2->setParam( BT_CONSTRAINT_ERP, (btScalar)0.35f, 2 );
 
-		pHinge2->setDamping( 2, 2.0 );
-		pHinge2->setStiffness( 2, 40.0 );
+		pHinge2->setDamping( 2, (btScalar)2.0 );
+		pHinge2->setStiffness( 2, (btScalar)40.0 );
 
 		pHinge2->setDbgDrawSize(btScalar(5.f));
 	}
@@ -409,9 +409,9 @@ void Hinge2Vehicle::renderScene()
 	getDynamicsWorld()->getBroadphase()->getBroadphaseAabb(worldBoundsMin, worldBoundsMax);
 }
 
-void Hinge2Vehicle::stepSimulation(float deltaTime)
+void Hinge2Vehicle::stepSimulation(btScalar deltaTime)
 {
-	float dt = deltaTime;
+	btScalar dt = deltaTime;
 
 	if (m_dynamicsWorld)
 	{
@@ -596,7 +596,7 @@ btRigidBody* Hinge2Vehicle::localCreateRigidBody(btScalar mass, const btTransfor
 	btAssert((!shape || shape->getShapeType() != INVALID_SHAPE_PROXYTYPE));
 
 	//rigidbody is dynamic if and only if mass is non zero, otherwise static
-	bool isDynamic = (mass != 0.f);
+	bool isDynamic = (mass != (btScalar)0.f);
 
 	btVector3 localInertia(0, 0, 0);
 	if (isDynamic)

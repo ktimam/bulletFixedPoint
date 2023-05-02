@@ -105,7 +105,7 @@ public:
 
 	virtual ~ForkLiftDemo();
 
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 
 	virtual void resetForklift();
 
@@ -155,10 +155,10 @@ public:
 	*/
 };
 
-btScalar maxMotorImpulse = 4000.f;
+btScalar maxMotorImpulse = (btScalar)4000.f;
 
 //the sequential impulse solver has difficulties dealing with large mass ratios (differences), between loadMass and the fork parts
-btScalar loadMass = 350.f;  //
+btScalar loadMass = (btScalar)350.f;  //
 //btScalar loadMass = 10.f;//this should work fine for the SI solver
 
 #ifndef M_PI
@@ -188,24 +188,24 @@ bool useMCLPSolver = true;
 ///btRaycastVehicle is the interface for the constraint that implements the raycast vehicle
 ///notice that for higher-quality slow-moving vehicles, another approach might be better
 ///implementing explicit hinged-wheel constraints with cylinder collision, rather then raycasts
-float gEngineForce = 0.f;
+btScalar gEngineForce = (btScalar)0.f;
 
-float defaultBreakingForce = 10.f;
-float gBreakingForce = 100.f;
+btScalar defaultBreakingForce = (btScalar)10.f;
+btScalar gBreakingForce = (btScalar)100.f;
 
-float maxEngineForce = 1000.f;  //this should be engine/velocity dependent
-float maxBreakingForce = 100.f;
+btScalar maxEngineForce = (btScalar)1000.f;  //this should be engine/velocity dependent
+btScalar maxBreakingForce = (btScalar)100.f;
 
-float gVehicleSteering = 0.f;
-float steeringIncrement = 0.04f;
-float steeringClamp = 0.3f;
-float wheelRadius = 0.5f;
-float wheelWidth = 0.4f;
-float wheelFriction = 1000;  //BT_LARGE_FLOAT;
-float suspensionStiffness = 20.f;
-float suspensionDamping = 2.3f;
-float suspensionCompression = 4.4f;
-float rollInfluence = 0.1f;  //1.0f;
+btScalar gVehicleSteering = (btScalar)0.f;
+btScalar steeringIncrement = (btScalar)0.04f;
+btScalar steeringClamp = (btScalar)0.3f;
+btScalar wheelRadius = (btScalar)0.5f;
+btScalar wheelWidth = (btScalar)0.4f;
+btScalar wheelFriction = (btScalar)1000;  //BT_LARGE_FLOAT;
+btScalar suspensionStiffness = (btScalar)20.f;
+btScalar suspensionDamping = (btScalar)2.3f;
+btScalar suspensionCompression = (btScalar)4.4f;
+btScalar rollInfluence = (btScalar)0.1f;  //1.0f;
 
 btScalar suspensionRestLength(0.6);
 
@@ -314,7 +314,7 @@ void ForkLiftDemo::initPhysics()
 	m_guiHelper->setUpAxis(upAxis);
 
 	btVector3 groundExtents(50, 50, 50);
-	groundExtents[upAxis] = 3;
+	groundExtents[upAxis] = (btScalar)3;
 	btCollisionShape* groundShape = new btBoxShape(groundExtents);
 	m_collisionShapes.push_back(groundShape);
 	m_collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -342,7 +342,7 @@ void ForkLiftDemo::initPhysics()
 	{
 		m_dynamicsWorld->getSolverInfo().m_minimumSolverBatchSize = 128;  //for direct solver, it is better to solve multiple objects together, small batches have high overhead
 	}
-	m_dynamicsWorld->getSolverInfo().m_globalCfm = 0.00001;
+	m_dynamicsWorld->getSolverInfo().m_globalCfm = (btScalar)0.00001;
 
 	m_guiHelper->createPhysicsDebugDrawer(m_dynamicsWorld);
 
@@ -354,7 +354,7 @@ void ForkLiftDemo::initPhysics()
 	//either use heightfield or triangle mesh
 
 	//create ground object
-	localCreateRigidBody(0, tr, groundShape);
+	localCreateRigidBody((btScalar)0, tr, groundShape);
 
 	btCollisionShape* chassisShape = new btBoxShape(btVector3(1.f, 0.5f, 2.f));
 	m_collisionShapes.push_back(chassisShape);
@@ -379,7 +379,7 @@ void ForkLiftDemo::initPhysics()
 
 	tr.setOrigin(btVector3(0, 0.f, 0));
 
-	m_carChassis = localCreateRigidBody(800, tr, compound);  //chassisShape);
+	m_carChassis = localCreateRigidBody((btScalar)800, tr, compound);  //chassisShape);
 	//m_carChassis->setDamping(0.2,0.2);
 
 	m_wheelShape = new btCylinderShapeX(btVector3(wheelWidth, wheelRadius, wheelRadius));
@@ -404,18 +404,18 @@ void ForkLiftDemo::initPhysics()
 		m_liftStartPos = btVector3(0.0f, 2.5f, 3.05f);
 		liftTrans.setIdentity();
 		liftTrans.setOrigin(m_liftStartPos);
-		m_liftBody = localCreateRigidBody(10, liftTrans, liftShape);
+		m_liftBody = localCreateRigidBody((btScalar)10, liftTrans, liftShape);
 
 		btTransform localA, localB;
 		localA.setIdentity();
 		localB.setIdentity();
-		localA.getBasis().setEulerZYX(0, M_PI_2, 0);
+		localA.getBasis().setEulerZYX((btScalar)0, (btScalar)M_PI_2, (btScalar)0);
 		localA.setOrigin(btVector3(0.0, 1.0, 3.05));
-		localB.getBasis().setEulerZYX(0, M_PI_2, 0);
+		localB.getBasis().setEulerZYX((btScalar)0, (btScalar)M_PI_2, (btScalar)0);
 		localB.setOrigin(btVector3(0.0, -1.5, -0.05));
 		m_liftHinge = new btHingeConstraint(*m_carChassis, *m_liftBody, localA, localB);
 		//		m_liftHinge->setLimit(-LIFT_EPS, LIFT_EPS);
-		m_liftHinge->setLimit(0.0f, 0.0f);
+		m_liftHinge->setLimit((btScalar)0.0f, (btScalar)0.0f);
 		m_dynamicsWorld->addConstraint(m_liftHinge, true);
 
 		btCollisionShape* forkShapeA = new btBoxShape(btVector3(1.0f, 0.1f, 0.1f));
@@ -442,21 +442,21 @@ void ForkLiftDemo::initPhysics()
 		m_forkStartPos = btVector3(0.0f, 0.6f, 3.2f);
 		forkTrans.setIdentity();
 		forkTrans.setOrigin(m_forkStartPos);
-		m_forkBody = localCreateRigidBody(5, forkTrans, forkCompound);
+		m_forkBody = localCreateRigidBody((btScalar)5, forkTrans, forkCompound);
 
 		localA.setIdentity();
 		localB.setIdentity();
-		localA.getBasis().setEulerZYX(0, 0, M_PI_2);
+		localA.getBasis().setEulerZYX((btScalar)0, (btScalar)0, (btScalar)M_PI_2);
 		localA.setOrigin(btVector3(0.0f, -1.9f, 0.05f));
-		localB.getBasis().setEulerZYX(0, 0, M_PI_2);
+		localB.getBasis().setEulerZYX((btScalar)0, (btScalar)0, (btScalar)M_PI_2);
 		localB.setOrigin(btVector3(0.0, 0.0, -0.1));
 		m_forkSlider = new btSliderConstraint(*m_liftBody, *m_forkBody, localA, localB, true);
-		m_forkSlider->setLowerLinLimit(0.1f);
-		m_forkSlider->setUpperLinLimit(0.1f);
+		m_forkSlider->setLowerLinLimit((btScalar)0.1f);
+		m_forkSlider->setUpperLinLimit((btScalar)0.1f);
 		//		m_forkSlider->setLowerAngLimit(-LIFT_EPS);
 		//		m_forkSlider->setUpperAngLimit(LIFT_EPS);
-		m_forkSlider->setLowerAngLimit(0.0f);
-		m_forkSlider->setUpperAngLimit(0.0f);
+		m_forkSlider->setLowerAngLimit((btScalar)0.0f);
+		m_forkSlider->setUpperAngLimit((btScalar)0.0f);
 		m_dynamicsWorld->addConstraint(m_forkSlider, true);
 
 		btCompoundShape* loadCompound = new btCompoundShape();
@@ -499,26 +499,26 @@ void ForkLiftDemo::initPhysics()
 		//choose coordinate system
 		m_vehicle->setCoordinateSystem(rightIndex, upIndex, forwardIndex);
 
-		btVector3 connectionPointCS0(CUBE_HALF_EXTENTS - (0.3 * wheelWidth), connectionHeight, 2 * CUBE_HALF_EXTENTS - wheelRadius);
+		btVector3 connectionPointCS0((btScalar)CUBE_HALF_EXTENTS - ((btScalar)0.3 * wheelWidth), (btScalar)connectionHeight, (btScalar)2 * CUBE_HALF_EXTENTS - wheelRadius);
 
-		m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-		connectionPointCS0 = btVector3(-CUBE_HALF_EXTENTS + (0.3 * wheelWidth), connectionHeight, 2 * CUBE_HALF_EXTENTS - wheelRadius);
+		m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, (btScalar)wheelRadius, m_tuning, isFrontWheel);
+		connectionPointCS0 = btVector3((btScalar)-CUBE_HALF_EXTENTS + ((btScalar)0.3 * wheelWidth), (btScalar)connectionHeight, (btScalar)2 * CUBE_HALF_EXTENTS - (btScalar)wheelRadius);
 
-		m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-		connectionPointCS0 = btVector3(-CUBE_HALF_EXTENTS + (0.3 * wheelWidth), connectionHeight, -2 * CUBE_HALF_EXTENTS + wheelRadius);
+		m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, (btScalar)wheelRadius, m_tuning, isFrontWheel);
+		connectionPointCS0 = btVector3(-CUBE_HALF_EXTENTS + ((btScalar)0.3 * wheelWidth), (btScalar)connectionHeight, -2 * CUBE_HALF_EXTENTS + wheelRadius);
 		isFrontWheel = false;
-		m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-		connectionPointCS0 = btVector3(CUBE_HALF_EXTENTS - (0.3 * wheelWidth), connectionHeight, -2 * CUBE_HALF_EXTENTS + wheelRadius);
-		m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
+		m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, (btScalar)wheelRadius, m_tuning, isFrontWheel);
+		connectionPointCS0 = btVector3(CUBE_HALF_EXTENTS - ((btScalar)0.3 * wheelWidth), (btScalar)connectionHeight, -2 * CUBE_HALF_EXTENTS + wheelRadius);
+		m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, (btScalar)wheelRadius, m_tuning, isFrontWheel);
 
 		for (int i = 0; i < m_vehicle->getNumWheels(); i++)
 		{
 			btWheelInfo& wheel = m_vehicle->getWheelInfo(i);
-			wheel.m_suspensionStiffness = suspensionStiffness;
-			wheel.m_wheelsDampingRelaxation = suspensionDamping;
-			wheel.m_wheelsDampingCompression = suspensionCompression;
-			wheel.m_frictionSlip = wheelFriction;
-			wheel.m_rollInfluence = rollInfluence;
+			wheel.m_suspensionStiffness = (btScalar)suspensionStiffness;
+			wheel.m_wheelsDampingRelaxation = (btScalar)suspensionDamping;
+			wheel.m_wheelsDampingCompression = (btScalar)suspensionCompression;
+			wheel.m_frictionSlip = (btScalar)wheelFriction;
+			wheel.m_rollInfluence = (btScalar)rollInfluence;
 		}
 	}
 
@@ -560,7 +560,7 @@ void ForkLiftDemo::renderScene()
 
 	m_guiHelper->render(m_dynamicsWorld);
 
-	ATTRIBUTE_ALIGNED16(btScalar)
+	ATTRIBUTE_ALIGNED16(float)
 	m[16];
 	int i;
 
@@ -638,7 +638,7 @@ void ForkLiftDemo::renderScene()
 #endif
 }
 
-void ForkLiftDemo::stepSimulation(float deltaTime)
+void ForkLiftDemo::stepSimulation(btScalar deltaTime)
 {
 	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -656,7 +656,7 @@ void ForkLiftDemo::stepSimulation(float deltaTime)
 		m_vehicle->setSteeringValue(gVehicleSteering, wheelIndex);
 	}
 
-	float dt = deltaTime;
+	btScalar dt = deltaTime;
 
 	if (m_dynamicsWorld)
 	{
@@ -721,9 +721,9 @@ void ForkLiftDemo::clientResetScene()
 
 void ForkLiftDemo::resetForklift()
 {
-	gVehicleSteering = 0.f;
+	gVehicleSteering = (btScalar)0.f;
 	gBreakingForce = defaultBreakingForce;
-	gEngineForce = 0.f;
+	gEngineForce = (btScalar)0.f;
 
 	m_carChassis->setCenterOfMassTransform(btTransform::getIdentity());
 	m_carChassis->setLinearVelocity(btVector3(0, 0, 0));
@@ -755,11 +755,11 @@ void ForkLiftDemo::resetForklift()
 	m_forkBody->setAngularVelocity(btVector3(0, 0, 0));
 
 	//	m_liftHinge->setLimit(-LIFT_EPS, LIFT_EPS);
-	m_liftHinge->setLimit(0.0f, 0.0f);
-	m_liftHinge->enableAngularMotor(false, 0, 0);
+	m_liftHinge->setLimit((btScalar)0.0f, (btScalar)0.0f);
+	m_liftHinge->enableAngularMotor(false, (btScalar)0, (btScalar)0);
 
-	m_forkSlider->setLowerLinLimit(0.1f);
-	m_forkSlider->setUpperLinLimit(0.1f);
+	m_forkSlider->setLowerLinLimit((btScalar)0.1f);
+	m_forkSlider->setUpperLinLimit((btScalar)0.1f);
 	m_forkSlider->setPoweredLinMotor(false);
 
 	btTransform loadTrans;
@@ -784,35 +784,35 @@ bool ForkLiftDemo::keyboardCallback(int key, int state)
 			{
 				case B3G_LEFT_ARROW:
 				{
-					m_liftHinge->setLimit(-M_PI / 16.0f, M_PI / 8.0f);
-					m_liftHinge->enableAngularMotor(true, -0.1, maxMotorImpulse);
+					m_liftHinge->setLimit((btScalar)-M_PI / (btScalar)16.0f, (btScalar)M_PI / (btScalar)8.0f);
+					m_liftHinge->enableAngularMotor(true, (btScalar)-0.1, maxMotorImpulse);
 					handled = true;
 					break;
 				}
 				case B3G_RIGHT_ARROW:
 				{
-					m_liftHinge->setLimit(-M_PI / 16.0f, M_PI / 8.0f);
-					m_liftHinge->enableAngularMotor(true, 0.1, maxMotorImpulse);
+					m_liftHinge->setLimit((btScalar)-M_PI / (btScalar)16.0f, (btScalar)M_PI / (btScalar)8.0f);
+					m_liftHinge->enableAngularMotor(true, (btScalar)0.1, maxMotorImpulse);
 					handled = true;
 					break;
 				}
 				case B3G_UP_ARROW:
 				{
-					m_forkSlider->setLowerLinLimit(0.1f);
-					m_forkSlider->setUpperLinLimit(3.9f);
+					m_forkSlider->setLowerLinLimit((btScalar)0.1f);
+					m_forkSlider->setUpperLinLimit((btScalar)3.9f);
 					m_forkSlider->setPoweredLinMotor(true);
 					m_forkSlider->setMaxLinMotorForce(maxMotorImpulse);
-					m_forkSlider->setTargetLinMotorVelocity(1.0);
+					m_forkSlider->setTargetLinMotorVelocity((btScalar)1.0);
 					handled = true;
 					break;
 				}
 				case B3G_DOWN_ARROW:
 				{
-					m_forkSlider->setLowerLinLimit(0.1f);
-					m_forkSlider->setUpperLinLimit(3.9f);
+					m_forkSlider->setLowerLinLimit((btScalar)0.1f);
+					m_forkSlider->setUpperLinLimit((btScalar)3.9f);
 					m_forkSlider->setPoweredLinMotor(true);
 					m_forkSlider->setMaxLinMotorForce(maxMotorImpulse);
-					m_forkSlider->setTargetLinMotorVelocity(-1.0);
+					m_forkSlider->setTargetLinMotorVelocity((btScalar)-1.0);
 					handled = true;
 					break;
 				}
@@ -844,14 +844,14 @@ bool ForkLiftDemo::keyboardCallback(int key, int state)
 				{
 					handled = true;
 					gEngineForce = maxEngineForce;
-					gBreakingForce = 0.f;
+					gBreakingForce = (btScalar)0.f;
 					break;
 				}
 				case B3G_DOWN_ARROW:
 				{
 					handled = true;
 					gEngineForce = -maxEngineForce;
-					gBreakingForce = 0.f;
+					gBreakingForce = (btScalar)0.f;
 					break;
 				}
 
@@ -906,7 +906,7 @@ bool ForkLiftDemo::keyboardCallback(int key, int state)
 			case B3G_UP_ARROW:
 			{
 				lockForkSlider();
-				gEngineForce = 0.f;
+				gEngineForce = (btScalar)0.f;
 				gBreakingForce = defaultBreakingForce;
 				handled = true;
 				break;
@@ -914,7 +914,7 @@ bool ForkLiftDemo::keyboardCallback(int key, int state)
 			case B3G_DOWN_ARROW:
 			{
 				lockForkSlider();
-				gEngineForce = 0.f;
+				gEngineForce = (btScalar)0.f;
 				gBreakingForce = defaultBreakingForce;
 				handled = true;
 				break;
@@ -1078,7 +1078,7 @@ void ForkLiftDemo::lockLiftHinge(void)
 	btScalar hingeAngle = m_liftHinge->getHingeAngle();
 	btScalar lowLim = m_liftHinge->getLowerLimit();
 	btScalar hiLim = m_liftHinge->getUpperLimit();
-	m_liftHinge->enableAngularMotor(false, 0, 0);
+	m_liftHinge->enableAngularMotor(false, (btScalar)0, (btScalar)0);
 	if (hingeAngle < lowLim)
 	{
 		//		m_liftHinge->setLimit(lowLim, lowLim + LIFT_EPS);
@@ -1126,7 +1126,7 @@ btRigidBody* ForkLiftDemo::localCreateRigidBody(btScalar mass, const btTransform
 	btAssert((!shape || shape->getShapeType() != INVALID_SHAPE_PROXYTYPE));
 
 	//rigidbody is dynamic if and only if mass is non zero, otherwise static
-	bool isDynamic = (mass != 0.f);
+	bool isDynamic = (mass != (btScalar)0.f);
 
 	btVector3 localInertia(0, 0, 0);
 	if (isDynamic)

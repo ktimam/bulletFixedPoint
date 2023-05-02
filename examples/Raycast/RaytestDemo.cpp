@@ -43,7 +43,7 @@ public:
 
 	void castRays();
 
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 
 	virtual void resetCamera()
 	{
@@ -57,22 +57,22 @@ public:
 
 void RaytestDemo::castRays()
 {
-	static float up = 0.f;
-	static float dir = 1.f;
+	static btScalar up = (btScalar)0.f;
+	static btScalar dir = (btScalar)1.f;
 	//add some simple animation
 	//if (!m_idle)
 	{
-		up += 0.01 * dir;
+		up += (btScalar)0.01 * dir;
 
-		if (btFabs(up) > 2)
+		if (btFabs(up) > (btScalar)2)
 		{
-			dir *= -1.f;
+			dir *= (btScalar)-1.f;
 		}
 
 		btTransform tr = m_dynamicsWorld->getCollisionObjectArray()[1]->getWorldTransform();
 		static float angle = 0.f;
 		angle += 0.01f;
-		tr.setRotation(btQuaternion(btVector3(0, 1, 0), angle));
+		tr.setRotation(btQuaternion(btVector3(0, 1, 0), (btScalar)angle));
 		m_dynamicsWorld->getCollisionObjectArray()[1]->setWorldTransform(tr);
 	}
 
@@ -87,9 +87,9 @@ void RaytestDemo::castRays()
 
 		///all hits
 		{
-			btVector3 from(-30, 1 + up, 0);
+			btVector3 from((btScalar)-30, (btScalar)1 + up, (btScalar)0);
 			btVector3 to(30, 1, 0);
-			m_dynamicsWorld->getDebugDrawer()->drawLine(from, to, btVector4(0, 0, 0, 1));
+			m_dynamicsWorld->getDebugDrawer()->drawLine(from, to, btVector4((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)1));
 			btCollisionWorld::AllHitsRayResultCallback allResults(from, to);
 			allResults.m_flags |= btTriangleRaycastCallback::kF_KeepUnflippedNormal;
 			//kF_UseGjkConvexRaytest flag is now enabled by default, use the faster but more approximate algorithm
@@ -101,7 +101,7 @@ void RaytestDemo::castRays()
 			for (int i = 0; i < allResults.m_hitFractions.size(); i++)
 			{
 				btVector3 p = from.lerp(to, allResults.m_hitFractions[i]);
-				m_dynamicsWorld->getDebugDrawer()->drawSphere(p, 0.1, red);
+				m_dynamicsWorld->getDebugDrawer()->drawSphere(p, (btScalar)0.1, red);
 				m_dynamicsWorld->getDebugDrawer()->drawLine(p, p + allResults.m_hitNormalWorld[i], red);
 			}
 		}
@@ -110,7 +110,7 @@ void RaytestDemo::castRays()
 		{
 			btVector3 from(-30, 1.2, 0);
 			btVector3 to(30, 1.2, 0);
-			m_dynamicsWorld->getDebugDrawer()->drawLine(from, to, btVector4(0, 0, 1, 1));
+			m_dynamicsWorld->getDebugDrawer()->drawLine(from, to, btVector4((btScalar)0, (btScalar)0, (btScalar)1, (btScalar)1));
 
 			btCollisionWorld::ClosestRayResultCallback closestResults(from, to);
 			closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
@@ -120,14 +120,14 @@ void RaytestDemo::castRays()
 			if (closestResults.hasHit())
 			{
 				btVector3 p = from.lerp(to, closestResults.m_closestHitFraction);
-				m_dynamicsWorld->getDebugDrawer()->drawSphere(p, 0.1, blue);
+				m_dynamicsWorld->getDebugDrawer()->drawSphere(p, (btScalar)0.1, blue);
 				m_dynamicsWorld->getDebugDrawer()->drawLine(p, p + closestResults.m_hitNormalWorld, blue);
 			}
 		}
 	}
 }
 
-void RaytestDemo::stepSimulation(float deltaTime)
+void RaytestDemo::stepSimulation(btScalar deltaTime)
 {
 	castRays();
 	CommonRigidBodyBase::stepSimulation(deltaTime);
@@ -170,7 +170,7 @@ void RaytestDemo::initPhysics()
 		btScalar mass(0.);
 
 		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
+		bool isDynamic = (mass != (btScalar)0.f);
 
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)
@@ -180,7 +180,7 @@ void RaytestDemo::initPhysics()
 		btDefaultMotionState* myMotionState = new btDefaultMotionState(groundTransform);
 		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, groundShape, localInertia);
 		btRigidBody* body = new btRigidBody(rbInfo);
-		body->setFriction(1);
+		body->setFriction((btScalar)1);
 		//add the body to the dynamics world
 		m_dynamicsWorld->addRigidBody(body);
 	}
@@ -207,8 +207,8 @@ void RaytestDemo::initPhysics()
 		btCollisionShape* colShapes[NUM_SHAPES] = {
 			trimesh,
 			new btConvexHullShape(&convexPoints[0].getX(), sizeof(convexPoints) / sizeof(btVector3), sizeof(btVector3)),
-			new btSphereShape(1),
-			new btCapsuleShape(0.2, 1),
+			new btSphereShape((btScalar)1),
+			new btCapsuleShape((btScalar)0.2, (btScalar)1),
 			new btCylinderShape(btVector3(0.2, 1, 0.2)),
 			new btBoxShape(btVector3(1, 1, 1))};
 
@@ -228,10 +228,10 @@ void RaytestDemo::initPhysics()
 			btScalar mass(1.f);
 
 			if (!i)
-				mass = 0.f;
+				mass = (btScalar)0.f;
 
 			//rigidbody is dynamic if and only if mass is non zero, otherwise static
-			bool isDynamic = (mass != 0.f);
+			bool isDynamic = (mass != (btScalar)0.f);
 
 			btVector3 localInertia(0, 0, 0);
 			btCollisionShape* colShape = colShapes[i % NUM_SHAPES];
@@ -241,9 +241,9 @@ void RaytestDemo::initPhysics()
 			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, 0, colShape, localInertia);
 			rbInfo.m_startWorldTransform = startTransform;
 			btRigidBody* body = new btRigidBody(rbInfo);
-			body->setRollingFriction(0.03);
-			body->setSpinningFriction(0.03);
-			body->setFriction(1);
+			body->setRollingFriction((btScalar)0.03);
+			body->setSpinningFriction((btScalar)0.03);
+			body->setFriction((btScalar)1);
 			body->setAnisotropicFriction(colShape->getAnisotropicRollingFrictionDirection(), btCollisionObject::CF_ANISOTROPIC_ROLLING_FRICTION);
 
 			m_dynamicsWorld->addRigidBody(body);

@@ -12,7 +12,7 @@ public:
 
 	virtual bool init(int argc, char* argv[]) = 0;
 
-	virtual void update(float deltaTime) = 0;
+	virtual void update(btScalar deltaTime) = 0;
 
 	virtual void updateGraphics() = 0;
 

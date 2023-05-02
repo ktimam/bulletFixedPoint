@@ -127,7 +127,7 @@ btVector3 getVector3FromXmlText(const char* text)
 
 btVector4 getVector4FromXmlText(const char* text)
 {
-	btVector4 vec(0, 0, 0, 0);
+	btVector4 vec((btScalar)0, (btScalar)0, (btScalar)0, (btScalar)0);
 	btAlignedObjectArray<float> floatArray;
 	TokenFloatArray adder(floatArray);
 	floatArray.reserve(4);
@@ -135,7 +135,7 @@ btVector4 getVector4FromXmlText(const char* text)
 	assert(floatArray.size() == 4);
 	if (floatArray.size() == 4)
 	{
-		vec.setValue(floatArray[0], floatArray[1], floatArray[2], floatArray[3]);
+		vec.setValue((btScalar)floatArray[0], (btScalar)floatArray[1], (btScalar)floatArray[2], (btScalar)floatArray[3]);
 	}
 	return vec;
 }
@@ -314,13 +314,13 @@ void readLibraryGeometries(XMLDocument& doc, btAlignedObjectArray<GLInstanceGrap
 				for (int v = 0; v < vertexPositions.size(); v++)
 				{
 					GLInstanceVertex vtx;
-					vtx.xyzw[0] = vertexPositions[v].x();
-					vtx.xyzw[1] = vertexPositions[v].y();
-					vtx.xyzw[2] = vertexPositions[v].z();
+					vtx.xyzw[0] = (float)vertexPositions[v].x();
+					vtx.xyzw[1] = (float)vertexPositions[v].y();
+					vtx.xyzw[2] = (float)vertexPositions[v].z();
 					vtx.xyzw[3] = 1.f;
-					vtx.normal[0] = vertexNormals[v].x();
-					vtx.normal[1] = vertexNormals[v].y();
-					vtx.normal[2] = vertexNormals[v].z();
+					vtx.normal[0] = (float)vertexNormals[v].x();
+					vtx.normal[1] = (float)vertexNormals[v].y();
+					vtx.normal[2] = (float)vertexNormals[v].z();
 					vtx.uv[0] = 0.5f;
 					vtx.uv[1] = 0.5f;
 					visualShape.m_vertices->push_back(vtx);
@@ -363,10 +363,10 @@ void readNodeHierarchy(XMLElement* node, btHashMap<btHashString, int>& name2Shap
 				tokenize(transElem->GetText(), adder);
 				if (floatArray.size() == 16)
 				{
-					btMatrix4x4 t(floatArray[0], floatArray[1], floatArray[2], floatArray[3],
-								  floatArray[4], floatArray[5], floatArray[6], floatArray[7],
-								  floatArray[8], floatArray[9], floatArray[10], floatArray[11],
-								  floatArray[12], floatArray[13], floatArray[14], floatArray[15]);
+					btMatrix4x4 t((btScalar)floatArray[0], (btScalar)floatArray[1], (btScalar)floatArray[2], (btScalar)floatArray[3],
+								  (btScalar)floatArray[4], (btScalar)floatArray[5], (btScalar)floatArray[6], (btScalar)floatArray[7],
+								  (btScalar)floatArray[8], (btScalar)floatArray[9], (btScalar)floatArray[10],(btScalar) floatArray[11],
+								  (btScalar)floatArray[12], (btScalar)floatArray[13], (btScalar)floatArray[14], (btScalar)floatArray[15]);
 
 					nodeTrans = nodeTrans * t;
 				}

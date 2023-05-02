@@ -12,48 +12,48 @@ static const idScalar kAxisLengthEpsilon = 10 * kIsZero;
 
 void setZero(vec3 &v)
 {
-	v(0) = 0;
-	v(1) = 0;
-	v(2) = 0;
+	v(0) = (btScalar)0;
+	v(1) = (btScalar)0;
+	v(2) = (btScalar)0;
 }
 
 void setZero(vecx &v)
 {
 	for (int i = 0; i < v.size(); i++)
 	{
-		v(i) = 0;
+		v(i) = (btScalar)0;
 	}
 }
 
 void setZero(mat33 &m)
 {
-	m(0, 0) = 0;
-	m(0, 1) = 0;
-	m(0, 2) = 0;
-	m(1, 0) = 0;
-	m(1, 1) = 0;
-	m(1, 2) = 0;
-	m(2, 0) = 0;
-	m(2, 1) = 0;
-	m(2, 2) = 0;
+	m(0, 0) = (btScalar)0;
+	m(0, 1) = (btScalar)0;
+	m(0, 2) = (btScalar)0;
+	m(1, 0) = (btScalar)0;
+	m(1, 1) = (btScalar)0;
+	m(1, 2) = (btScalar)0;
+	m(2, 0) = (btScalar)0;
+	m(2, 1) = (btScalar)0;
+	m(2, 2) = (btScalar)0;
 }
 
 void skew(vec3 &v, mat33 *result)
 {
-	(*result)(0, 0) = 0.0;
+	(*result)(0, 0) = (btScalar)0.0;
 	(*result)(0, 1) = -v(2);
 	(*result)(0, 2) = v(1);
 	(*result)(1, 0) = v(2);
-	(*result)(1, 1) = 0.0;
+	(*result)(1, 1) = (btScalar)0.0;
 	(*result)(1, 2) = -v(0);
 	(*result)(2, 0) = -v(1);
 	(*result)(2, 1) = v(0);
-	(*result)(2, 2) = 0.0;
+	(*result)(2, 2) = (btScalar)0.0;
 }
 
 idScalar maxAbs(const vecx &v)
 {
-	idScalar result = 0.0;
+	idScalar result = (btScalar)0.0;
 	for (int i = 0; i < v.size(); i++)
 	{
 		const idScalar tmp = BT_ID_FABS(v(i));
@@ -67,7 +67,7 @@ idScalar maxAbs(const vecx &v)
 
 idScalar maxAbs(const vec3 &v)
 {
-	idScalar result = 0.0;
+	idScalar result = (btScalar)0.0;
 	for (int i = 0; i < 3; i++)
 	{
 		const idScalar tmp = BT_ID_FABS(v(i));
@@ -83,12 +83,12 @@ idScalar maxAbs(const vec3 &v)
 idScalar maxAbsMat3x(const mat3x &m)
 {
 	// only used for tests -- so just loop here for portability
-	idScalar result = 0.0;
+	idScalar result = (btScalar)0.0;
 	for (idArrayIdx col = 0; col < m.cols(); col++)
 	{
 		for (idArrayIdx row = 0; row < 3; row++)
 		{
-			result = BT_ID_MAX(result, std::fabs(m(row, col)));
+			result = BT_ID_MAX(result, BT_ID_FABS(m(row, col)));
 		}
 	}
 	return result;
@@ -155,15 +155,15 @@ mat33 transformX(const idScalar &alpha)
 	// [1  0 0]
 	// [0  c s]
 	// [0 -s c]
-	T(0, 0) = 1.0;
-	T(0, 1) = 0.0;
-	T(0, 2) = 0.0;
+	T(0, 0) = (btScalar)1.0;
+	T(0, 1) = (btScalar)0.0;
+	T(0, 2) = (btScalar)0.0;
 
-	T(1, 0) = 0.0;
+	T(1, 0) = (btScalar)0.0;
 	T(1, 1) = cos_alpha;
 	T(1, 2) = sin_alpha;
 
-	T(2, 0) = 0.0;
+	T(2, 0) = (btScalar)0.0;
 	T(2, 1) = -sin_alpha;
 	T(2, 2) = cos_alpha;
 
@@ -179,15 +179,15 @@ mat33 transformY(const idScalar &beta)
 	// [0 1  0]
 	// [s 0  c]
 	T(0, 0) = cos_beta;
-	T(0, 1) = 0.0;
+	T(0, 1) = (btScalar)0.0;
 	T(0, 2) = -sin_beta;
 
-	T(1, 0) = 0.0;
-	T(1, 1) = 1.0;
-	T(1, 2) = 0.0;
+	T(1, 0) = (btScalar)0.0;
+	T(1, 1) = (btScalar)1.0;
+	T(1, 2) = (btScalar)0.0;
 
 	T(2, 0) = sin_beta;
-	T(2, 1) = 0.0;
+	T(2, 1) = (btScalar)0.0;
 	T(2, 2) = cos_beta;
 
 	return T;
@@ -203,15 +203,15 @@ mat33 transformZ(const idScalar &gamma)
 	// [ 0 0 1]
 	T(0, 0) = cos_gamma;
 	T(0, 1) = sin_gamma;
-	T(0, 2) = 0.0;
+	T(0, 2) = (btScalar)0.0;
 
 	T(1, 0) = -sin_gamma;
 	T(1, 1) = cos_gamma;
-	T(1, 2) = 0.0;
+	T(1, 2) = (btScalar)0.0;
 
-	T(2, 0) = 0.0;
-	T(2, 1) = 0.0;
-	T(2, 2) = 1.0;
+	T(2, 0) = (btScalar)0.0;
+	T(2, 1) = (btScalar)0.0;
+	T(2, 2) = (btScalar)1.0;
 
 	return T;
 }
@@ -219,15 +219,15 @@ mat33 transformZ(const idScalar &gamma)
 mat33 tildeOperator(const vec3 &v)
 {
 	mat33 m;
-	m(0, 0) = 0.0;
+	m(0, 0) = (btScalar)0.0;
 	m(0, 1) = -v(2);
 	m(0, 2) = v(1);
 	m(1, 0) = v(2);
-	m(1, 1) = 0.0;
+	m(1, 1) = (btScalar)0.0;
 	m(1, 2) = -v(0);
 	m(2, 0) = -v(1);
 	m(2, 1) = v(0);
-	m(2, 2) = 0.0;
+	m(2, 2) = (btScalar)0.0;
 	return m;
 }
 
@@ -244,7 +244,7 @@ void getVecMatFromDH(idScalar theta, idScalar d, idScalar a, idScalar alpha, vec
 
 	(*T)(0, 0) = ct;
 	(*T)(0, 1) = -st;
-	(*T)(0, 2) = 0.0;
+	(*T)(0, 2) = (btScalar)0.0;
 
 	(*T)(1, 0) = st * ca;
 	(*T)(1, 1) = ct * ca;
@@ -259,7 +259,7 @@ void bodyTParentFromAxisAngle(const vec3 &axis, const idScalar &angle, mat33 *T)
 {
 	const idScalar c = BT_ID_COS(angle);
 	const idScalar s = -BT_ID_SIN(angle);
-	const idScalar one_m_c = 1.0 - c;
+	const idScalar one_m_c = (btScalar)1.0 - c;
 
 	const idScalar &x = axis(0);
 	const idScalar &y = axis(1);
@@ -281,17 +281,17 @@ void bodyTParentFromAxisAngle(const vec3 &axis, const idScalar &angle, mat33 *T)
 bool isPositiveDefinite(const mat33 &m)
 {
 	// test if all upper left determinants are positive
-	if (m(0, 0) <= 0)
+	if (m(0, 0) <= (btScalar)0)
 	{  // upper 1x1
 		return false;
 	}
-	if (m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0) <= 0)
+	if (m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0) <= (btScalar)0)
 	{  // upper 2x2
 		return false;
 	}
 	if ((m(0, 0) * (m(1, 1) * m(2, 2) - m(1, 2) * m(2, 1)) -
 		 m(0, 1) * (m(1, 0) * m(2, 2) - m(1, 2) * m(2, 0)) +
-		 m(0, 2) * (m(1, 0) * m(2, 1) - m(1, 1) * m(2, 0))) < 0)
+		 m(0, 2) * (m(1, 0) * m(2, 1) - m(1, 1) * m(2, 0))) < (btScalar)0)
 	{
 		return false;
 	}
@@ -301,17 +301,17 @@ bool isPositiveDefinite(const mat33 &m)
 bool isPositiveSemiDefinite(const mat33 &m)
 {
 	// test if all upper left determinants are positive
-	if (m(0, 0) < 0)
+	if (m(0, 0) < (btScalar)0)
 	{  // upper 1x1
 		return false;
 	}
-	if (m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0) < 0)
+	if (m(0, 0) * m(1, 1) - m(0, 1) * m(1, 0) < (btScalar)0)
 	{  // upper 2x2
 		return false;
 	}
 	if ((m(0, 0) * (m(1, 1) * m(2, 2) - m(1, 2) * m(2, 1)) -
 		 m(0, 1) * (m(1, 0) * m(2, 2) - m(1, 2) * m(2, 0)) +
-		 m(0, 2) * (m(1, 0) * m(2, 1) - m(1, 1) * m(2, 0))) < 0)
+		 m(0, 2) * (m(1, 0) * m(2, 1) - m(1, 1) * m(2, 0))) < (btScalar)0)
 	{
 		return false;
 	}
@@ -410,7 +410,7 @@ bool isValidInertiaMatrix(const mat33 &I, const int index, bool has_fixed_joint)
 	// check positive/zero diagonal elements
 	for (int i = 0; i < 3; i++)
 	{
-		if (I(i, i) < 0)
+		if (I(i, i) < (btScalar)0)
 		{  // accept zero
 			bt_id_error_message("invalid inertia tensor, I(%d,%d)= %e <0\n", i, i, I(i, i));
 			return false;
@@ -452,7 +452,7 @@ bool isValidTransformMatrix(const mat33 &m)
 	for (int i = 0; i < 3; i++)
 	{
 		const idScalar length_minus_1 =
-			BT_ID_FABS(m(0, i) * m(0, i) + m(1, i) * m(1, i) + m(2, i) * m(2, i) - 1.0);
+			BT_ID_FABS(m(0, i) * m(0, i) + m(1, i) * m(1, i) + m(2, i) * m(2, i) - (btScalar)1.0);
 		if (length_minus_1 > kAxisLengthEpsilon)
 		{
 			bt_id_error_message(
@@ -484,7 +484,7 @@ bool isValidTransformMatrix(const mat33 &m)
 		return false;
 	}
 	// check determinant (rotation not reflection)
-	if (determinant(m) <= 0)
+	if (determinant(m) <= (btScalar)0)
 	{
 		bt_id_error_message("Not a valid rotation matrix (determinant <=0)\n");
 		print_mat(m);
@@ -495,7 +495,7 @@ bool isValidTransformMatrix(const mat33 &m)
 
 bool isUnitVector(const vec3 &vector)
 {
-	return BT_ID_FABS(vector(0) * vector(0) + vector(1) * vector(1) + vector(2) * vector(2) - 1.0) <
+	return BT_ID_FABS(vector(0) * vector(0) + vector(1) * vector(1) + vector(2) * vector(2) - (btScalar)1.0) <
 		   kIsZero;
 }
 

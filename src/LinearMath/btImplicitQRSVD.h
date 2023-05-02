@@ -80,15 +80,15 @@ public:
     }
     void setIdentity()
     {
-        m_00 = 1;
-        m_11 = 1;
-        m_01 = 0;
-        m_10 = 0;
+        m_00 = (btScalar)1;
+        m_11 = (btScalar)1;
+        m_01 = (btScalar)0;
+        m_10 = (btScalar)0;
     }
 };
 
 static inline btScalar copySign(btScalar x, btScalar y) {
-    if ((x < 0 && y > 0) || (x > 0 && y < 0))
+    if ((x < (btScalar)0 && y >(btScalar)0) || (x > (btScalar)0 && y < (btScalar)0))
         return -x;
     return x;
 }
@@ -148,8 +148,8 @@ public:
     inline void compute(const btScalar a, const btScalar b)
     {
         btScalar d = a * a + b * b;
-        c = 1;
-        s = 0;
+        c = (btScalar)1;
+        s = (btScalar)0;
         if (d > SIMD_EPSILON) {
             btScalar sqrtd = btSqrt(d);
             if (sqrtd>SIMD_EPSILON)
@@ -169,8 +169,8 @@ public:
     inline void computeUnconventional(const btScalar a, const btScalar b)
     {
         btScalar d = a * a + b * b;
-        c = 0;
-        s = 1;
+        c = (btScalar)0;
+        s = (btScalar)1;
         if (d > SIMD_EPSILON) {
             btScalar t = btScalar(1.0)/btSqrt(d);
             s = a * t;
@@ -302,7 +302,7 @@ inline void zeroChase(btMatrix3x3& H, btMatrix3x3& U, btMatrix3x3& V)
      rows thus no need to divide by sqrt(a^2+b^2)
      */
     GivensRotation r2(1, 2);
-    if (H[1][0] != 0)
+    if (H[1][0] != (btScalar)0)
         r2.compute(H[0][0] * H[0][1] + H[1][0] * H[1][1], H[0][0] * H[0][2] + H[1][0] * H[1][2]);
     else
         r2.compute(H[0][1], H[0][2]);
@@ -481,22 +481,22 @@ inline void singularValueDecomposition(
     btScalar x = S_Sym(0, 0);
     btScalar y = S_Sym(0, 1);
     btScalar z = S_Sym(1, 1);
-    if (y == 0) {
+    if (y == (btScalar)0) {
         // S is already diagonal
-        cosine = 1;
-        sine = 0;
+        cosine = (btScalar)1;
+        sine = (btScalar)0;
         sigma(0,0) = x;
         sigma(1,1) = z;
     }
     else {
-        btScalar tau = 0.5 * (x - z);
+        btScalar tau = (btScalar)0.5 * (x - z);
         btScalar val = tau * tau + y * y;
         if (val > SIMD_EPSILON)
         {
         btScalar w = btSqrt(val);
         // w > y > 0
         btScalar t;
-        if (tau > 0) {
+        if (tau > (btScalar)0) {
             // tau + w > w > y > 0 ==> division is safe
             t = y / (tau + w);
         }
@@ -518,8 +518,8 @@ inline void singularValueDecomposition(
         sigma(1,1) = s2 * x + csy + c2 * z;
       } else
       	{
-      		cosine = 1;
-        sine = 0;
+      		cosine = (btScalar)1;
+        sine = (btScalar)0;
         sigma(0,0) = x;
         sigma(1,1) = z;
       	}
@@ -671,7 +671,7 @@ inline void sort(btMatrix3x3& U, btVector3& sigma, btMatrix3x3& V, int t)
     {
         // Case: sigma(0) > |sigma(1)| >= |sigma(2)|
         if (btFabs(sigma[1]) >= btFabs(sigma[2])) {
-            if (sigma[1] < 0) {
+            if (sigma[1] < (btScalar)0) {
                 flipSign(1, U, sigma);
                 flipSign(2, U, sigma);
             }
@@ -679,7 +679,7 @@ inline void sort(btMatrix3x3& U, btVector3& sigma, btMatrix3x3& V, int t)
         }
         
         //fix sign of sigma for both cases
-        if (sigma[2] < 0) {
+        if (sigma[2] < (btScalar)0) {
             flipSign(1, U, sigma);
             flipSign(2, U, sigma);
         }
@@ -707,7 +707,7 @@ inline void sort(btMatrix3x3& U, btVector3& sigma, btMatrix3x3& V, int t)
     {
         // Case: |sigma(0)| >= sigma(1) > |sigma(2)|
         if (btFabs(sigma[0]) >= sigma[1]) {
-            if (sigma[0] < 0) {
+            if (sigma[0] < (btScalar)0) {
                 flipSign(0, U, sigma);
                 flipSign(2, U, sigma);
             }
@@ -733,7 +733,7 @@ inline void sort(btMatrix3x3& U, btVector3& sigma, btMatrix3x3& V, int t)
         }
         
         // fix sign for both cases
-        if (sigma[1] < 0) {
+        if (sigma[1] < (btScalar)0) {
             flipSign(1, U, sigma);
             flipSign(2, U, sigma);
         }

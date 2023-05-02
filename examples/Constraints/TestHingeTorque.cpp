@@ -51,11 +51,11 @@ void TestHingeTorque::stepSimulation(float deltaTime)
 		btRigidBody& bodyA = hinge->getRigidBodyA();
 		btTransform trA = bodyA.getWorldTransform();
 		btVector3 hingeAxisInWorld = trA.getBasis() * hinge->getFrameOffsetA().getBasis().getColumn(2);
-		hinge->getRigidBodyA().applyTorque(-hingeAxisInWorld * 10);
-		hinge->getRigidBodyB().applyTorque(hingeAxisInWorld * 10);
+		hinge->getRigidBodyA().applyTorque(-hingeAxisInWorld * (btScalar)10);
+		hinge->getRigidBodyB().applyTorque(hingeAxisInWorld * (btScalar)10);
 	}
 
-	m_dynamicsWorld->stepSimulation(1. / 240, 0);
+	m_dynamicsWorld->stepSimulation((btScalar)1. / (btScalar)240, 0);
 
 	static int count = 0;
 	if ((count & 0x0f) == 0)
@@ -124,9 +124,9 @@ void TestHingeTorque::initPhysics()
 		float baseMass = 0.f;
 		float linkMass = 1.f;
 
-		btRigidBody* base = createRigidBody(baseMass, baseWorldTrans, baseBox);
+		btRigidBody* base = createRigidBody((btScalar)baseMass, baseWorldTrans, baseBox);
 		m_dynamicsWorld->removeRigidBody(base);
-		base->setDamping(0, 0);
+		base->setDamping((btScalar)0, (btScalar)0);
 		m_dynamicsWorld->addRigidBody(base, collisionFilterGroup, collisionFilterMask);
 		btBoxShape* linkBox1 = new btBoxShape(linkHalfExtents);
 		btSphereShape* linkSphere = new btSphereShape(radius);
@@ -138,7 +138,7 @@ void TestHingeTorque::initPhysics()
 			btTransform linkTrans;
 			linkTrans = baseWorldTrans;
 
-			linkTrans.setOrigin(basePosition - btVector3(0, linkHalfExtents[1] * 2.f * (i + 1), 0));
+			linkTrans.setOrigin(basePosition - btVector3((btScalar)0, linkHalfExtents[1] * (btScalar)2.f * (i + 1), (btScalar)0));
 
 			btCollisionShape* colOb = 0;
 
@@ -150,17 +150,17 @@ void TestHingeTorque::initPhysics()
 			{
 				colOb = linkSphere;
 			}
-			btRigidBody* linkBody = createRigidBody(linkMass, linkTrans, colOb);
+			btRigidBody* linkBody = createRigidBody((btScalar)linkMass, linkTrans, colOb);
 			m_dynamicsWorld->removeRigidBody(linkBody);
 			m_dynamicsWorld->addRigidBody(linkBody, collisionFilterGroup, collisionFilterMask);
-			linkBody->setDamping(0, 0);
+			linkBody->setDamping((btScalar)0, (btScalar)0);
 			btTypedConstraint* con = 0;
 
 			if (i == 0)
 			{
 				//create a hinge constraint
-				btVector3 pivotInA(0, -linkHalfExtents[1], 0);
-				btVector3 pivotInB(0, linkHalfExtents[1], 0);
+				btVector3 pivotInA((btScalar)0, -linkHalfExtents[1], (btScalar)0);
+				btVector3 pivotInB((btScalar)0, linkHalfExtents[1], (btScalar)0);
 				btVector3 axisInA(1, 0, 0);
 				btVector3 axisInB(1, 0, 0);
 				bool useReferenceA = true;
@@ -171,8 +171,8 @@ void TestHingeTorque::initPhysics()
 			}
 			else
 			{
-				btTransform pivotInA(btQuaternion::getIdentity(), btVector3(0, -radius, 0));  //par body's COM to cur body's COM offset
-				btTransform pivotInB(btQuaternion::getIdentity(), btVector3(0, radius, 0));   //cur body's COM to cur body's PIV offset
+				btTransform pivotInA(btQuaternion::getIdentity(), btVector3((btScalar)0, -radius, (btScalar)0));  //par body's COM to cur body's COM offset
+				btTransform pivotInB(btQuaternion::getIdentity(), btVector3((btScalar)0, radius, (btScalar)0));   //cur body's COM to cur body's PIV offset
 				btGeneric6DofSpring2Constraint* fixed = new btGeneric6DofSpring2Constraint(*prevBody, *linkBody,
 																						   pivotInA, pivotInB);
 				fixed->setLinearLowerLimit(btVector3(0, 0, 0));
@@ -198,7 +198,7 @@ void TestHingeTorque::initPhysics()
 	if (1)
 	{
 		btVector3 groundHalfExtents(1, 1, 0.2);
-		groundHalfExtents[upAxis] = 1.f;
+		groundHalfExtents[upAxis] = (btScalar)1.f;
 		btBoxShape* box = new btBoxShape(groundHalfExtents);
 		box->initializePolyhedralFeatures();
 
@@ -206,14 +206,14 @@ void TestHingeTorque::initPhysics()
 		start.setIdentity();
 		btVector3 groundOrigin(-0.4f, 3.f, 0.f);
 		//	btVector3 basePosition = btVector3(-0.4f, 3.f, 0.f);
-		btQuaternion groundOrn(btVector3(0, 1, 0), 0.25 * SIMD_PI);
+		btQuaternion groundOrn(btVector3(0, 1, 0), (btScalar)0.25 * SIMD_PI);
 
-		groundOrigin[upAxis] -= .5;
-		groundOrigin[2] -= 0.6;
+		groundOrigin[upAxis] -= (btScalar).5;
+		groundOrigin[2] -= (btScalar)0.6;
 		start.setOrigin(groundOrigin);
 		//	start.setRotation(groundOrn);
-		btRigidBody* body = createRigidBody(0, start, box);
-		body->setFriction(0);
+		btRigidBody* body = createRigidBody((btScalar)0, start, box);
+		body->setFriction((btScalar)0);
 	}
 	m_guiHelper->autogenerateGraphicsObjects(m_dynamicsWorld);
 }

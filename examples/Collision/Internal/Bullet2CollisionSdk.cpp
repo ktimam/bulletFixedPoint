@@ -212,7 +212,7 @@ struct Bullet2ContactResultCallback : public btCollisionWorld::ContactResultCall
 			m_numContacts++;
 		}
 
-		return 1.f;
+		return (btScalar)1.f;
 	}
 };
 

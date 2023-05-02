@@ -15,8 +15,8 @@ btReducedDeformableBody::btReducedDeformableBody(btSoftBodyWorldInfo* worldInfo,
   m_nodeIndexOffset = 0;
 
   m_transform_lock = false;
-  m_ksScale = 1.0;
-  m_rhoScale = 1.0;
+  m_ksScale = (btScalar)1.0;
+  m_rhoScale = (btScalar)1.0;
 
   // rigid motion
   m_linearVelocity.setZero();
@@ -29,15 +29,15 @@ btReducedDeformableBody::btReducedDeformableBody(btSoftBodyWorldInfo* worldInfo,
 	m_linearFactor.setValue(1, 1, 1);
   // m_invInertiaLocal.setValue(1, 1, 1);
   m_invInertiaLocal.setIdentity();
-  m_mass = 0.0;
-  m_inverseMass = 0.0;
+  m_mass = (btScalar)0.0;
+  m_inverseMass = (btScalar)0.0;
 
-  m_linearDamping = 0;
-  m_angularDamping = 0;
+  m_linearDamping = (btScalar)0;
+  m_angularDamping = (btScalar)0;
 
   // Rayleigh damping
-  m_dampingAlpha = 0;
-  m_dampingBeta = 0;
+  m_dampingAlpha = (btScalar)0;
+  m_dampingBeta = (btScalar)0;
 
   m_rigidTransformWorld.setIdentity();
 }
@@ -46,33 +46,33 @@ void btReducedDeformableBody::setReducedModes(int num_modes, int full_size)
 {
   m_nReduced = num_modes;
   m_nFull = full_size;
-  m_reducedDofs.resize(m_nReduced, 0);
-  m_reducedDofsBuffer.resize(m_nReduced, 0);
-  m_reducedVelocity.resize(m_nReduced, 0);
-  m_reducedVelocityBuffer.resize(m_nReduced, 0);
-  m_reducedForceElastic.resize(m_nReduced, 0);
-  m_reducedForceDamping.resize(m_nReduced, 0);
-  m_reducedForceExternal.resize(m_nReduced, 0);
-  m_internalDeltaReducedVelocity.resize(m_nReduced, 0);
-  m_nodalMass.resize(full_size, 0);
+  m_reducedDofs.resize(m_nReduced, (btScalar)0);
+  m_reducedDofsBuffer.resize(m_nReduced, (btScalar)0);
+  m_reducedVelocity.resize(m_nReduced, (btScalar)0);
+  m_reducedVelocityBuffer.resize(m_nReduced, (btScalar)0);
+  m_reducedForceElastic.resize(m_nReduced, (btScalar)0);
+  m_reducedForceDamping.resize(m_nReduced, (btScalar)0);
+  m_reducedForceExternal.resize(m_nReduced, (btScalar)0);
+  m_internalDeltaReducedVelocity.resize(m_nReduced, (btScalar)0);
+  m_nodalMass.resize(full_size, (btScalar)0);
   m_localMomentArm.resize(m_nFull);
 }
 
 void btReducedDeformableBody::setMassProps(const tDenseArray& mass_array)
 {
-  btScalar total_mass = 0;
+  btScalar total_mass = (btScalar)0;
   btVector3 CoM(0, 0, 0);
 	for (int i = 0; i < m_nFull; ++i)
 	{
 		m_nodalMass[i] = m_rhoScale * mass_array[i];
-		m_nodes[i].m_im = mass_array[i] > 0 ? 1.0 / (m_rhoScale * mass_array[i]) : 0;
+		m_nodes[i].m_im = mass_array[i] > (btScalar)0 ? (btScalar)1.0 / (m_rhoScale * mass_array[i]) : (btScalar)0;
 		total_mass += m_rhoScale * mass_array[i];
 
     CoM += m_nodalMass[i] * m_nodes[i].m_x;
 	}
   // total rigid body mass
   m_mass = total_mass;
-  m_inverseMass = total_mass > 0 ? 1.0 / total_mass : 0;
+  m_inverseMass = total_mass > (btScalar)0 ? (btScalar)1.0 / total_mass : (btScalar)0;
   // original CoM
   m_initialCoM = CoM / total_mass;
 }
@@ -121,7 +121,7 @@ void btReducedDeformableBody::setMassScale(const btScalar rho)
 void btReducedDeformableBody::setFixedNodes(const int n_node)
 {
   m_fixedNodes.push_back(n_node);
-  m_nodes[n_node].m_im = 0;   // set inverse mass to be zero for the constraint solver.
+  m_nodes[n_node].m_im = (btScalar)0;   // set inverse mass to be zero for the constraint solver.
 }
 
 void btReducedDeformableBody::setDamping(const btScalar alpha, const btScalar beta)
@@ -152,7 +152,7 @@ void btReducedDeformableBody::updateLocalMomentArm()
     for (int k = 0; k < 3; ++k)
     {
       // compute displacement
-      delta_x[i][k] = 0;
+      delta_x[i][k] = (btScalar)0;
       for (int j = 0; j < m_nReduced; ++j) 
       {
         delta_x[i][k] += m_modes[j][3 * i + k] * m_reducedDofs[j];
@@ -179,10 +179,10 @@ void btReducedDeformableBody::updateExternalForceProjectMatrix(bool initialized)
     // P_A
     for (int r = 0; r < m_nReduced; ++r)
     {
-      m_projPA[r].resize(3 * m_nFull, 0);
+      m_projPA[r].resize(3 * m_nFull, (btScalar)0);
       for (int i = 0; i < m_nFull; ++i)
       {
-        btMatrix3x3 mass_scaled_i = Diagonal(1) - Diagonal(m_nodalMass[i] / m_mass);
+        btMatrix3x3 mass_scaled_i = Diagonal((btScalar)1) - Diagonal(m_nodalMass[i] / m_mass);
         btVector3 s_ri(m_modes[r][3 * i], m_modes[r][3 * i + 1], m_modes[r][3 * i + 2]);
         btVector3 prod_i = mass_scaled_i * s_ri;
 
@@ -200,7 +200,7 @@ void btReducedDeformableBody::updateExternalForceProjectMatrix(bool initialized)
   // C(q) is updated once per position update
   for (int r = 0; r < m_nReduced; ++r)
   {
-  	m_projCq[r].resize(3 * m_nFull, 0);
+  	m_projCq[r].resize(3 * m_nFull, (btScalar)0);
     for (int i = 0; i < m_nFull; ++i)
     {
       btMatrix3x3 r_star = Cross(m_localMomentArm[i]);
@@ -220,10 +220,10 @@ void btReducedDeformableBody::endOfTimeStepZeroing()
 {
   for (int i = 0; i < m_nReduced; ++i)
   {
-    m_reducedForceElastic[i] = 0;
-    m_reducedForceDamping[i] = 0;
-    m_reducedForceExternal[i] = 0;
-    m_internalDeltaReducedVelocity[i] = 0;
+    m_reducedForceElastic[i] = (btScalar)0;
+    m_reducedForceDamping[i] = (btScalar)0;
+    m_reducedForceExternal[i] = (btScalar)0;
+    m_internalDeltaReducedVelocity[i] = (btScalar)0;
     m_reducedDofsBuffer[i] = m_reducedDofs[i];
     m_reducedVelocityBuffer[i] = m_reducedVelocity[i];
   }
@@ -239,7 +239,7 @@ void btReducedDeformableBody::applyInternalVelocityChanges()
   for (int r = 0; r < m_nReduced; ++r)
   {
     m_reducedVelocity[r] += m_internalDeltaReducedVelocity[r];
-    m_internalDeltaReducedVelocity[r] = 0;
+    m_internalDeltaReducedVelocity[r] = (btScalar)0;
   }
 }
 
@@ -275,7 +275,7 @@ void btReducedDeformableBody::updateReducedVelocity(btScalar solverdt)
   for (int r = 0; r < m_nReduced; ++r)
   {
     // the reduced mass is always identity!
-    btScalar delta_v = 0;
+    btScalar delta_v = (btScalar)0;
     delta_v = solverdt * (m_reducedForceElastic[r] + m_reducedForceDamping[r]);
     // delta_v = solverdt * (m_reducedForceElastic[r] + m_reducedForceDamping[r] + m_reducedForceExternal[r]);
     m_reducedVelocity[r] = m_reducedVelocityBuffer[r] + delta_v;
@@ -504,7 +504,7 @@ void btReducedDeformableBody::setTotalMass(btScalar mass, bool fromfaces)
     m_nodalMass[i] *= scale_ratio;
   }
   m_mass = mass;
-  m_inverseMass = mass > 0 ? 1.0 / mass : 0;
+  m_inverseMass = mass > (btScalar)0 ? (btScalar)1.0 / mass : (btScalar)0;
 
   // update inertia tensors
   updateLocalInertiaTensorFromNodes();
@@ -726,10 +726,10 @@ void btReducedDeformableBody::applyFullSpaceNodalForce(const btVector3& f_ext, i
 
   // f_ext_r = [S^T * P]_{n_node} * f_local
   tDenseArray f_ext_r;
-  f_ext_r.resize(m_nReduced, 0);
+  f_ext_r.resize(m_nReduced, (btScalar)0);
   for (int r = 0; r < m_nReduced; ++r)
   {
-    m_reducedForceExternal[r] = 0;
+    m_reducedForceExternal[r] = (btScalar)0;
     for (int k = 0; k < 3; ++k)
     {
       f_ext_r[r] += (m_projPA[r][3 * n_node + k] + m_projCq[r][3 * n_node + k]) * f_local[k];

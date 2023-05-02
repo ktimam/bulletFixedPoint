@@ -103,7 +103,7 @@ struct btSparseSdf
 		//if this limit is reached, the SDF is reset (at the cost of some performance during the reset)
 		m_clampCells = clampCells;
 		cells.resize(hashsize, 0);
-		m_defaultVoxelsz = 0.25;
+		m_defaultVoxelsz = (btScalar)0.25;
 		Reset();
 	}
 	//
@@ -291,7 +291,7 @@ struct btSparseSdf
 		const btVector3 org = btVector3((btScalar)c.c[0],
 										(btScalar)c.c[1],
 										(btScalar)c.c[2]) *
-							  CELLSIZE * voxelsz;
+			(btScalar)CELLSIZE * (btScalar)voxelsz;
 		for (int k = 0; k <= CELLSIZE; ++k)
 		{
 			const btScalar z = voxelsz * k + org.z();
@@ -317,9 +317,9 @@ struct btSparseSdf
 		{
 			btGjkEpaSolver2::sResults res;
 			const btConvexShape* csh = static_cast<const btConvexShape*>(shape);
-			return (btGjkEpaSolver2::SignedDistance(x, 0, csh, unit, res));
+			return (btGjkEpaSolver2::SignedDistance(x, (btScalar)0, csh, unit, res));
 		}
-		return (0);
+		return ((btScalar)0);
 	}
 	//
 	static inline IntFrac Decompose(btScalar x)
@@ -328,7 +328,7 @@ struct btSparseSdf
 		/* Remove test, faster floor...				*/
 		IntFrac r;
 		x /= CELLSIZE;
-		const int o = x < 0 ? (int)(-x + 1) : 0;
+		const int o = (float)x < 0 ? (int)((float) - x + 1) : 0;
 		x += o;
 		r.b = (int)x;
 		const btScalar k = (x - r.b) * CELLSIZE;

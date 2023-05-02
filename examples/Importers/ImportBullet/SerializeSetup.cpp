@@ -12,7 +12,7 @@ public:
 	virtual ~SerializeSetup();
 
 	virtual void initPhysics();
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 	virtual void setFileName(const char* fileName)
 	{
 		memcpy(m_fileName, fileName, strlen(fileName) + 1);
@@ -72,7 +72,7 @@ void SerializeSetup::initPhysics()
 	importer->loadFile(relativeFileName);
 
 	//for now, guess the up axis from gravity
-	if (m_dynamicsWorld->getGravity()[1] == 0.f)
+	if (m_dynamicsWorld->getGravity()[1] == (btScalar)0.f)
 	{
 		m_guiHelper->setUpAxis(2);
 	}
@@ -93,7 +93,7 @@ void SerializeSetup::initPhysics()
 	m_guiHelper->autogenerateGraphicsObjects(m_dynamicsWorld);
 }
 
-void SerializeSetup::stepSimulation(float deltaTime)
+void SerializeSetup::stepSimulation(btScalar deltaTime)
 {
 	CommonRigidBodyBase::stepSimulation(deltaTime);
 }

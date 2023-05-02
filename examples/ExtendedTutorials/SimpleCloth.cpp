@@ -89,11 +89,11 @@ void SimpleClothExample::initPhysics()
 	groundTransform.setOrigin(btVector3(0, -50, 0));
 	{
 		btScalar mass(0.);
-		createRigidBody(mass, groundTransform, groundShape, btVector4(0, 0, 1, 1));
+		createRigidBody(mass, groundTransform, groundShape, btVector4((btScalar)0, (btScalar)0, (btScalar)1, (btScalar)1));
 	}
 
 	{
-		const btScalar s = 4;  //size of cloth patch
+		const btScalar s = (btScalar)4;  //size of cloth patch
 		const int NUM_X = 31;  //vertices on X axis
 		const int NUM_Z = 31;  //vertices on Z axis
 		createSoftBody(s, NUM_X, NUM_Z);
@@ -108,21 +108,21 @@ void SimpleClothExample::createSoftBody(const btScalar s,
 										const int fixed)
 {
 	btSoftBody* cloth = btSoftBodyHelpers::CreatePatch(softBodyWorldInfo,
-													   btVector3(-s / 2, s + 1, 0),
-													   btVector3(+s / 2, s + 1, 0),
-													   btVector3(-s / 2, s + 1, +s),
-													   btVector3(+s / 2, s + 1, +s),
+													   btVector3(-s / 2, s + 1, (btScalar)0),
+													   btVector3(s / 2, s + 1, (btScalar)0),
+													   btVector3(-s / 2, s + 1, s),
+													   btVector3(s / 2, s + 1, s),
 													   numX, numY,
 													   fixed, true);
 
-	cloth->getCollisionShape()->setMargin(0.001f);
+	cloth->getCollisionShape()->setMargin((btScalar)0.001f);
 	cloth->getCollisionShape()->setUserPointer((void*)cloth);
 	cloth->generateBendingConstraints(2, cloth->appendMaterial());
-	cloth->setTotalMass(10);
+	cloth->setTotalMass((btScalar)10);
 	//cloth->m_cfg.citerations = 10;
 	//	cloth->m_cfg.diterations = 10;
 	cloth->m_cfg.piterations = 5;
-	cloth->m_cfg.kDP = 0.005f;
+	cloth->m_cfg.kDP = (btScalar)0.005f;
 	getSoftDynamicsWorld()->addSoftBody(cloth);
 }
 

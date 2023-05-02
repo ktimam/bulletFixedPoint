@@ -354,12 +354,12 @@ static int gSolverMode = SOLVER_SIMD |
 						 // SOLVER_INTERLEAVE_CONTACT_AND_FRICTION_CONSTRAINTS |
 						 // SOLVER_USE_2_FRICTION_DIRECTIONS |
 						 0;
-static btScalar gSliderSolverIterations = 10.0f;                                                        // should be int
-static btScalar gSliderNumThreads = 1.0f;                                                               // should be int
-static btScalar gSliderIslandBatchingThreshold = 0.0f;                                                  // should be int
+static btScalar gSliderSolverIterations = (btScalar)10.0f;                                                        // should be int
+static btScalar gSliderNumThreads = (btScalar)1.0f;                                                               // should be int
+static btScalar gSliderIslandBatchingThreshold = (btScalar)0.0f;                                                  // should be int
 static btScalar gSliderMinBatchSize = btScalar(btSequentialImpulseConstraintSolverMt::s_minBatchSize);  // should be int
 static btScalar gSliderMaxBatchSize = btScalar(btSequentialImpulseConstraintSolverMt::s_maxBatchSize);  // should be int
-static btScalar gSliderLeastSquaresResidualThreshold = 0.0f;
+static btScalar gSliderLeastSquaresResidualThreshold = (btScalar)0.0f;
 
 ////////////////////////////////////
 CommonRigidBodyMTBase::CommonRigidBodyMTBase(struct GUIHelperInterface* helper)

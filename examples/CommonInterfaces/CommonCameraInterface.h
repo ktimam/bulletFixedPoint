@@ -1,6 +1,9 @@
 #ifndef COMMON_CAMERA_INTERFACE_H
 #define COMMON_CAMERA_INTERFACE_H
 
+#include "LinearMath/btScalar.h"
+#include "LinearMath/btVector3.h"
+
 struct CommonCameraInterface
 {
 	virtual ~CommonCameraInterface() {}
@@ -11,7 +14,8 @@ struct CommonCameraInterface
 	virtual void disableVRCamera() = 0;
 	virtual bool isVRCamera() const = 0;
 	virtual void setVRCameraOffsetTransform(const float offset[16]) = 0;
-
+	virtual void getCameraPosition(btVector3& pos) const = 0;
+	virtual void getCameraTargetPosition(btVector3& pos) const = 0;
 	virtual void getCameraTargetPosition(float pos[3]) const = 0;
 	virtual void getCameraPosition(float pos[3]) const = 0;
 

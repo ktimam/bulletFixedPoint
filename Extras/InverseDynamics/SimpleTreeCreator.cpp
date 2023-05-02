@@ -7,38 +7,38 @@ namespace btInverseDynamics
 /// minimal "tree" (chain)
 SimpleTreeCreator::SimpleTreeCreator(int dim) : m_num_bodies(dim)
 {
-	m_mass = 1.0;
-	m_body_T_parent_ref(0, 0) = 1;
-	m_body_T_parent_ref(0, 1) = 0;
-	m_body_T_parent_ref(0, 2) = 0;
-	m_body_T_parent_ref(1, 0) = 0;
-	m_body_T_parent_ref(1, 1) = 1;
-	m_body_T_parent_ref(1, 2) = 0;
-	m_body_T_parent_ref(2, 0) = 0;
-	m_body_T_parent_ref(2, 1) = 0;
-	m_body_T_parent_ref(2, 2) = 1;
+	m_mass = (btScalar)1.0;
+	m_body_T_parent_ref(0, 0) = (btScalar)1;
+	m_body_T_parent_ref(0, 1) = (btScalar)0;
+	m_body_T_parent_ref(0, 2) = (btScalar)0;
+	m_body_T_parent_ref(1, 0) = (btScalar)0;
+	m_body_T_parent_ref(1, 1) = (btScalar)1;
+	m_body_T_parent_ref(1, 2) = (btScalar)0;
+	m_body_T_parent_ref(2, 0) = (btScalar)0;
+	m_body_T_parent_ref(2, 1) = (btScalar)0;
+	m_body_T_parent_ref(2, 2) = (btScalar)1;
 
-	m_parent_r_parent_body_ref(0) = 1.0;
-	m_parent_r_parent_body_ref(1) = 0.0;
-	m_parent_r_parent_body_ref(2) = 0.0;
+	m_parent_r_parent_body_ref(0) = (btScalar)1.0;
+	m_parent_r_parent_body_ref(1) = (btScalar)0.0;
+	m_parent_r_parent_body_ref(2) = (btScalar)0.0;
 
-	m_body_r_body_com(0) = 0.5;
-	m_body_r_body_com(1) = 0.0;
-	m_body_r_body_com(2) = 0.0;
+	m_body_r_body_com(0) = (btScalar)0.5;
+	m_body_r_body_com(1) = (btScalar)0.0;
+	m_body_r_body_com(2) = (btScalar)0.0;
 
-	m_body_I_body(0, 0) = 1;
-	m_body_I_body(0, 1) = 0;
-	m_body_I_body(0, 2) = 0;
-	m_body_I_body(1, 0) = 0;
-	m_body_I_body(1, 1) = 1;
-	m_body_I_body(1, 2) = 0;
-	m_body_I_body(2, 0) = 0;
-	m_body_I_body(2, 1) = 0;
-	m_body_I_body(2, 2) = 1;
+	m_body_I_body(0, 0) = (btScalar)1;
+	m_body_I_body(0, 1) = (btScalar)0;
+	m_body_I_body(0, 2) = (btScalar)0;
+	m_body_I_body(1, 0) = (btScalar)0;
+	m_body_I_body(1, 1) = (btScalar)1;
+	m_body_I_body(1, 2) = (btScalar)0;
+	m_body_I_body(2, 0) = (btScalar)0;
+	m_body_I_body(2, 1) = (btScalar)0;
+	m_body_I_body(2, 2) = (btScalar)1;
 
-	m_axis(0) = 0;
-	m_axis(1) = 0;
-	m_axis(2) = 1;
+	m_axis(0) = (btScalar)0;
+	m_axis(1) = (btScalar)0;
+	m_axis(2) = (btScalar)1;
 }
 int SimpleTreeCreator::getNumBodies(int* num_bodies) const
 {
@@ -63,7 +63,7 @@ int SimpleTreeCreator::getBody(const int body_index, int* parent_index, JointTyp
 	*parent_r_parent_body_ref = m_parent_r_parent_body_ref;
 	if (0 == body_index)
 	{
-		(*parent_r_parent_body_ref)(2) = 1.0;
+		(*parent_r_parent_body_ref)(2) = (btScalar)1.0;
 	}
 	*body_T_parent_ref = m_body_T_parent_ref;
 	*body_axis_of_motion = m_axis;

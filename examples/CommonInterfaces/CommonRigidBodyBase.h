@@ -70,7 +70,7 @@ struct CommonRigidBodyBase : public CommonExampleInterface
 		m_dynamicsWorld->setGravity(btVector3(0, -10, 0));
 	}
 
-	virtual void stepSimulation(float deltaTime)
+	virtual void stepSimulation(btScalar deltaTime)
 	{
 		if (m_dynamicsWorld)
 		{
@@ -176,26 +176,27 @@ struct CommonRigidBodyBase : public CommonExampleInterface
 			return btVector3(0, 0, 0);
 		}
 
-		float top = 1.f;
-		float bottom = -1.f;
-		float nearPlane = 1.f;
-		float tanFov = (top - bottom) * 0.5f / nearPlane;
-		float fov = btScalar(2.0) * btAtan(tanFov);
+		btScalar top = (btScalar)1.f;
+		btScalar bottom = (btScalar)-1.f;
+		btScalar nearPlane = (btScalar)1.f;
+		btScalar tanFov = (top - bottom) * (btScalar)0.5f / nearPlane;
+		btScalar fov = btScalar(2.0) * btAtan(tanFov);
 
-		btVector3 camPos, camTarget;
+		float camPos[3], camTarget[3];
 
 		renderer->getActiveCamera()->getCameraPosition(camPos);
 		renderer->getActiveCamera()->getCameraTargetPosition(camTarget);
 
-		btVector3 rayFrom = camPos;
-		btVector3 rayForward = (camTarget - camPos);
+		btVector3 rayFrom = btVector3((btScalar)camPos[0], (btScalar)camPos[1], (btScalar)camPos[2]);
+		btVector3 rayForward = (btVector3((btScalar)camTarget[0], (btScalar)camTarget[1], (btScalar)camTarget[2])
+			- btVector3((btScalar)camPos[0], (btScalar)camPos[1], (btScalar)camPos[2]));
 		rayForward.normalize();
-		float farPlane = 10000.f;
+		btScalar farPlane = (btScalar)10000.f;
 		rayForward *= farPlane;
 
 		btVector3 rightOffset;
 		btVector3 cameraUp = btVector3(0, 0, 0);
-		cameraUp[m_guiHelper->getAppInterface()->getUpAxis()] = 1;
+		cameraUp[m_guiHelper->getAppInterface()->getUpAxis()] = (btScalar)1;
 
 		btVector3 vertical = cameraUp;
 
@@ -205,24 +206,24 @@ struct CommonRigidBodyBase : public CommonExampleInterface
 		vertical = hor.cross(rayForward);
 		vertical.safeNormalize();
 
-		float tanfov = tanf(0.5f * fov);
+		btScalar tanfov = tan((btScalar)0.5f * fov);
 
-		hor *= 2.f * farPlane * tanfov;
-		vertical *= 2.f * farPlane * tanfov;
+		hor *= (btScalar)2.f * farPlane * tanfov;
+		vertical *= (btScalar)2.f * farPlane * tanfov;
 
 		btScalar aspect;
-		float width = float(renderer->getScreenWidth());
-		float height = float(renderer->getScreenHeight());
+		btScalar width = btScalar(renderer->getScreenWidth());
+		btScalar height = btScalar(renderer->getScreenHeight());
 
 		aspect = width / height;
 
 		hor *= aspect;
 
 		btVector3 rayToCenter = rayFrom + rayForward;
-		btVector3 dHor = hor * 1.f / width;
-		btVector3 dVert = vertical * 1.f / height;
+		btVector3 dHor = hor * (btScalar)1.f / width;
+		btVector3 dVert = vertical * (btScalar)1.f / height;
 
-		btVector3 rayTo = rayToCenter - 0.5f * hor + 0.5f * vertical;
+		btVector3 rayTo = rayToCenter - (btScalar)0.5f * hor + (btScalar)0.5f * vertical;
 		rayTo += btScalar(x) * dHor;
 		rayTo -= btScalar(y) * dVert;
 		return rayTo;
@@ -239,8 +240,9 @@ struct CommonRigidBodyBase : public CommonExampleInterface
 		}
 
 		btVector3 rayTo = getRayTo(int(x), int(y));
-		btVector3 rayFrom;
-		renderer->getActiveCamera()->getCameraPosition(rayFrom);
+		float camPos[3];
+		renderer->getActiveCamera()->getCameraPosition(camPos);
+		btVector3 rayFrom = btVector3((btScalar)camPos[0], (btScalar)camPos[1], (btScalar)camPos[2]);
 		movePickedBody(rayFrom, rayTo);
 
 		return false;
@@ -336,10 +338,10 @@ struct CommonRigidBodyBase : public CommonExampleInterface
 					btPoint2PointConstraint* p2p = new btPoint2PointConstraint(*body, localPivot);
 					m_dynamicsWorld->addConstraint(p2p, true);
 					m_pickedConstraint = p2p;
-					btScalar mousePickClamping = 30.f;
+					btScalar mousePickClamping = (btScalar)30.f;
 					p2p->m_setting.m_impulseClamp = mousePickClamping;
 					//very weak constraint for picking
-					p2p->m_setting.m_tau = 0.001f;
+					p2p->m_setting.m_tau = (btScalar)0.001f;
 				}
 			}
 
@@ -404,12 +406,12 @@ struct CommonRigidBodyBase : public CommonExampleInterface
 		delete ms;
 	}
 
-	btRigidBody* createRigidBody(float mass, const btTransform& startTransform, btCollisionShape* shape, const btVector4& color = btVector4(1, 0, 0, 1))
+	btRigidBody* createRigidBody(btScalar mass, const btTransform& startTransform, btCollisionShape* shape, const btVector4& color = btVector4((btScalar)1, (btScalar)0, (btScalar)0, (btScalar)1))
 	{
 		btAssert((!shape || shape->getShapeType() != INVALID_SHAPE_PROXYTYPE));
 
 		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
+		bool isDynamic = (mass != (btScalar)0.f);
 
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)

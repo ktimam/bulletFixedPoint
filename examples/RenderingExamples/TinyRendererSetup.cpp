@@ -77,8 +77,8 @@ struct TinyRendererSetupInternalData
 		}
 		if (m_animateRenderer)
 		{
-			m_pitch += 0.005f;
-			m_yaw += 0.01f;
+			m_pitch += (btScalar)0.005f;
+			m_yaw += (btScalar)0.01f;
 		}
 	}
 };
@@ -98,7 +98,7 @@ struct TinyRendererSetup : public CommonExampleInterface
 
 	virtual void exitPhysics();
 
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 
 	virtual void physicsDebugDraw(int debugFlags);
 
@@ -303,7 +303,7 @@ void TinyRendererSetup::exitPhysics()
 {
 }
 
-void TinyRendererSetup::stepSimulation(float deltaTime)
+void TinyRendererSetup::stepSimulation(btScalar deltaTime)
 {
 	m_internalData->updateTransforms();
 }
@@ -312,13 +312,13 @@ void TinyRendererSetup::renderScene()
 {
 	m_internalData->updateTransforms();
 
-	btVector4 from(m_internalData->m_lightPos[0], m_internalData->m_lightPos[1], m_internalData->m_lightPos[2], 1);
-	btVector4 toX(m_internalData->m_lightPos[0] + 0.1, m_internalData->m_lightPos[1], m_internalData->m_lightPos[2], 1);
-	btVector4 toY(m_internalData->m_lightPos[0], m_internalData->m_lightPos[1] + 0.1, m_internalData->m_lightPos[2], 1);
-	btVector4 toZ(m_internalData->m_lightPos[0], m_internalData->m_lightPos[1], m_internalData->m_lightPos[2] + 0.1, 1);
-	btVector4 colorX(1, 0, 0, 1);
-	btVector4 colorY(0, 1, 0, 1);
-	btVector4 colorZ(0, 0, 1, 1);
+	float from[] = { (float)m_internalData->m_lightPos[0], (float)m_internalData->m_lightPos[1], (float)m_internalData->m_lightPos[2], 1 };
+	float toX[] = { (float)m_internalData->m_lightPos[0] + 0.1, (float)m_internalData->m_lightPos[1], (float)m_internalData->m_lightPos[2], 1 };
+	float toY[] = { (float)m_internalData->m_lightPos[0], (float)m_internalData->m_lightPos[1] + 0.1, (float)m_internalData->m_lightPos[2], 1 };
+	float toZ[] = { (float)m_internalData->m_lightPos[0], (float)m_internalData->m_lightPos[1], (float)m_internalData->m_lightPos[2] + 0.1, 1 };
+	float colorX[] = { 1, 0, 0, 1 };
+	float colorY[] = { 0, 1, 0, 1 };
+	float colorZ[] = { 0, 0, 1, 1 };
 	int width = 2;
 	m_guiHelper->getRenderInterface()->drawLine(from, toX, colorX, width);
 	m_guiHelper->getRenderInterface()->drawLine(from, toY, colorY, width);
@@ -326,12 +326,24 @@ void TinyRendererSetup::renderScene()
 
 	if (!m_useSoftware)
 	{
-		btVector3 lightPos(m_internalData->m_lightPos[0], m_internalData->m_lightPos[1], m_internalData->m_lightPos[2]);
+		float lightPos[] = { (float)m_internalData->m_lightPos[0], (float)m_internalData->m_lightPos[1], (float)m_internalData->m_lightPos[2] };
 		m_guiHelper->getRenderInterface()->setLightPosition(lightPos);
 
 		for (int i = 0; i < m_internalData->m_transforms.size(); i++)
 		{
-			m_guiHelper->getRenderInterface()->writeSingleInstanceTransformToCPU(m_internalData->m_transforms[i].getOrigin(), m_internalData->m_transforms[i].getRotation(), i);
+			btVector3 posvec = m_internalData->m_transforms[i].getOrigin();
+			btQuaternion ornvec = m_internalData->m_transforms[i].getRotation();
+			float pos[4];
+			float orn[4];
+			pos[0] = (float)posvec[0];
+			pos[1] = (float)posvec[1];
+			pos[2] = (float)posvec[2];
+			pos[3] = (float)posvec[3];
+			orn[0] = (float)ornvec[0];
+			orn[1] = (float)ornvec[1];
+			orn[2] = (float)ornvec[2];
+			orn[3] = (float)ornvec[3];
+			m_guiHelper->getRenderInterface()->writeSingleInstanceTransformToCPU(pos, orn, i);
 		}
 		m_guiHelper->getRenderInterface()->writeTransforms();
 		m_guiHelper->getRenderInterface()->renderScene();
@@ -353,7 +365,7 @@ void TinyRendererSetup::renderScene()
 			}
 		}
 
-		ATTRIBUTE_ALIGNED16(btScalar modelMat2[16]);
+		ATTRIBUTE_ALIGNED16(float modelMat2[16]);
 		ATTRIBUTE_ALIGNED16(float viewMat[16]);
 		ATTRIBUTE_ALIGNED16(float projMat[16]);
 		CommonRenderInterface* render = this->m_app->m_renderer;

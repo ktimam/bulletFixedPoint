@@ -67,7 +67,7 @@ public:
 			{
 				btSoftBody::Node& n = psb->m_nodes[j];
 				size_t id = n.index;
-				btScalar mass = (n.m_im == 0) ? 0 : 1. / n.m_im;
+				btScalar mass = (n.m_im == (btScalar)0) ? (btScalar)0 : (btScalar)1. / n.m_im;
 				btVector3 scaled_force = scale * m_gravity * mass * m_softBodies[i]->m_gravityFactor;
 				force[id] += scaled_force;
 			}
@@ -80,9 +80,9 @@ public:
 	}
 
 	// the gravitational potential energy
-	virtual double totalEnergy(btScalar dt)
+	virtual btScalar totalEnergy(btScalar dt)
 	{
-		double e = 0;
+		btScalar e = (btScalar)0;
 		for (int i = 0; i < m_softBodies.size(); ++i)
 		{
 			btSoftBody* psb = m_softBodies[i];
@@ -93,7 +93,7 @@ public:
 			for (int j = 0; j < psb->m_nodes.size(); ++j)
 			{
 				const btSoftBody::Node& node = psb->m_nodes[j];
-				if (node.m_im > 0)
+				if (node.m_im > (btScalar)0)
 				{
 					e -= m_gravity.dot(node.m_q) / node.m_im;
 				}

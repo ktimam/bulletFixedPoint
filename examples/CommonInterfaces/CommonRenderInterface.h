@@ -1,6 +1,10 @@
 #ifndef COMMON_RENDER_INTERFACE_H
 #define COMMON_RENDER_INTERFACE_H
 
+#include "LinearMath/btScalar.h"
+#include "LinearMath/btVector3.h"
+#include "LinearMath/btQuaternion.h"
+
 struct CommonCameraInterface;
 
 enum
@@ -76,8 +80,10 @@ struct CommonRenderInterface
 	virtual int registerGraphicsInstance(int shapeIndex, const float* position, const float* quaternion, const float* color, const float* scaling) = 0;
 	virtual int registerGraphicsInstance(int shapeIndex, const double* position, const double* quaternion, const double* color, const double* scaling) = 0;
 	virtual void drawLines(const float* positions, const float color[4], int numPoints, int pointStrideInBytes, const unsigned int* indices, int numIndices, float pointDrawSize) = 0;
+	virtual void drawLines(const btScalar* positions, const btScalar color[4], int numPoints, int pointStrideInBytes, const unsigned int* indices, int numIndices, float pointDrawSize) = 0;
 	virtual void drawLine(const float from[4], const float to[4], const float color[4], float lineWidth) = 0;
 	virtual void drawLine(const double from[4], const double to[4], const double color[4], double lineWidth) = 0;
+	virtual void drawLine(const btVector3 fromIn, const btVector3 toIn, const btVector3 colorIn, double lineWidthIn) = 0;
 	virtual void drawPoint(const float* position, const float color[4], float pointDrawSize) = 0;
 	virtual void drawPoint(const double* position, const double color[4], double pointDrawSize) = 0;
 	virtual void drawPoints(const float* positions, const float* colors, int numPoints, int pointStrideInBytes, float pointDrawSize) = 0;
@@ -100,6 +106,7 @@ struct CommonRenderInterface
 
 	virtual void writeSingleInstanceTransformToCPU(const float* position, const float* orientation, int srcIndex) = 0;
 	virtual void writeSingleInstanceTransformToCPU(const double* position, const double* orientation, int srcIndex) = 0;
+	virtual void writeSingleInstanceTransformToCPU(const btVector3 position, const btQuaternion orientation, int srcIndex) = 0;
 	virtual void writeSingleInstanceColorToCPU(const float* color, int srcIndex) = 0;
 	virtual void writeSingleInstanceColorToCPU(const double* color, int srcIndex) = 0;
 	virtual void writeSingleInstanceScaleToCPU(const float* scale, int srcIndex) = 0;

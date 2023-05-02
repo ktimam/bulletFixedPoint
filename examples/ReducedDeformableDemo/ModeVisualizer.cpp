@@ -28,15 +28,15 @@
 
 
 static int num_modes = 20;
-static btScalar visualize_mode = 0;
-static btScalar frequency_scale = 1;
+static btScalar visualize_mode = (btScalar)0;
+static btScalar frequency_scale = (btScalar)1;
 
 class ModeVisualizer : public CommonDeformableBodyBase
 {
     btScalar sim_time;
 
     // get deformed shape
-    void getDeformedShape(btReducedDeformableBody* rsb, const int mode_n, const btScalar time_term = 1)
+    void getDeformedShape(btReducedDeformableBody* rsb, const int mode_n, const btScalar time_term = (btScalar)1)
     {
       for (int i = 0; i < rsb->m_nodes.size(); ++i)
         for (int k = 0; k < 3; ++k)
@@ -60,7 +60,7 @@ public:
     ModeVisualizer(struct GUIHelperInterface* helper)
         : CommonDeformableBodyBase(helper)
     {
-        sim_time = 0;
+        sim_time = (btScalar)0;
     }
     virtual ~ModeVisualizer()
     {
@@ -83,12 +83,12 @@ public:
         m_guiHelper->resetCamera(dist, yaw, pitch, targetPos[0], targetPos[1], targetPos[2]);
     }
     
-    void stepSimulation(float deltaTime)
+    void stepSimulation(btScalar deltaTime)
     {
       btReducedDeformableBody* rsb = static_cast<btReducedDeformableBody*>(static_cast<btDeformableMultiBodyDynamicsWorld*>(m_dynamicsWorld)->getSoftBodyArray()[0]);
 
       sim_time += deltaTime;
-      int n_mode = floor(visualize_mode);
+      int n_mode = floor((int)visualize_mode);
       btScalar scale = sin(sqrt(rsb->m_eigenvalues[n_mode]) * sim_time / frequency_scale);
       getDeformedShape(rsb, n_mode, scale);
     //   btVector3 mass_weighted_column_sum = computeMassWeightedColumnSum(rsb, visualize_mode);
@@ -145,7 +145,7 @@ void ModeVisualizer::initPhysics()
                                           false);
 
       getDeformableDynamicsWorld()->addSoftBody(rsb);
-      rsb->getCollisionShape()->setMargin(0.1);
+      rsb->getCollisionShape()->setMargin((btScalar)0.1);
 
       btTransform init_transform;
       init_transform.setIdentity();

@@ -184,7 +184,7 @@ public:
 			for (int j = 0; j < psb->m_nodes.size(); ++j)
 			{
 				const btSoftBody::Node& node = psb->m_nodes[j];
-				f[counter] = (node.m_im == 0) ? btVector3(0, 0, 0) : dv[counter] / node.m_im;
+				f[counter] = (node.m_im == (btScalar)0) ? btVector3(0, 0, 0) : dv[counter] / node.m_im;
 				++counter;
 			}
 		}

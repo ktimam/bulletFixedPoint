@@ -18,9 +18,9 @@ MultiBodyTree::MultiBodyImpl::MultiBodyImpl(int num_bodies_, int num_dofs_)
 	m_user_int.resize(num_bodies_);
 	m_user_ptr.resize(num_bodies_);
 
-	m_world_gravity(0) = 0.0;
-	m_world_gravity(1) = 0.0;
-	m_world_gravity(2) = -9.8;
+	m_world_gravity(0) = (btScalar)0.0;
+	m_world_gravity(1) = (btScalar)0.0;
+	m_world_gravity(2) = (btScalar)-9.8;
 }
 
 const char *MultiBodyTree::MultiBodyImpl::jointTypeToString(const JointType &type) const
@@ -210,39 +210,39 @@ void MultiBodyTree::MultiBodyImpl::calculateStaticData()
 		switch (body.m_joint_type)
 		{
 			case REVOLUTE:
-				body.m_parent_vel_rel(0) = 0;
-				body.m_parent_vel_rel(1) = 0;
-				body.m_parent_vel_rel(2) = 0;
-				body.m_parent_acc_rel(0) = 0;
-				body.m_parent_acc_rel(1) = 0;
-				body.m_parent_acc_rel(2) = 0;
+				body.m_parent_vel_rel(0) = (btScalar)0;
+				body.m_parent_vel_rel(1) = (btScalar)0;
+				body.m_parent_vel_rel(2) = (btScalar)0;
+				body.m_parent_acc_rel(0) = (btScalar)0;
+				body.m_parent_acc_rel(1) = (btScalar)0;
+				body.m_parent_acc_rel(2) = (btScalar)0;
 				body.m_parent_pos_parent_body = body.m_parent_pos_parent_body_ref;
 				break;
 			case PRISMATIC:
 				body.m_body_T_parent = body.m_body_T_parent_ref;
 				body.m_parent_Jac_JT = body.m_body_T_parent_ref.transpose() * body.m_Jac_JT;
-				body.m_body_ang_vel_rel(0) = 0;
-				body.m_body_ang_vel_rel(1) = 0;
-				body.m_body_ang_vel_rel(2) = 0;
-				body.m_body_ang_acc_rel(0) = 0;
-				body.m_body_ang_acc_rel(1) = 0;
-				body.m_body_ang_acc_rel(2) = 0;
+				body.m_body_ang_vel_rel(0) = (btScalar)0;
+				body.m_body_ang_vel_rel(1) = (btScalar)0;
+				body.m_body_ang_vel_rel(2) = (btScalar)0;
+				body.m_body_ang_acc_rel(0) = (btScalar)0;
+				body.m_body_ang_acc_rel(1) = (btScalar)0;
+				body.m_body_ang_acc_rel(2) = (btScalar)0;
 				break;
 			case FIXED:
 				body.m_parent_pos_parent_body = body.m_parent_pos_parent_body_ref;
 				body.m_body_T_parent = body.m_body_T_parent_ref;
-				body.m_body_ang_vel_rel(0) = 0;
-				body.m_body_ang_vel_rel(1) = 0;
-				body.m_body_ang_vel_rel(2) = 0;
-				body.m_parent_vel_rel(0) = 0;
-				body.m_parent_vel_rel(1) = 0;
-				body.m_parent_vel_rel(2) = 0;
-				body.m_body_ang_acc_rel(0) = 0;
-				body.m_body_ang_acc_rel(1) = 0;
-				body.m_body_ang_acc_rel(2) = 0;
-				body.m_parent_acc_rel(0) = 0;
-				body.m_parent_acc_rel(1) = 0;
-				body.m_parent_acc_rel(2) = 0;
+				body.m_body_ang_vel_rel(0) = (btScalar)0;
+				body.m_body_ang_vel_rel(1) = (btScalar)0;
+				body.m_body_ang_vel_rel(2) = (btScalar)0;
+				body.m_parent_vel_rel(0) = (btScalar)0;
+				body.m_parent_vel_rel(1) = (btScalar)0;
+				body.m_parent_vel_rel(2) = (btScalar)0;
+				body.m_body_ang_acc_rel(0) = (btScalar)0;
+				body.m_body_ang_acc_rel(1) = (btScalar)0;
+				body.m_body_ang_acc_rel(2) = (btScalar)0;
+				body.m_parent_acc_rel(0) = (btScalar)0;
+				body.m_parent_acc_rel(1) = (btScalar)0;
+				body.m_parent_acc_rel(2) = (btScalar)0;
 				break;
 			case FLOATING:
 				// no static data
@@ -250,23 +250,23 @@ void MultiBodyTree::MultiBodyImpl::calculateStaticData()
 			case SPHERICAL:
 				//todo: review
 				body.m_parent_pos_parent_body = body.m_parent_pos_parent_body_ref;
-				body.m_parent_vel_rel(0) = 0;
-				body.m_parent_vel_rel(1) = 0;
-				body.m_parent_vel_rel(2) = 0;
-				body.m_parent_acc_rel(0) = 0;
-				body.m_parent_acc_rel(1) = 0;
-				body.m_parent_acc_rel(2) = 0;
+				body.m_parent_vel_rel(0) = (btScalar)0;
+				body.m_parent_vel_rel(1) = (btScalar)0;
+				body.m_parent_vel_rel(2) = (btScalar)0;
+				body.m_parent_acc_rel(0) = (btScalar)0;
+				body.m_parent_acc_rel(1) = (btScalar)0;
+				body.m_parent_acc_rel(2) = (btScalar)0;
 				break;
 		}
 
 			// resize & initialize jacobians to zero.
 #if (defined BT_ID_HAVE_MAT3X) && (defined BT_ID_WITH_JACOBIANS)
-		body.m_body_dot_Jac_T_u(0) = 0.0;
-		body.m_body_dot_Jac_T_u(1) = 0.0;
-		body.m_body_dot_Jac_T_u(2) = 0.0;
-		body.m_body_dot_Jac_R_u(0) = 0.0;
-		body.m_body_dot_Jac_R_u(1) = 0.0;
-		body.m_body_dot_Jac_R_u(2) = 0.0;
+		body.m_body_dot_Jac_T_u(0) = (btScalar)0.0;
+		body.m_body_dot_Jac_T_u(1) = (btScalar)0.0;
+		body.m_body_dot_Jac_T_u(2) = (btScalar)0.0;
+		body.m_body_dot_Jac_R_u(0) = (btScalar)0.0;
+		body.m_body_dot_Jac_R_u(1) = (btScalar)0.0;
+		body.m_body_dot_Jac_R_u(2) = (btScalar)0.0;
 		resize(body.m_body_Jac_T, m_num_dofs);
 		resize(body.m_body_Jac_R, m_num_dofs);
 		body.m_body_Jac_T.setZero();
@@ -486,9 +486,9 @@ int MultiBodyTree::MultiBodyImpl::calculateKinematics(const vecx &q, const vecx 
 				transformZ(q(body.m_q_index + 2));
 		body.m_body_T_parent = T * body.m_body_T_parent_ref;
 			
-		body.m_parent_pos_parent_body(0)=0;
-		body.m_parent_pos_parent_body(1)=0;
-		body.m_parent_pos_parent_body(2)=0;
+		body.m_parent_pos_parent_body(0)= (btScalar)0;
+		body.m_parent_pos_parent_body(1)= (btScalar)0;
+		body.m_parent_pos_parent_body(2)= (btScalar)0;
 		
 		body.m_parent_pos_parent_body = body.m_body_T_parent * body.m_parent_pos_parent_body;
 
@@ -577,7 +577,7 @@ int MultiBodyTree::MultiBodyImpl::calculateKinematics(const vecx &q, const vecx 
 				body.m_body_T_parent *
 				(parent.m_body_acc + parent.m_body_ang_acc.cross(body.m_parent_pos_parent_body) +
 				 parent.m_body_ang_vel.cross(parent.m_body_ang_vel.cross(body.m_parent_pos_parent_body)) +
-				 2.0 * parent.m_body_ang_vel.cross(body.m_parent_vel_rel) + body.m_parent_acc_rel);
+					(btScalar)2.0 * parent.m_body_ang_vel.cross(body.m_parent_vel_rel) + body.m_parent_acc_rel);
 		}
 	}
 
@@ -607,9 +607,9 @@ void MultiBodyTree::MultiBodyImpl::addRelativeJacobianComponent(RigidBody &body)
 						 &body.m_body_Jac_T);
 			break;
 		case FLOATING:
-			setMat3xElem(0, idx + 0, 1.0, &body.m_body_Jac_R);
-			setMat3xElem(1, idx + 1, 1.0, &body.m_body_Jac_R);
-			setMat3xElem(2, idx + 2, 1.0, &body.m_body_Jac_R);
+			setMat3xElem(0, idx + 0, (btScalar)1.0, &body.m_body_Jac_R);
+			setMat3xElem(1, idx + 1, (btScalar)1.0, &body.m_body_Jac_R);
+			setMat3xElem(2, idx + 2, (btScalar)1.0, &body.m_body_Jac_R);
 			// body_Jac_T = body_T_parent.transpose();
 			setMat3xElem(0, idx + 3, body.m_body_T_parent(0, 0), &body.m_body_Jac_T);
 			setMat3xElem(0, idx + 4, body.m_body_T_parent(1, 0), &body.m_body_Jac_T);
@@ -626,9 +626,9 @@ void MultiBodyTree::MultiBodyImpl::addRelativeJacobianComponent(RigidBody &body)
 			break;
 		case SPHERICAL:
 			//todo: review
-			setMat3xElem(0, idx + 0, 1.0, &body.m_body_Jac_R);
-			setMat3xElem(1, idx + 1, 1.0, &body.m_body_Jac_R);
-			setMat3xElem(2, idx + 2, 1.0, &body.m_body_Jac_R);
+			setMat3xElem(0, idx + 0, (btScalar)1.0, &body.m_body_Jac_R);
+			setMat3xElem(1, idx + 1, (btScalar)1.0, &body.m_body_Jac_R);
+			setMat3xElem(2, idx + 2, (btScalar)1.0, &body.m_body_Jac_R);
 			break;
 	}
 }
@@ -670,7 +670,7 @@ int MultiBodyTree::MultiBodyImpl::calculateJacobians(const vecx &q, const vecx &
 			body.m_body_dot_Jac_T_u = body.m_body_T_parent *
 									  (parent.m_body_dot_Jac_T_u + parent.m_body_dot_Jac_R_u.cross(body.m_parent_pos_parent_body) +
 									   parent.m_body_ang_vel.cross(parent.m_body_ang_vel.cross(body.m_parent_pos_parent_body)) +
-									   2.0 * parent.m_body_ang_vel.cross(body.m_parent_vel_rel));
+										  (btScalar)2.0 * parent.m_body_ang_vel.cross(body.m_parent_vel_rel));
 		}
 	}
 	return 0;
@@ -683,21 +683,21 @@ static inline void setThreeDoFJacobians(const int dof, vec3 &Jac_JR, vec3 &Jac_J
 	{
 		// rotational part
 		case 0:
-			Jac_JR(0) = 1;
-			Jac_JR(1) = 0;
-			Jac_JR(2) = 0;
+			Jac_JR(0) = (btScalar)1;
+			Jac_JR(1) = (btScalar)0;
+			Jac_JR(2) = (btScalar)0;
 			setZero(Jac_JT);
 			break;
 		case 1:
-			Jac_JR(0) = 0;
-			Jac_JR(1) = 1;
-			Jac_JR(2) = 0;
+			Jac_JR(0) = (btScalar)0;
+			Jac_JR(1) = (btScalar)1;
+			Jac_JR(2) = (btScalar)0;
 			setZero(Jac_JT);
 			break;
 		case 2:
-			Jac_JR(0) = 0;
-			Jac_JR(1) = 0;
-			Jac_JR(2) = 1;
+			Jac_JR(0) = (btScalar)0;
+			Jac_JR(1) = (btScalar)0;
+			Jac_JR(2) = (btScalar)1;
 			setZero(Jac_JT);
 			break;
 	}
@@ -709,41 +709,41 @@ static inline void setSixDoFJacobians(const int dof, vec3 &Jac_JR, vec3 &Jac_JT)
 	{
 		// rotational part
 		case 0:
-			Jac_JR(0) = 1;
-			Jac_JR(1) = 0;
-			Jac_JR(2) = 0;
+			Jac_JR(0) = (btScalar)1;
+			Jac_JR(1) = (btScalar)0;
+			Jac_JR(2) = (btScalar)0;
 			setZero(Jac_JT);
 			break;
 		case 1:
-			Jac_JR(0) = 0;
-			Jac_JR(1) = 1;
-			Jac_JR(2) = 0;
+			Jac_JR(0) = (btScalar)0;
+			Jac_JR(1) = (btScalar)1;
+			Jac_JR(2) = (btScalar)0;
 			setZero(Jac_JT);
 			break;
 		case 2:
-			Jac_JR(0) = 0;
-			Jac_JR(1) = 0;
-			Jac_JR(2) = 1;
+			Jac_JR(0) = (btScalar)0;
+			Jac_JR(1) = (btScalar)0;
+			Jac_JR(2) = (btScalar)1;
 			setZero(Jac_JT);
 			break;
 		// translational part
 		case 3:
 			setZero(Jac_JR);
-			Jac_JT(0) = 1;
-			Jac_JT(1) = 0;
-			Jac_JT(2) = 0;
+			Jac_JT(0) = (btScalar)1;
+			Jac_JT(1) = (btScalar)0;
+			Jac_JT(2) = (btScalar)0;
 			break;
 		case 4:
 			setZero(Jac_JR);
-			Jac_JT(0) = 0;
-			Jac_JT(1) = 1;
-			Jac_JT(2) = 0;
+			Jac_JT(0) = (btScalar)0;
+			Jac_JT(1) = (btScalar)1;
+			Jac_JT(2) = (btScalar)0;
 			break;
 		case 5:
 			setZero(Jac_JR);
-			Jac_JT(0) = 0;
-			Jac_JT(1) = 0;
-			Jac_JT(2) = 1;
+			Jac_JT(0) = (btScalar)0;
+			Jac_JT(1) = (btScalar)0;
+			Jac_JT(2) = (btScalar)1;
 			break;
 	}
 }
@@ -800,7 +800,7 @@ int MultiBodyTree::MultiBodyImpl::calculateMassMatrix(const vecx &q, const bool 
 		{
 			for (int j = 0; j < m_num_dofs; j++)
 			{
-				setMatxxElem(i, j, 0.0, mass_matrix);
+				setMatxxElem(i, j, (btScalar)0.0, mass_matrix);
 			}
 		}
 	}
@@ -853,9 +853,9 @@ int MultiBodyTree::MultiBodyImpl::calculateMassMatrix(const vecx &q, const bool 
 				transformZ(q(body.m_q_index + 2));
 			body.m_body_T_parent = T * body.m_body_T_parent_ref;
 
-			body.m_parent_pos_parent_body(0)=0;
-			body.m_parent_pos_parent_body(1)=0;
-			body.m_parent_pos_parent_body(2)=0;
+			body.m_parent_pos_parent_body(0)= (btScalar)0;
+			body.m_parent_pos_parent_body(1)= (btScalar)0;
+			body.m_parent_pos_parent_body(2)= (btScalar)0;
 			
 			body.m_parent_pos_parent_body = body.m_body_T_parent * body.m_parent_pos_parent_body;
 		}
@@ -880,7 +880,7 @@ int MultiBodyTree::MultiBodyImpl::calculateMassMatrix(const vecx &q, const bool 
 			body.m_body_subtree_I_body +=
 				body_T_child * child.m_body_subtree_I_body * child.m_body_T_parent;
 
-			if (child.m_subtree_mass > 0)
+			if (child.m_subtree_mass > (btScalar)0)
 			{
 				// Shift the reference point for the child subtree inertia using the
 				// Huygens-Steiner ("parallel axis") theorem.
@@ -935,13 +935,13 @@ int MultiBodyTree::MultiBodyImpl::calculateMassMatrix(const vecx &q, const bool 
 					{
 						//todo: review
 						setThreeDoFJacobians(row - q_index_min, Jac_JR, Jac_JT);
-						const double Mrc = Jac_JR.dot(body_eom_rot) + Jac_JT.dot(body_eom_trans);
+						const btScalar Mrc = Jac_JR.dot(body_eom_rot) + Jac_JT.dot(body_eom_trans);
 						setMatxxElem(col, row, Mrc, mass_matrix);
 					}
 					if (FLOATING == body.m_joint_type)
 					{
 						setSixDoFJacobians(row - q_index_min, Jac_JR, Jac_JT);
-						const double Mrc = Jac_JR.dot(body_eom_rot) + Jac_JT.dot(body_eom_trans);
+						const btScalar Mrc = Jac_JR.dot(body_eom_rot) + Jac_JT.dot(body_eom_trans);
 						setMatxxElem(col, row, Mrc, mass_matrix);
 					}
 				}
@@ -975,7 +975,7 @@ int MultiBodyTree::MultiBodyImpl::calculateMassMatrix(const vecx &q, const bool 
 						{
 							setSixDoFJacobians(row - parent_body_q_index_min, Jac_JR, Jac_JT);
 						}
-						const double Mrc = Jac_JR.dot(body_eom_rot) + Jac_JT.dot(body_eom_trans);
+						const btScalar Mrc = Jac_JR.dot(body_eom_rot) + Jac_JT.dot(body_eom_trans);
 						setMatxxElem(col, row, Mrc, mass_matrix);
 					}
 
@@ -1056,7 +1056,7 @@ int MultiBodyTree::MultiBodyImpl::getBodyCoM(int body_index, vec3 *world_com) co
 {
 	CHECK_IF_BODY_INDEX_IS_VALID(body_index);
 	const RigidBody &body = m_body_list[body_index];
-	if (body.m_mass > 0)
+	if (body.m_mass > (btScalar)0)
 	{
 		*world_com = body.m_body_T_world.transpose() *
 					 (body.m_body_pos + body.m_body_mass_com / body.m_mass);
@@ -1097,15 +1097,15 @@ int MultiBodyTree::MultiBodyImpl::getBodyLinearVelocityCoM(int body_index,
 	CHECK_IF_BODY_INDEX_IS_VALID(body_index);
 	const RigidBody &body = m_body_list[body_index];
 	vec3 com;
-	if (body.m_mass > 0)
+	if (body.m_mass > (btScalar)0)
 	{
 		com = body.m_body_mass_com / body.m_mass;
 	}
 	else
 	{
-		com(0) = 0;
-		com(1) = 0;
-		com(2) = 0;
+		com(0) = (btScalar)0;
+		com(1) = (btScalar)0;
+		com(2) = (btScalar)0;
 	}
 
 	*world_velocity =

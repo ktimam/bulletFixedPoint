@@ -29,9 +29,9 @@
 ///The BasicTest shows the contact between volumetric deformable objects and rigid objects.
 // static btScalar E = 50;
 // static btScalar nu = 0.3;
-static btScalar damping_alpha = 0.0;
-static btScalar damping_beta = 0.0;
-static btScalar COLLIDING_VELOCITY = 4;
+static btScalar damping_alpha = (btScalar)0.0;
+static btScalar damping_beta = (btScalar)0.0;
+static btScalar COLLIDING_VELOCITY = (btScalar)4;
 static int num_modes = 20;
 
 class ReducedCollide : public CommonDeformableBodyBase
@@ -80,7 +80,7 @@ public:
         // btCollisionShape* shape = new btBoxShape(btVector3(1, 1, 1));
         btVector3 localInertia(0, 0, 0);
 		if (mass != 0.f)
-			shape->calculateLocalInertia(mass, localInertia);
+			shape->calculateLocalInertia((btScalar)mass, localInertia);
 
         btTransform startTransform;
         startTransform.setIdentity();
@@ -88,13 +88,13 @@ public:
         // startTransform.setRotation(btQuaternion(btVector3(1, 0, 1), SIMD_PI / 3.0));
         btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 
-		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, shape, localInertia);
+		btRigidBody::btRigidBodyConstructionInfo rbInfo((btScalar)mass, myMotionState, shape, localInertia);
 		btRigidBody* body = new btRigidBody(rbInfo);
 
 		m_dynamicsWorld->addRigidBody(body, 1, 1+2);
 
         body->setActivationState(DISABLE_DEACTIVATION);
-        body->setLinearVelocity(btVector3(0, COLLIDING_VELOCITY, 0));
+        body->setLinearVelocity(btVector3((btScalar)0, COLLIDING_VELOCITY, (btScalar)0));
         // body->setFriction(1);
     }
 
@@ -105,7 +105,7 @@ public:
         btCollisionShape* shape = new btBoxShape(btVector3(0.5, 0.25, 2));
         btVector3 localInertia(0, 0, 0);
 		if (mass != 0.f)
-			shape->calculateLocalInertia(mass, localInertia);
+			shape->calculateLocalInertia((btScalar)mass, localInertia);
 
         btTransform startTransform;
         startTransform.setIdentity();
@@ -113,7 +113,7 @@ public:
         // startTransform.setRotation(btQuaternion(btVector3(1, 0, 1), SIMD_PI / 3.0));
         btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 
-		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, shape, localInertia);
+		btRigidBody::btRigidBodyConstructionInfo rbInfo((btScalar)mass, myMotionState, shape, localInertia);
 		btRigidBody* body = new btRigidBody(rbInfo);
 
 		m_dynamicsWorld->addRigidBody(body, 1, 1+2);
@@ -131,7 +131,7 @@ public:
         btCollisionShape* shape = new btBoxShape(btVector3(10, 2, 10));
         btVector3 localInertia(0, 0, 0);
 		if (mass != 0.f)
-			shape->calculateLocalInertia(mass, localInertia);
+			shape->calculateLocalInertia((btScalar)mass, localInertia);
 
         btTransform startTransform;
         startTransform.setIdentity();
@@ -139,7 +139,7 @@ public:
         // startTransform.setRotation(btQuaternion(btVector3(1, 0, 1), SIMD_PI / 3.0));
         btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 
-		btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, shape, localInertia);
+		btRigidBody::btRigidBodyConstructionInfo rbInfo((btScalar)mass, myMotionState, shape, localInertia);
 		btRigidBody* body = new btRigidBody(rbInfo);
 
 		m_dynamicsWorld->addRigidBody(body, 1, 1+2);
@@ -149,9 +149,9 @@ public:
         // body->setFriction(1);
     }
     
-    void stepSimulation(float deltaTime)
+    void stepSimulation(btScalar deltaTime)
     {
-      float internalTimeStep = 1. / 60.f;
+      btScalar internalTimeStep = (btScalar)1. / (btScalar)60.f;
       m_dynamicsWorld->stepSimulation(deltaTime, 1, internalTimeStep);
     }
     
@@ -171,7 +171,7 @@ public:
             for (int p = 0; p < rsb->m_contactNodesList.size(); ++p)
             {
                 int index = rsb->m_contactNodesList[p];
-                deformableWorld->getDebugDrawer()->drawSphere(rsb->m_nodes[index].m_x, 0.2, btVector3(0, 1, 0));
+                deformableWorld->getDebugDrawer()->drawSphere(rsb->m_nodes[index].m_x, (btScalar)0.2, btVector3(0, 1, 0));
             }
         }
     }
@@ -198,7 +198,7 @@ void ReducedCollide::initPhysics()
 
     m_dynamicsWorld = new btDeformableMultiBodyDynamicsWorld(m_dispatcher, m_broadphase, sol, m_collisionConfiguration, reducedSoftBodySolver);
     m_dynamicsWorld->setGravity(gravity);
-	m_dynamicsWorld->getSolverInfo().m_globalCfm = 1e-3;
+	m_dynamicsWorld->getSolverInfo().m_globalCfm = (btScalar)1e-3;
     m_dynamicsWorld->getSolverInfo().m_solverMode |= SOLVER_RANDMIZE_ORDER;
     m_guiHelper->createPhysicsDebugDrawer(m_dynamicsWorld);
 
@@ -214,13 +214,13 @@ void ReducedCollide::initPhysics()
                                             false);
                                             
         getDeformableDynamicsWorld()->addSoftBody(rsb);
-        rsb->getCollisionShape()->setMargin(0.1);
+        rsb->getCollisionShape()->setMargin((btScalar)0.1);
         // rsb->scale(btVector3(0.5, 0.5, 0.5));
 
-        rsb->setStiffnessScale(100);
+        rsb->setStiffnessScale((btScalar)100);
         rsb->setDamping(damping_alpha, damping_beta);
 
-        rsb->setTotalMass(15);
+        rsb->setTotalMass((btScalar)15);
 
         btTransform init_transform;
         init_transform.setIdentity();
@@ -228,15 +228,15 @@ void ReducedCollide::initPhysics()
         // init_transform.setRotation(btQuaternion(0, SIMD_PI / 2.0, SIMD_PI / 2.0));
         rsb->transformTo(init_transform);
 
-        rsb->m_cfg.kKHR = 1; // collision hardness with kinematic objects
-        rsb->m_cfg.kCHR = 1; // collision hardness with rigid body
-        rsb->m_cfg.kDF = 0;
+        rsb->m_cfg.kKHR = (btScalar)1; // collision hardness with kinematic objects
+        rsb->m_cfg.kCHR = (btScalar)1; // collision hardness with rigid body
+        rsb->m_cfg.kDF = (btScalar)0;
         rsb->m_cfg.collisions = btSoftBody::fCollision::SDF_RD;
         rsb->m_cfg.collisions |= btSoftBody::fCollision::SDF_RDN;
-        rsb->m_sleepingThreshold = 0;
+        rsb->m_sleepingThreshold = (btScalar)0;
         btSoftBodyHelpers::generateBoundaryFaces(rsb);
         
-        rsb->setRigidVelocity(btVector3(0, -COLLIDING_VELOCITY, 0));
+        rsb->setRigidVelocity(btVector3((btScalar)0, -COLLIDING_VELOCITY, (btScalar)0));
         // rsb->setRigidAngularVelocity(btVector3(1, 0, 0));
         b3Printf("total mass: %e", rsb->getTotalMass());
     }
@@ -305,11 +305,11 @@ void ReducedCollide::initPhysics()
     getDeformableDynamicsWorld()->setImplicit(false);
     getDeformableDynamicsWorld()->setLineSearch(false);
     getDeformableDynamicsWorld()->setUseProjection(false);
-    getDeformableDynamicsWorld()->getSolverInfo().m_friction = 1;
-    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_erp = 0.2;
-    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_cfm = 0.2;
+    getDeformableDynamicsWorld()->getSolverInfo().m_friction = (btScalar)1;
+    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_erp = (btScalar)0.2;
+    getDeformableDynamicsWorld()->getSolverInfo().m_deformable_cfm = (btScalar)0.2;
     getDeformableDynamicsWorld()->getSolverInfo().m_deformable_maxErrorReduction = btScalar(200);
-    getDeformableDynamicsWorld()->getSolverInfo().m_leastSquaresResidualThreshold = 1e-3;
+    getDeformableDynamicsWorld()->getSolverInfo().m_leastSquaresResidualThreshold = (btScalar)1e-3;
     getDeformableDynamicsWorld()->getSolverInfo().m_splitImpulse = false;
     getDeformableDynamicsWorld()->getSolverInfo().m_numIterations = 100;
     m_guiHelper->autogenerateGraphicsObjects(m_dynamicsWorld);
@@ -397,15 +397,15 @@ btMultiBody* ReducedCollide::createFeatherstoneMultiBody_testMultiDof(btMultiBod
 	if (baseMass)
 	{
 		btCollisionShape* pTempBox = new btBoxShape(btVector3(baseHalfExtents[0], baseHalfExtents[1], baseHalfExtents[2]));
-		pTempBox->calculateLocalInertia(baseMass, baseInertiaDiag);
+		pTempBox->calculateLocalInertia((btScalar)baseMass, baseInertiaDiag);
 		delete pTempBox;
 	}
 
 	bool canSleep = false;
 
-	btMultiBody* pMultiBody = new btMultiBody(numLinks, baseMass, baseInertiaDiag, !floating, canSleep);
+	btMultiBody* pMultiBody = new btMultiBody(numLinks, (btScalar)baseMass, baseInertiaDiag, !floating, canSleep);
 
-	btQuaternion baseOriQuat(0.f, 0.f, 0.f, 1.f);
+	btQuaternion baseOriQuat((btScalar)0.f, (btScalar)0.f, (btScalar)0.f, (btScalar)1.f);
 	// btQuaternion baseOriQuat(btVector3(0, 0, 1), -SIMD_PI / 6.0);
 	pMultiBody->setBasePos(basePosition);
 	pMultiBody->setWorldToBaseRot(baseOriQuat);
@@ -417,16 +417,16 @@ btMultiBody* ReducedCollide::createFeatherstoneMultiBody_testMultiDof(btMultiBod
 	btVector3 linkInertiaDiag(0.f, 0.f, 0.f);
 
 	btCollisionShape* pTempBox = new btBoxShape(btVector3(linkHalfExtents[0], linkHalfExtents[1], linkHalfExtents[2]));
-	pTempBox->calculateLocalInertia(linkMass, linkInertiaDiag);
+	pTempBox->calculateLocalInertia((btScalar)linkMass, linkInertiaDiag);
 	delete pTempBox;
 
 	//y-axis assumed up
-	btVector3 parentComToCurrentCom(0, -linkHalfExtents[1] * 2.f, 0);                      //par body's COM to cur body's COM offset
-	btVector3 currentPivotToCurrentCom(0, -linkHalfExtents[1], 0);                         //cur body's COM to cur body's PIV offset
+	btVector3 parentComToCurrentCom((btScalar)0, -linkHalfExtents[1] * (btScalar)2.f, (btScalar)0);                      //par body's COM to cur body's COM offset
+	btVector3 currentPivotToCurrentCom((btScalar)0, -linkHalfExtents[1], (btScalar)0);                         //cur body's COM to cur body's PIV offset
 	btVector3 parentComToCurrentPivot = parentComToCurrentCom - currentPivotToCurrentCom;  //par body's COM to cur body's PIV offset
 
 	//////
-	btScalar q0 = 0.f * SIMD_PI / 180.f;
+	btScalar q0 = (btScalar)0.f * SIMD_PI / (btScalar)180.f;
 	btQuaternion quat0(btVector3(0, 1, 0).normalized(), q0);
 	quat0.normalize();
 	/////
@@ -434,10 +434,10 @@ btMultiBody* ReducedCollide::createFeatherstoneMultiBody_testMultiDof(btMultiBod
 	for (int i = 0; i < numLinks; ++i)
 	{
 		if (!spherical)
-			pMultiBody->setupRevolute(i, linkMass, linkInertiaDiag, i - 1, btQuaternion(0.f, 0.f, 0.f, 1.f), hingeJointAxis, parentComToCurrentPivot, currentPivotToCurrentCom, true);
+			pMultiBody->setupRevolute(i, (btScalar)linkMass, linkInertiaDiag, i - 1, btQuaternion((btScalar)0.f, (btScalar)0.f, (btScalar)0.f, (btScalar)1.f), hingeJointAxis, parentComToCurrentPivot, currentPivotToCurrentCom, true);
 		else
 			//pMultiBody->setupPlanar(i, linkMass, linkInertiaDiag, i - 1, btQuaternion(0.f, 0.f, 0.f, 1.f)/*quat0*/, btVector3(1, 0, 0), parentComToCurrentPivot*2, false);
-			pMultiBody->setupSpherical(i, linkMass, linkInertiaDiag, i - 1, btQuaternion(0.f, 0.f, 0.f, 1.f), parentComToCurrentPivot, currentPivotToCurrentCom, true);
+			pMultiBody->setupSpherical(i, (btScalar)linkMass, linkInertiaDiag, i - 1, btQuaternion((btScalar)0.f, (btScalar)0.f, (btScalar)0.f, (btScalar)1.f), parentComToCurrentPivot, currentPivotToCurrentCom, true);
 	}
 
 	pMultiBody->finalizeMultiDof();
@@ -477,7 +477,7 @@ void ReducedCollide::addColliders_testMultiDof(btMultiBody* pMultiBody, btMultiB
 
 			pWorld->addCollisionObject(col, 2, 1 + 2);
 
-			col->setFriction(1);
+			col->setFriction((btScalar)1);
 			pMultiBody->setBaseCollider(col);
 		}
 	}
@@ -505,7 +505,7 @@ void ReducedCollide::addColliders_testMultiDof(btMultiBody* pMultiBody, btMultiB
 		tr.setOrigin(posr);
 		tr.setRotation(btQuaternion(quat[0], quat[1], quat[2], quat[3]));
 		col->setWorldTransform(tr);
-		col->setFriction(1);
+		col->setFriction((btScalar)1);
 		pWorld->addCollisionObject(col, 2, 1 + 2);
 
 		pMultiBody->getLink(i).m_collider = col;

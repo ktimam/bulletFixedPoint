@@ -77,8 +77,8 @@ void RigidBodySoftContact::initPhysics()
 
 	if (m_dynamicsWorld->getDebugDrawer())
 		m_dynamicsWorld->getDebugDrawer()->setDebugMode(btIDebugDraw::DBG_DrawWireframe + btIDebugDraw::DBG_DrawContactPoints);
-	m_dynamicsWorld->getSolverInfo().m_erp2 = 0.f;
-	m_dynamicsWorld->getSolverInfo().m_globalCfm = 0.f;
+	m_dynamicsWorld->getSolverInfo().m_erp2 = (btScalar)0.f;
+	m_dynamicsWorld->getSolverInfo().m_globalCfm = (btScalar)0.f;
 	m_dynamicsWorld->getSolverInfo().m_numIterations = 3;
 	m_dynamicsWorld->getSolverInfo().m_solverMode = SOLVER_SIMD;  // | SOLVER_RANDMIZE_ORDER;
 	m_dynamicsWorld->getSolverInfo().m_splitImpulse = false;
@@ -97,9 +97,9 @@ void RigidBodySoftContact::initPhysics()
 
 	{
 		btScalar mass(0.);
-		btRigidBody* body = createRigidBody(mass, groundTransform, groundShape, btVector4(0, 0, 1, 1));
+		btRigidBody* body = createRigidBody(mass, groundTransform, groundShape, btVector4((btScalar)0, (btScalar)0, (btScalar)1, (btScalar)1));
 
-		body->setContactStiffnessAndDamping(300, 10);
+		body->setContactStiffnessAndDamping((btScalar)300, (btScalar)10);
 	}
 
 	{
@@ -118,11 +118,11 @@ void RigidBodySoftContact::initPhysics()
 		btTransform startTransform;
 		startTransform.setIdentity();
 
-		startTransform.setRotation(btQuaternion(btVector3(1, 1, 1), SIMD_PI / 10.));
+		startTransform.setRotation(btQuaternion(btVector3(1, 1, 1), SIMD_PI / (btScalar)10.));
 		btScalar mass(1.f);
 
 		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
+		bool isDynamic = (mass != (btScalar)0.f);
 
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)

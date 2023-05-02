@@ -89,7 +89,7 @@ public:
 	{
 		drawLine(PointOnB, PointOnB + normalOnB * distance, color);
 		btVector3 ncolor(0, 0, 0);
-		drawLine(PointOnB, PointOnB + normalOnB * 0.01, ncolor);
+		drawLine(PointOnB, PointOnB + normalOnB * (btScalar)0.01, ncolor);
 	}
 
 	virtual void reportErrorWarning(const char* warningString)
@@ -116,9 +116,9 @@ public:
 		if (sz)
 		{
 			float debugColor[4];
-			debugColor[0] = m_currentLineColor.x();
-			debugColor[1] = m_currentLineColor.y();
-			debugColor[2] = m_currentLineColor.z();
+			debugColor[0] = (float)m_currentLineColor.x();
+			debugColor[1] = (float)m_currentLineColor.y();
+			debugColor[2] = (float)m_currentLineColor.z();
 			debugColor[3] = 1.f;
 			m_glApp->m_renderer->drawLines(&m_linePoints[0].x, debugColor,
 										   m_linePoints.size(), sizeof(MyDebugVec3),
@@ -133,10 +133,10 @@ public:
 
 static btVector4 sColors[4] =
 	{
-		btVector4(60. / 256., 186. / 256., 84. / 256., 1),
-		btVector4(244. / 256., 194. / 256., 13. / 256., 1),
-		btVector4(219. / 256., 50. / 256., 54. / 256., 1),
-		btVector4(72. / 256., 133. / 256., 237. / 256., 1),
+		btVector4((btScalar)60. / (btScalar)256., (btScalar)186. / (btScalar)256., (btScalar)84. / (btScalar)256., (btScalar)1),
+		btVector4((btScalar)244. / (btScalar)256., (btScalar)194. / (btScalar)256., (btScalar)13. / (btScalar)256., (btScalar)1),
+		btVector4((btScalar)219. / (btScalar)256., (btScalar)50. / (btScalar)256., (btScalar)54. / (btScalar)256., (btScalar)1),
+		btVector4((btScalar)72. / (btScalar)256., (btScalar)133. / (btScalar)256., (btScalar)237. / (btScalar)256., (btScalar)1),
 
 		//btVector4(1,1,0,1),
 };
@@ -294,14 +294,14 @@ public:
 			normal.safeNormalize();
 			for (int l = 0; l < 3; l++)
 			{
-				v.xyzw[l] = tris[k][l];
-				v.normal[l] = normal[l];
+				v.xyzw[l] = (float)tris[k][l];
+				v.normal[l] = (float)normal[l];
 			}
 			
 			btVector3 extents = m_aabbMax - m_aabbMin;
 			
-			v.uv[0] = (1.-((v.xyzw[0] - m_aabbMin[0]) / (m_aabbMax[0] - m_aabbMin[0])))*m_textureScaling;
-			v.uv[1] = (1.-(v.xyzw[1] - m_aabbMin[1]) / (m_aabbMax[1] - m_aabbMin[1]))*m_textureScaling;
+			v.uv[0] = (1.-((v.xyzw[0] - (float)m_aabbMin[0]) / ((float)m_aabbMax[0] - (float)m_aabbMin[0])))* (float)m_textureScaling;
+			v.uv[1] = (1.-(v.xyzw[1] - (float)m_aabbMin[1]) / ((float)m_aabbMax[1] - (float)m_aabbMin[1]))* (float)m_textureScaling;
 
 			m_pIndicesOut->push_back(m_pVerticesOut->size());
 			m_pVerticesOut->push_back(v);
@@ -319,8 +319,28 @@ void OpenGLGuiHelper::createCollisionObjectGraphicsObject(btCollisionObject* bod
 		{
 			//	btAssert(graphicsShapeId >= 0);
 			//the graphics shape is already scaled
-			btVector3 localScaling(1, 1, 1);
-			int graphicsInstanceId = m_data->m_glApp->m_renderer->registerGraphicsInstance(graphicsShapeId, startTransform.getOrigin(), startTransform.getRotation(), color, localScaling);
+			float localScaling[] = { 1, 1, 1 };
+			btVector3 org = startTransform.getOrigin();
+			btQuaternion rotqt = startTransform.getRotation();
+
+			float pos[4];
+			float rot[4];
+			pos[0] = (float)org[0];
+			pos[1] = (float)org[1];
+			pos[2] = (float)org[2];
+			pos[3] = (float)org[3];
+			rot[0] = (float)rotqt[0];
+			rot[1] = (float)rotqt[1];
+			rot[2] = (float)rotqt[2];
+			rot[3] = (float)rotqt[3];
+
+			float clr[4];
+			clr[0] = (float)color[0];
+			clr[1] = (float)color[1];
+			clr[2] = (float)color[2];
+			clr[3] = (float)color[3];
+
+			int graphicsInstanceId = m_data->m_glApp->m_renderer->registerGraphicsInstance(graphicsShapeId, pos, rot, clr, localScaling);
 			body->setUserIndex(graphicsInstanceId);
 
 			btSoftBody* sb = btSoftBody::upcast(body);
@@ -514,9 +534,9 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 					cube_vertices_textured[i * 9 + 2]);
 
 				btVector3 trVer = halfExtents * vert;
-				transformedVertices[i * 9 + 0] = trVer[0];
-				transformedVertices[i * 9 + 1] = trVer[1];
-				transformedVertices[i * 9 + 2] = trVer[2];
+				transformedVertices[i * 9 + 0] = (float)trVer[0];
+				transformedVertices[i * 9 + 1] = (float)trVer[1];
+				transformedVertices[i * 9 + 2] = (float)trVer[2];
 				transformedVertices[i * 9 + 3] = cube_vertices_textured[i * 9 + 3];
 				transformedVertices[i * 9 + 4] = cube_vertices_textured[i * 9 + 4];
 				transformedVertices[i * 9 + 5] = cube_vertices_textured[i * 9 + 5];
@@ -553,8 +573,8 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 		col.m_pIndicesOut = &indices;
 		for (int k = 0; k < 3; k++)
 		{
-			aabbMin[k] = -BT_LARGE_FLOAT;
-			aabbMax[k] = BT_LARGE_FLOAT;
+			aabbMin[k] = (btScalar)-BT_LARGE_FLOAT;
+			aabbMax[k] = (btScalar)BT_LARGE_FLOAT;
 		}
 		heightField->processAllTriangles(&col, aabbMin, aabbMax);
 		if (gfxVertices.size() && indices.size())
@@ -596,8 +616,8 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 			MyHashShape shape;
 			shape.m_sphere0Pos = sphere0Pos;
 			shape.m_sphere1Pos = sphere1Pos;
-			shape.m_radius0 = 2. * ms->getSphereRadius(0);
-			shape.m_radius1 = 2. * ms->getSphereRadius(1);
+			shape.m_radius0 = (btScalar)2. * ms->getSphereRadius(0);
+			shape.m_radius1 = (btScalar)2. * ms->getSphereRadius(1);
 			shape.m_deformFunc = 1;  //vert.dot(fromTo)
 			int graphicsShapeIndex = -1;
 			int* graphicsShapeIndexPtr = m_data->m_hashShapes[shape];
@@ -619,22 +639,22 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 
 					btVector3 trVer(0, 0, 0);
 
-					if (vert.dot(fromTo) > 0)
+					if (vert.dot(fromTo) > (btScalar)0)
 					{
-						btScalar radiusScale = 2. * ms->getSphereRadius(1);
+						btScalar radiusScale = (btScalar)2. * ms->getSphereRadius(1);
 						trVer = radiusScale * vert;
 						trVer += sphere1Pos;
 					}
 					else
 					{
-						btScalar radiusScale = 2. * ms->getSphereRadius(0);
+						btScalar radiusScale = (btScalar)2. * ms->getSphereRadius(0);
 						trVer = radiusScale * vert;
 						trVer += sphere0Pos;
 					}
 
-					transformedVertices[i * 9 + 0] = trVer[0];
-					transformedVertices[i * 9 + 1] = trVer[1];
-					transformedVertices[i * 9 + 2] = trVer[2];
+					transformedVertices[i * 9 + 0] = (float)trVer[0];
+					transformedVertices[i * 9 + 1] = (float)trVer[1];
+					transformedVertices[i * 9 + 2] = (float)trVer[2];
 					transformedVertices[i * 9 + 3] = textured_detailed_sphere_vertices[i * 9 + 3];
 					transformedVertices[i * 9 + 4] = textured_detailed_sphere_vertices[i * 9 + 4];
 					transformedVertices[i * 9 + 5] = textured_detailed_sphere_vertices[i * 9 + 5];
@@ -659,7 +679,7 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 	{
 		btSphereShape* sphereShape = (btSphereShape*)collisionShape;
 		btScalar radius = sphereShape->getRadius();
-		btScalar sphereSize = 2. * radius;
+		btScalar sphereSize = (btScalar)2. * radius;
 		btVector3 radiusScale(sphereSize, sphereSize, sphereSize);
 		btAlignedObjectArray<float> transformedVertices;
 
@@ -685,9 +705,9 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 							  textured_detailed_sphere_vertices[i * 9 + 2]);
 
 				btVector3 trVer = radiusScale * vert;
-				transformedVertices[i * 9 + 0] = trVer[0];
-				transformedVertices[i * 9 + 1] = trVer[1];
-				transformedVertices[i * 9 + 2] = trVer[2];
+				transformedVertices[i * 9 + 0] = (float)trVer[0];
+				transformedVertices[i * 9 + 1] = (float)trVer[1];
+				transformedVertices[i * 9 + 2] = (float)trVer[2];
 				transformedVertices[i * 9 + 3] = textured_detailed_sphere_vertices[i * 9 + 3];
 				transformedVertices[i * 9 + 4] = textured_detailed_sphere_vertices[i * 9 + 4];
 				transformedVertices[i * 9 + 5] = textured_detailed_sphere_vertices[i * 9 + 5];
@@ -713,7 +733,7 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 			{
 				btSphereShape* sphereShape = (btSphereShape*)compound->getChildShape(0);
 				btScalar radius = sphereShape->getRadius();
-				btScalar sphereSize = 2. * radius;
+				btScalar sphereSize = (btScalar)2. * radius;
 				btVector3 radiusScale(sphereSize, sphereSize, sphereSize);
 
 				MyHashShape shape;
@@ -741,9 +761,9 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 									  textured_detailed_sphere_vertices[i * 9 + 2]);
 
 						btVector3 trVer = compound->getChildTransform(0) * (radiusScale * vert);
-						transformedVertices[i * 9 + 0] = trVer[0];
-						transformedVertices[i * 9 + 1] = trVer[1];
-						transformedVertices[i * 9 + 2] = trVer[2];
+						transformedVertices[i * 9 + 0] = (float)trVer[0];
+						transformedVertices[i * 9 + 1] = (float)trVer[1];
+						transformedVertices[i * 9 + 2] = (float)trVer[2];
 						transformedVertices[i * 9 + 3] = textured_detailed_sphere_vertices[i * 9 + 3];
 						transformedVertices[i * 9 + 4] = textured_detailed_sphere_vertices[i * 9 + 4];
 						transformedVertices[i * 9 + 5] = textured_detailed_sphere_vertices[i * 9 + 5];
@@ -767,7 +787,7 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 				btScalar halfHeight = sphereShape->getHalfHeight();
 
 				btScalar radius = sphereShape->getRadius();
-				btScalar sphereSize = 2. * radius;
+				btScalar sphereSize = (btScalar)2. * radius;
 
 				btVector3 radiusScale = btVector3(sphereSize, sphereSize, sphereSize);
 
@@ -797,16 +817,16 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 									  textured_detailed_sphere_vertices[i * 9 + 2]);
 
 						btVector3 trVer = (radiusScale * vert);
-						if (trVer[up] > 0)
+						if (trVer[up] > (btScalar)0)
 							trVer[up] += halfHeight;
 						else
 							trVer[up] -= halfHeight;
 
 						trVer = compound->getChildTransform(0) * trVer;
 
-						transformedVertices[i * 9 + 0] = trVer[0];
-						transformedVertices[i * 9 + 1] = trVer[1];
-						transformedVertices[i * 9 + 2] = trVer[2];
+						transformedVertices[i * 9 + 0] = (float)trVer[0];
+						transformedVertices[i * 9 + 1] = (float)trVer[1];
+						transformedVertices[i * 9 + 2] = (float)trVer[2];
 						transformedVertices[i * 9 + 3] = textured_detailed_sphere_vertices[i * 9 + 3];
 						transformedVertices[i * 9 + 4] = textured_detailed_sphere_vertices[i * 9 + 4];
 						transformedVertices[i * 9 + 5] = textured_detailed_sphere_vertices[i * 9 + 5];
@@ -835,8 +855,8 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 					btVector3 sphere0Pos = ms->getSpherePosition(0);
 					btVector3 sphere1Pos = ms->getSpherePosition(1);
 					btVector3 fromTo = sphere1Pos - sphere0Pos;
-					btScalar radiusScale1 = 2.0 * ms->getSphereRadius(1);
-					btScalar radiusScale0 = 2.0 * ms->getSphereRadius(0);
+					btScalar radiusScale1 = (btScalar)2.0 * ms->getSphereRadius(1);
+					btScalar radiusScale0 = (btScalar)2.0 * ms->getSphereRadius(0);
 
 					MyHashShape shape;
 					shape.m_radius0 = radiusScale0;
@@ -863,7 +883,7 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 										  textured_detailed_sphere_vertices[i * 9 + 2]);
 
 							btVector3 trVer(0, 0, 0);
-							if (vert.dot(fromTo) > 0)
+							if (vert.dot(fromTo) > (btScalar)0)
 							{
 								trVer = vert * radiusScale1;
 								trVer += sphere1Pos;
@@ -876,9 +896,9 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 								trVer = compound->getChildTransform(0) * trVer;
 							}
 
-							transformedVertices[i * 9 + 0] = trVer[0];
-							transformedVertices[i * 9 + 1] = trVer[1];
-							transformedVertices[i * 9 + 2] = trVer[2];
+							transformedVertices[i * 9 + 0] = (float)trVer[0];
+							transformedVertices[i * 9 + 1] = (float)trVer[1];
+							transformedVertices[i * 9 + 2] = (float)trVer[2];
 							transformedVertices[i * 9 + 3] = textured_detailed_sphere_vertices[i * 9 + 3];
 							transformedVertices[i * 9 + 4] = textured_detailed_sphere_vertices[i * 9 + 4];
 							transformedVertices[i * 9 + 5] = textured_detailed_sphere_vertices[i * 9 + 5];
@@ -904,7 +924,7 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 		btScalar halfHeight = sphereShape->getHalfHeight();
 
 		btScalar radius = sphereShape->getRadius();
-		btScalar sphereSize = 2. * radius;
+		btScalar sphereSize = (btScalar)2. * radius;
 		btVector3 radiusScale(sphereSize, sphereSize, sphereSize);
 
 		MyHashShape shape;
@@ -932,14 +952,14 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 							  textured_detailed_sphere_vertices[i * 9 + 2]);
 
 				btVector3 trVer = radiusScale * vert;
-				if (trVer[up] > 0)
+				if (trVer[up] > (btScalar)0)
 					trVer[up] += halfHeight;
 				else
 					trVer[up] -= halfHeight;
 
-				transformedVertices[i * 9 + 0] = trVer[0];
-				transformedVertices[i * 9 + 1] = trVer[1];
-				transformedVertices[i * 9 + 2] = trVer[2];
+				transformedVertices[i * 9 + 0] = (float)trVer[0];
+				transformedVertices[i * 9 + 1] = (float)trVer[1];
+				transformedVertices[i * 9 + 2] = (float)trVer[2];
 				transformedVertices[i * 9 + 3] = textured_detailed_sphere_vertices[i * 9 + 3];
 				transformedVertices[i * 9 + 4] = textured_detailed_sphere_vertices[i * 9 + 4];
 				transformedVertices[i * 9 + 5] = textured_detailed_sphere_vertices[i * 9 + 5];
@@ -964,7 +984,7 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 		btVector3 vec0, vec1;
 		btPlaneSpace1(planeNormal, vec0, vec1);
 
-		btScalar vecLen = 128;
+		btScalar vecLen = (btScalar)128;
 		btVector3 verts[4];
 
 		verts[0] = planeOrigin + vec0 * vecLen + vec1 * vecLen;
@@ -990,13 +1010,13 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 			btVector3 vtxPos;
 			btVector3 pos = parentTransform * verts[i];
 
-			gfxVertices[i].xyzw[0] = pos[0];
-			gfxVertices[i].xyzw[1] = pos[1];
-			gfxVertices[i].xyzw[2] = pos[2];
+			gfxVertices[i].xyzw[0] = (float)pos[0];
+			gfxVertices[i].xyzw[1] = (float)pos[1];
+			gfxVertices[i].xyzw[2] = (float)pos[2];
 			gfxVertices[i].xyzw[3] = 1;
-			gfxVertices[i].normal[0] = triNormal[0];
-			gfxVertices[i].normal[1] = triNormal[1];
-			gfxVertices[i].normal[2] = triNormal[2];
+			gfxVertices[i].normal[0] = (float)triNormal[0];
+			gfxVertices[i].normal[1] = (float)triNormal[1];
+			gfxVertices[i].normal[2] = (float)triNormal[2];
 		}
 
 		//verts[0] = planeOrigin + vec0*vecLen + vec1*vecLen;
@@ -1004,14 +1024,14 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 		//verts[2] = planeOrigin - vec0*vecLen - vec1*vecLen;
 		//verts[3] = planeOrigin + vec0*vecLen - vec1*vecLen;
 
-		gfxVertices[0].uv[0] = vecLen / 2;
-		gfxVertices[0].uv[1] = vecLen / 2;
-		gfxVertices[1].uv[0] = -vecLen / 2;
-		gfxVertices[1].uv[1] = vecLen / 2;
-		gfxVertices[2].uv[0] = -vecLen / 2;
-		gfxVertices[2].uv[1] = -vecLen / 2;
-		gfxVertices[3].uv[0] = vecLen / 2;
-		gfxVertices[3].uv[1] = -vecLen / 2;
+		gfxVertices[0].uv[0] = (float)vecLen / 2;
+		gfxVertices[0].uv[1] = (float)vecLen / 2;
+		gfxVertices[1].uv[0] = (float)-vecLen / 2;
+		gfxVertices[1].uv[1] = (float)vecLen / 2;
+		gfxVertices[2].uv[0] = (float)-vecLen / 2;
+		gfxVertices[2].uv[1] = (float)-vecLen / 2;
+		gfxVertices[3].uv[0] = (float)vecLen / 2;
+		gfxVertices[3].uv[1] = (float)-vecLen / 2;
 
 		int shapeId = registerGraphicsShape(&gfxVertices[0].xyzw[0], gfxVertices.size(), &indices[0], indices.size(), B3_GL_TRIANGLES, m_data->m_checkedTexture);
 		collisionShape->setUserIndex(shapeId);
@@ -1031,11 +1051,11 @@ void OpenGLGuiHelper::createCollisionShapeGraphicsObject(btCollisionShape* colli
 		{
 			for (int j = 0; j < 4; j++)
 			{
-				gfxVertices[i].xyzw[j] = vertexPositions[i][j];
+				gfxVertices[i].xyzw[j] = (float)vertexPositions[i][j];
 			}
 			for (int j = 0; j < 3; j++)
 			{
-				gfxVertices[i].normal[j] = vertexNormals[i][j];
+				gfxVertices[i].normal[j] = (float)vertexNormals[i][j];
 			}
 			for (int j = 0; j < 2; j++)
 			{
@@ -1075,16 +1095,16 @@ void OpenGLGuiHelper::syncPhysicsToGraphics(const btDiscreteDynamicsWorld* rbWor
 					gfxVertices.resize(psb->m_renderNodes.size());
 					for (int i = 0; i < psb->m_renderNodes.size(); i++)  // Foreach face
 					{
-						gfxVertices[i].xyzw[0] = psb->m_renderNodes[i].m_x[0];
-						gfxVertices[i].xyzw[1] = psb->m_renderNodes[i].m_x[1];
-						gfxVertices[i].xyzw[2] = psb->m_renderNodes[i].m_x[2];
-						gfxVertices[i].xyzw[3] = psb->m_renderNodes[i].m_x[3];
-						gfxVertices[i].uv[0] = psb->m_renderNodes[i].m_uv1[0];
-						gfxVertices[i].uv[1] = psb->m_renderNodes[i].m_uv1[1];
+						gfxVertices[i].xyzw[0] = (float)psb->m_renderNodes[i].m_x[0];
+						gfxVertices[i].xyzw[1] = (float)psb->m_renderNodes[i].m_x[1];
+						gfxVertices[i].xyzw[2] = (float)psb->m_renderNodes[i].m_x[2];
+						gfxVertices[i].xyzw[3] = (float)psb->m_renderNodes[i].m_x[3];
+						gfxVertices[i].uv[0] = (float)psb->m_renderNodes[i].m_uv1[0];
+						gfxVertices[i].uv[1] = (float)psb->m_renderNodes[i].m_uv1[1];
 						//gfxVertices[i].normal[0] = psb->m_renderNodes[i].
-						gfxVertices[i].normal[0] = psb->m_renderNodes[i].m_normal[0];
-						gfxVertices[i].normal[1] = psb->m_renderNodes[i].m_normal[1];
-						gfxVertices[i].normal[2] = psb->m_renderNodes[i].m_normal[2];
+						gfxVertices[i].normal[0] = (float)psb->m_renderNodes[i].m_normal[0];
+						gfxVertices[i].normal[1] = (float)psb->m_renderNodes[i].m_normal[1];
+						gfxVertices[i].normal[2] = (float)psb->m_renderNodes[i].m_normal[2];
 					}
 				}
 				else
@@ -1095,18 +1115,28 @@ void OpenGLGuiHelper::syncPhysicsToGraphics(const btDiscreteDynamicsWorld* rbWor
 				m_data->m_glApp->m_renderer->updateShape(collisionShape->getUserIndex(), &gfxVertices[0].xyzw[0], gfxVertices.size());
 				continue;
 			}
-			btVector3 pos = colObj->getWorldTransform().getOrigin();
-			btQuaternion orn = colObj->getWorldTransform().getRotation();
+			btVector3 posvec = colObj->getWorldTransform().getOrigin();
+			btQuaternion ornvec = colObj->getWorldTransform().getRotation();
 			int index = colObj->getUserIndex();
 			if (index >= 0)
 			{
+				float pos[4];
+				float orn[4];
+				pos[0] = (float)posvec[0];
+				pos[1] = (float)posvec[1];
+				pos[2] = (float)posvec[2];
+				pos[3] = (float)posvec[3];
+				orn[0] = (float)ornvec[0];
+				orn[1] = (float)ornvec[1];
+				orn[2] = (float)ornvec[2];
+				orn[3] = (float)ornvec[3];
 				m_data->m_glApp->m_renderer->writeSingleInstanceTransformToCPU(pos, orn, index);
 			}
 
 			std::ostringstream stringStream;
-			double x = pos.getX();
-			double y = pos.getY();
-			double z = pos.getZ();
+			double x = (float)posvec.getX();
+			double y = (float)posvec.getY();
+			double z = (float)posvec.getZ();
 			stringStream << "X = " << x << " Y = " << y << " Z = " << z << " \n";
 			log += stringStream.str();		
 		}
@@ -1212,15 +1242,16 @@ bool OpenGLGuiHelper::getCameraInfo(int* width, int* height, float viewMatrix[16
 		float top = 1.f;
 		float bottom = -1.f;
 		float tanFov = (top - bottom) * 0.5f / 1;
-		float fov = btScalar(2.0) * btAtan(tanFov);
-		btVector3 camPos, camTarget;
+		float fov = (float)(btScalar(2.0) * btAtan((btScalar)tanFov));
+		float camPos[3], camTarget[3];
 		getRenderInterface()->getActiveCamera()->getCameraPosition(camPos);
 		getRenderInterface()->getActiveCamera()->getCameraTargetPosition(camTarget);
-		btVector3 rayFrom = camPos;
-		btVector3 rayForward = (camTarget - camPos);
+		//btVector3 rayFrom = camPos;
+		btVector3 rayForward = (btVector3((btScalar)camTarget[0], (btScalar)camTarget[1], (btScalar)camTarget[2]) 
+			- btVector3((btScalar)camPos[0], (btScalar)camPos[1], (btScalar)camPos[2]));
 		rayForward.normalize();
 		float farPlane = 10000.f;
-		rayForward *= farPlane;
+		rayForward *= (btScalar)farPlane;
 
 		btVector3 rightOffset;
 		btVector3 cameraUp = btVector3(camUp[0], camUp[1], camUp[2]);
@@ -1231,24 +1262,24 @@ bool OpenGLGuiHelper::getCameraInfo(int* width, int* height, float viewMatrix[16
 		vertical = hori.cross(rayForward);
 		vertical.normalize();
 		float tanfov = tanf(0.5f * fov);
-		hori *= 2.f * farPlane * tanfov;
-		vertical *= 2.f * farPlane * tanfov;
-		btScalar aspect = float(*width) / float(*height);
+		hori *= (btScalar)2.f * (btScalar)farPlane * (btScalar)tanfov;
+		vertical *= (btScalar)2.f * (btScalar)farPlane * (btScalar)tanfov;
+		btScalar aspect = (btScalar)(*width) / (btScalar)(*height);
 		hori *= aspect;
 		//compute 'hor' and 'vert' vectors, useful to generate raytracer rays
-		hor[0] = hori[0];
-		hor[1] = hori[1];
-		hor[2] = hori[2];
-		vert[0] = vertical[0];
-		vert[1] = vertical[1];
-		vert[2] = vertical[2];
+		hor[0] = (float)hori[0];
+		hor[1] = (float)hori[1];
+		hor[2] = (float)hori[2];
+		vert[0] = (float)vertical[0];
+		vert[1] = (float)vertical[1];
+		vert[2] = (float)vertical[2];
 
 		*yaw = getRenderInterface()->getActiveCamera()->getCameraYaw();
 		*pitch = getRenderInterface()->getActiveCamera()->getCameraPitch();
 		*camDist = getRenderInterface()->getActiveCamera()->getCameraDistance();
-		cameraTarget[0] = camTarget[0];
-		cameraTarget[1] = camTarget[1];
-		cameraTarget[2] = camTarget[2];
+		cameraTarget[0] = (float)camTarget[0];
+		cameraTarget[1] = (float)camTarget[1];
+		cameraTarget[2] = (float)camTarget[2];
 		return true;
 	}
 	return false;
@@ -1491,7 +1522,7 @@ void OpenGLGuiHelper::autogenerateGraphicsObjects(btDiscreteDynamicsWorld* rbWor
 		color = sColors[colorIndex];
 		if (colObj->getCollisionShape()->getShapeType() == STATIC_PLANE_PROXYTYPE)
 		{
-			color.setValue(1, 1, 1, 1);
+			color.setValue((btScalar)1, (btScalar)1, (btScalar)1, (btScalar)1);
 		}
 		createCollisionObjectGraphicsObject(colObj, color);
 		
@@ -1544,15 +1575,15 @@ void OpenGLGuiHelper::computeSoftBodyVertices(btCollisionShape* collisionShape,
 			int currentIndex = i * 3 + k;
 			for (int j = 0; j < 3; j++)
 			{
-				gfxVertices[currentIndex].xyzw[j] = psb->m_faces[i].m_n[k]->m_x[j];
+				gfxVertices[currentIndex].xyzw[j] = (float)psb->m_faces[i].m_n[k]->m_x[j];
 			}
 			for (int j = 0; j < 3; j++)
 			{
-				gfxVertices[currentIndex].normal[j] = psb->m_faces[i].m_n[k]->m_n[j];
+				gfxVertices[currentIndex].normal[j] = (float)psb->m_faces[i].m_n[k]->m_n[j];
 			}
 			for (int j = 0; j < 2; j++)
 			{
-				gfxVertices[currentIndex].uv[j] = psb->m_faces[i].m_n[k]->m_x[j];
+				gfxVertices[currentIndex].uv[j] = (float)psb->m_faces[i].m_n[k]->m_x[j];
 			}
 			indices.push_back(currentIndex);
 		}

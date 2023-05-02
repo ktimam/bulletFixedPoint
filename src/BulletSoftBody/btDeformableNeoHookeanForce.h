@@ -29,13 +29,13 @@ public:
 	btScalar m_mu_damp, m_lambda_damp;
 	btDeformableNeoHookeanForce() : m_mu(1), m_lambda(1)
 	{
-		btScalar damping = 0.05;
+		btScalar damping = (btScalar)0.05;
 		m_mu_damp = damping * m_mu;
 		m_lambda_damp = damping * m_lambda;
 		updateYoungsModulusAndPoissonRatio();
 	}
 
-	btDeformableNeoHookeanForce(btScalar mu, btScalar lambda, btScalar damping = 0.05) : m_mu(mu), m_lambda(lambda)
+	btDeformableNeoHookeanForce(btScalar mu, btScalar lambda, btScalar damping = (btScalar)0.05) : m_mu(mu), m_lambda(lambda)
 	{
 		m_mu_damp = damping * m_mu;
 		m_lambda_damp = damping * m_lambda;
@@ -47,14 +47,14 @@ public:
 		// conversion from Lame Parameters to Young's modulus and Poisson ratio
 		// https://en.wikipedia.org/wiki/Lam%C3%A9_parameters
 		m_E = m_mu * (3 * m_lambda + 2 * m_mu) / (m_lambda + m_mu);
-		m_nu = m_lambda * 0.5 / (m_mu + m_lambda);
+		m_nu = m_lambda * (btScalar)0.5 / (m_mu + m_lambda);
 	}
 
 	void updateLameParameters()
 	{
 		// conversion from Young's modulus and Poisson ratio to Lame Parameters
 		// https://en.wikipedia.org/wiki/Lam%C3%A9_parameters
-		m_mu = m_E * 0.5 / (1 + m_nu);
+		m_mu = m_E * (btScalar)0.5 / (1 + m_nu);
 		m_lambda = m_E * m_nu / ((1 + m_nu) * (1 - 2 * m_nu));
 	}
 
@@ -97,7 +97,7 @@ public:
 	// The damping matrix is calculated using the time n state as described in https://www.math.ucla.edu/~jteran/papers/GSSJT15.pdf to allow line search
 	virtual void addScaledDampingForce(btScalar scale, TVStack& force)
 	{
-		if (m_mu_damp == 0 && m_lambda_damp == 0)
+		if (m_mu_damp == (btScalar)0 && m_lambda_damp == (btScalar)0)
 			return;
 		int numNodes = getNumNodes();
 		btAssert(numNodes <= force.size());
@@ -138,9 +138,9 @@ public:
 		}
 	}
 
-	virtual double totalElasticEnergy(btScalar dt)
+	virtual btScalar totalElasticEnergy(btScalar dt)
 	{
-		double energy = 0;
+		btScalar energy = (btScalar)0;
 		for (int i = 0; i < m_softBodies.size(); ++i)
 		{
 			btSoftBody* psb = m_softBodies[i];
@@ -159,9 +159,9 @@ public:
 	}
 
 	// The damping energy is formulated as in https://www.math.ucla.edu/~jteran/papers/GSSJT15.pdf to allow line search
-	virtual double totalDampingEnergy(btScalar dt)
+	virtual btScalar totalDampingEnergy(btScalar dt)
 	{
-		double energy = 0;
+		btScalar energy = (btScalar)0;
 		int sz = 0;
 		for (int i = 0; i < m_softBodies.size(); ++i)
 		{
@@ -179,7 +179,7 @@ public:
 		dampingForce.resize(sz + 1);
 		for (int i = 0; i < dampingForce.size(); ++i)
 			dampingForce[i].setZero();
-		addScaledDampingForce(0.5, dampingForce);
+		addScaledDampingForce((btScalar)0.5, dampingForce);
 		for (int i = 0; i < m_softBodies.size(); ++i)
 		{
 			btSoftBody* psb = m_softBodies[i];
@@ -192,12 +192,12 @@ public:
 		return energy;
 	}
 
-	double elasticEnergyDensity(const btSoftBody::TetraScratch& s)
+	btScalar elasticEnergyDensity(const btSoftBody::TetraScratch& s)
 	{
-		double density = 0;
-		density += m_mu * 0.5 * (s.m_trace - 3.);
-		density += m_lambda * 0.5 * (s.m_J - 1. - 0.75 * m_mu / m_lambda) * (s.m_J - 1. - 0.75 * m_mu / m_lambda);
-		density -= m_mu * 0.5 * log(s.m_trace + 1);
+		btScalar density = (btScalar)0;
+		density += m_mu * (btScalar)0.5 * (s.m_trace - (btScalar)3.);
+		density += m_lambda * (btScalar)0.5 * (s.m_J - (btScalar)1. - (btScalar)0.75 * m_mu / m_lambda) * (s.m_J - (btScalar)1. - (btScalar)0.75 * m_mu / m_lambda);
+		density -= m_mu * (btScalar)0.5 * log(s.m_trace + 1);
 		return density;
 	}
 
@@ -271,7 +271,7 @@ public:
 	// The damping matrix is calculated using the time n state as described in https://www.math.ucla.edu/~jteran/papers/GSSJT15.pdf to allow line search
 	virtual void addScaledDampingForceDifferential(btScalar scale, const TVStack& dv, TVStack& df)
 	{
-		if (m_mu_damp == 0 && m_lambda_damp == 0)
+		if (m_mu_damp == (btScalar)0 && m_lambda_damp == (btScalar)0)
 			return;
 		int numNodes = getNumNodes();
 		btAssert(numNodes <= df.size());
@@ -357,8 +357,8 @@ public:
 
 	void firstPiola(const btSoftBody::TetraScratch& s, btMatrix3x3& P)
 	{
-		btScalar c1 = (m_mu * (1. - 1. / (s.m_trace + 1.)));
-		btScalar c2 = (m_lambda * (s.m_J - 1.) - 0.75 * m_mu);
+		btScalar c1 = (m_mu * ((btScalar)1. - (btScalar)1. / (s.m_trace + (btScalar)1.)));
+		btScalar c2 = (m_lambda * (s.m_J - (btScalar)1.) - (btScalar)0.75 * m_mu);
 		P = s.m_F * c1 + s.m_cofF * c2;
 	}
 
@@ -366,11 +366,11 @@ public:
 	// This function calculates the dP = dP/dF * dF
 	void firstPiolaDifferential(const btSoftBody::TetraScratch& s, const btMatrix3x3& dF, btMatrix3x3& dP)
 	{
-		btScalar c1 = m_mu * (1. - 1. / (s.m_trace + 1.));
-		btScalar c2 = (2. * m_mu) * DotProduct(s.m_F, dF) * (1. / ((1. + s.m_trace) * (1. + s.m_trace)));
+		btScalar c1 = m_mu * ((btScalar)1. - (btScalar)1. / (s.m_trace + (btScalar)1.));
+		btScalar c2 = ((btScalar)2. * m_mu) * DotProduct(s.m_F, dF) * ((btScalar)1. / (((btScalar)1. + s.m_trace) * ((btScalar)1. + s.m_trace)));
 		btScalar c3 = (m_lambda * DotProduct(s.m_cofF, dF));
 		dP = dF * c1 + s.m_F * c2;
-		addScaledCofactorMatrixDifferential(s.m_F, dF, m_lambda * (s.m_J - 1.) - 0.75 * m_mu, dP);
+		addScaledCofactorMatrixDifferential(s.m_F, dF, m_lambda * (s.m_J - (btScalar)1.) - (btScalar)0.75 * m_mu, dP);
 		dP += s.m_cofF * c3;
 	}
 
@@ -378,17 +378,17 @@ public:
 	// This function calculates the dP = dQ/dF * dF
 	void firstPiolaDampingDifferential(const btSoftBody::TetraScratch& s, const btMatrix3x3& dF, btMatrix3x3& dP)
 	{
-		btScalar c1 = (m_mu_damp * (1. - 1. / (s.m_trace + 1.)));
-		btScalar c2 = ((2. * m_mu_damp) * DotProduct(s.m_F, dF) * (1. / ((1. + s.m_trace) * (1. + s.m_trace))));
+		btScalar c1 = (m_mu_damp * ((btScalar)1. - (btScalar)1. / (s.m_trace + (btScalar)1.)));
+		btScalar c2 = (((btScalar)2. * m_mu_damp) * DotProduct(s.m_F, dF) * ((btScalar)1. / (((btScalar)1. + s.m_trace) * ((btScalar)1. + s.m_trace))));
 		btScalar c3 = (m_lambda_damp * DotProduct(s.m_cofF, dF));
 		dP = dF * c1 + s.m_F * c2;
-		addScaledCofactorMatrixDifferential(s.m_F, dF, m_lambda_damp * (s.m_J - 1.) - 0.75 * m_mu_damp, dP);
+		addScaledCofactorMatrixDifferential(s.m_F, dF, m_lambda_damp * (s.m_J - (btScalar)1.) - (btScalar)0.75 * m_mu_damp, dP);
 		dP += s.m_cofF * c3;
 	}
 
 	btScalar DotProduct(const btMatrix3x3& A, const btMatrix3x3& B)
 	{
-		btScalar ans = 0;
+		btScalar ans = (btScalar)0;
 		for (int i = 0; i < 3; ++i)
 		{
 			ans += A[i].dot(B[i]);

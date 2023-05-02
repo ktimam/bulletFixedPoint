@@ -22,7 +22,7 @@ public:
 
 	virtual void initPhysics();
 
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 
 	virtual void resetCamera()
 	{
@@ -52,10 +52,10 @@ void MultiBodySoftContact::initPhysics()
 
 	btVector4 colors[4] =
 		{
-			btVector4(1, 0, 0, 1),
-			btVector4(0, 1, 0, 1),
-			btVector4(0, 1, 1, 1),
-			btVector4(1, 1, 0, 1),
+			btVector4((btScalar)1, (btScalar)0, (btScalar)0, (btScalar)1),
+			btVector4((btScalar)0, (btScalar)1, (btScalar)0, (btScalar)1),
+			btVector4((btScalar)0, (btScalar)1,(btScalar)1, (btScalar)1),
+			btVector4((btScalar)1, (btScalar)1, (btScalar)0, (btScalar)1),
 		};
 	int curColor = 0;
 
@@ -80,10 +80,10 @@ void MultiBodySoftContact::initPhysics()
 		btVector3 groundOrigin(0, 0, -50.5);
 		start.setOrigin(groundOrigin);
 		//	start.setRotation(groundOrn);
-		btRigidBody* body = createRigidBody(0, start, box);
+		btRigidBody* body = createRigidBody((btScalar)0, start, box);
 
 		//setContactStiffnessAndDamping will enable compliant rigid body contact
-		body->setContactStiffnessAndDamping(300, 10);
+		body->setContactStiffnessAndDamping((btScalar)300, (btScalar)10);
 		btVector4 color = colors[curColor];
 		curColor++;
 		curColor &= 3;
@@ -94,11 +94,11 @@ void MultiBodySoftContact::initPhysics()
 		btCollisionShape* childShape = new btSphereShape(btScalar(0.5));
 		m_guiHelper->createCollisionShapeGraphicsObject(childShape);
 
-		btScalar mass = 1;
+		btScalar mass = (btScalar)1;
 		btVector3 baseInertiaDiag;
-		bool isFixed = (mass == 0);
+		bool isFixed = (mass == (btScalar)0);
 		childShape->calculateLocalInertia(mass, baseInertiaDiag);
-		btMultiBody* pMultiBody = new btMultiBody(0, 1, baseInertiaDiag, false, false);
+		btMultiBody* pMultiBody = new btMultiBody(0, (btScalar)1, baseInertiaDiag, false, false);
 		btTransform startTrans;
 		startTrans.setIdentity();
 		startTrans.setOrigin(btVector3(0, 0, 3));
@@ -108,7 +108,7 @@ void MultiBodySoftContact::initPhysics()
 		btMultiBodyLinkCollider* col = new btMultiBodyLinkCollider(pMultiBody, -1);
 		col->setCollisionShape(childShape);
 		pMultiBody->setBaseCollider(col);
-		bool isDynamic = (mass > 0 && !isFixed);
+		bool isDynamic = (mass > (btScalar)0 && !isFixed);
 		int collisionFilterGroup = isDynamic ? int(btBroadphaseProxy::DefaultFilter) : int(btBroadphaseProxy::StaticFilter);
 		int collisionFilterMask = isDynamic ? int(btBroadphaseProxy::AllFilter) : int(btBroadphaseProxy::AllFilter ^ btBroadphaseProxy::StaticFilter);
 
@@ -128,12 +128,12 @@ void MultiBodySoftContact::initPhysics()
 	m_guiHelper->autogenerateGraphicsObjects(m_dynamicsWorld);
 }
 
-void MultiBodySoftContact::stepSimulation(float deltaTime)
+void MultiBodySoftContact::stepSimulation(btScalar deltaTime)
 {
 	if (/* DISABLES CODE */ (0))  //m_once)
 	{
 		m_once = false;
-		m_multiBody->addJointTorque(0, 10.0);
+		m_multiBody->addJointTorque(0, (btScalar)10.0);
 
 		btScalar torque = m_multiBody->getJointTorque(0);
 		b3Printf("t = %f,%f,%f\n", torque, torque, torque);  //[0],torque[1],torque[2]);

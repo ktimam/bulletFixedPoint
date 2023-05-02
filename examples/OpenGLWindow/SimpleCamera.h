@@ -1,6 +1,7 @@
 #ifndef SIMPLE_CAMERA_H
 #define SIMPLE_CAMERA_H
 
+#include <LinearMath/btVector3.h>
 #include "../CommonInterfaces/CommonCameraInterface.h"
 
 struct SimpleCamera : public CommonCameraInterface
@@ -21,6 +22,9 @@ struct SimpleCamera : public CommonCameraInterface
 	virtual void disableVRCamera();
 
 	virtual bool isVRCamera() const;
+
+	virtual void getCameraPosition(btVector3 &pos) const;
+	virtual void getCameraTargetPosition(btVector3& pos) const;
 
 	virtual void getCameraTargetPosition(float pos[3]) const;
 	virtual void getCameraPosition(float pos[3]) const;

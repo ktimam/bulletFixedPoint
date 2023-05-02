@@ -93,7 +93,7 @@ struct btSoftBodyHelpers
 								   int resy,
 								   int fixeds,
 								   bool gendiags,
-								   btScalar perturbation = 0.);
+								   btScalar perturbation = (btScalar)0.);
 	/* Create a patch with UV Texture Coordinates	*/
 	static btSoftBody* CreatePatchUV(btSoftBodyWorldInfo& worldInfo,
 									 const btVector3& corner00,

@@ -44,5 +44,5 @@ void btSoftSoftCollisionAlgorithm::processCollision(const btCollisionObjectWrapp
 btScalar btSoftSoftCollisionAlgorithm::calculateTimeOfImpact(btCollisionObject* /*body0*/, btCollisionObject* /*body1*/, const btDispatcherInfo& /*dispatchInfo*/, btManifoldResult* /*resultOut*/)
 {
 	//not yet
-	return 1.f;
+	return (btScalar)1.f;
 }

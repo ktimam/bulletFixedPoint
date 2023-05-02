@@ -53,12 +53,12 @@ void btFractureDynamicsWorld::glueCallback()
 		if (!manifold->getNumContacts())
 			continue;
 
-		btScalar minDist = 1e30f;
+		btScalar minDist = (btScalar)1e30f;
 		for (int v = 0; v < manifold->getNumContacts(); v++)
 		{
 			minDist = btMin(minDist, manifold->getContactPoint(v).getDistance());
 		}
-		if (minDist > 0.)
+		if (minDist > (btScalar)0.)
 			continue;
 
 		btCollisionObject* colObj0 = (btCollisionObject*)manifold->getBody0();
@@ -143,10 +143,10 @@ void btFractureDynamicsWorld::glueCallback()
 			btAlignedObjectArray<btVector3> oldImpulses;
 			btAlignedObjectArray<btVector3> oldCenterOfMassesWS;
 
-			oldImpulses.push_back(fracObj->getLinearVelocity() / 1. / fracObj->getInvMass());
+			oldImpulses.push_back(fracObj->getLinearVelocity() / (btScalar)1. / fracObj->getInvMass());
 			oldCenterOfMassesWS.push_back(fracObj->getCenterOfMassPosition());
 
-			btScalar totalMass = 0.f;
+			btScalar totalMass = (btScalar)0.f;
 
 			btCompoundShape* compound = new btCompoundShape();
 			if (fracObj->getCollisionShape()->isCompound())
@@ -185,13 +185,13 @@ void btFractureDynamicsWorld::glueCallback()
 				if (!otherObject || !otherObject->getInvMass())
 					continue;
 
-				oldImpulses.push_back(otherObject->getLinearVelocity() * (1.f / otherObject->getInvMass()));
+				oldImpulses.push_back(otherObject->getLinearVelocity() * ((btScalar)1.f / otherObject->getInvMass()));
 				oldCenterOfMassesWS.push_back(otherObject->getCenterOfMassPosition());
 
 				removedObjects.push_back(otherObject);
 				m_fractureBodies.remove((btFractureBody*)otherObject);
 
-				btScalar curMass = 1.f / otherObject->getInvMass();
+				btScalar curMass = (btScalar)1.f / otherObject->getInvMass();
 
 				if (otherObject->getCollisionShape()->isCompound())
 				{
@@ -281,7 +281,7 @@ btFractureBody* btFractureDynamicsWorld::addNewBody(const btTransform& oldTransf
 	shift.setIdentity();
 	btVector3 localInertia;
 	btCompoundShape* newCompound = btFractureBody::shiftTransform(oldCompound, masses, shift, localInertia);
-	btScalar totalMass = 0;
+	btScalar totalMass = (btScalar)0;
 	for (i = 0; i < newCompound->getNumChildShapes(); i++)
 		totalMass += masses[i];
 	//newCompound->calculateLocalInertia(totalMass,localInertia);
@@ -359,7 +359,7 @@ void btFractureDynamicsWorld::breakDisconnectedParts(btFractureBody* fracObj)
 	for (i = 0; i < fracObj->m_connections.size(); i++)
 	{
 		btConnection& connection = fracObj->m_connections[i];
-		if (connection.m_strength > 0.)
+		if (connection.m_strength > (btScalar)0.)
 		{
 			int tag0 = tags[connection.m_childIndex0];
 			int tag1 = tags[connection.m_childIndex1];
@@ -446,7 +446,7 @@ void btFractureDynamicsWorld::fractureCallback()
 		if (!manifold->getNumContacts())
 			continue;
 
-		btScalar totalImpact = 0.f;
+		btScalar totalImpact = (btScalar)0.f;
 		for (int p = 0; p < manifold->getNumContacts(); p++)
 		{
 			totalImpact += manifold->getContactPoint(p).m_appliedImpulse;
@@ -454,12 +454,12 @@ void btFractureDynamicsWorld::fractureCallback()
 
 		//		printf("totalImpact=%f\n",totalImpact);
 
-		static float maxImpact = 0;
+		static btScalar maxImpact = (btScalar)0;
 		if (totalImpact > maxImpact)
 			maxImpact = totalImpact;
 
 		//some threshold otherwise resting contact would break objects after a while
-		if (totalImpact < 40.f)
+		if (totalImpact < (btScalar)40.f)
 			continue;
 
 		//		printf("strong impact\n");
@@ -597,10 +597,10 @@ void btFractureDynamicsWorld::fractureCallback()
 										(connection.m_childIndex1 == pt.m_index0))
 									{
 										connection.m_strength -= pt.m_appliedImpulse;
-										if (connection.m_strength < 0)
+										if (connection.m_strength < (btScalar)0)
 										{
 											//remove or set to zero
-											connection.m_strength = 0.f;
+											connection.m_strength = (btScalar)0.f;
 											needsBreakingCheck = true;
 										}
 									}
@@ -615,10 +615,10 @@ void btFractureDynamicsWorld::fractureCallback()
 										(connection.m_childIndex1 == pt.m_index1))
 									{
 										connection.m_strength -= pt.m_appliedImpulse;
-										if (connection.m_strength < 0)
+										if (connection.m_strength < (btScalar)0)
 										{
 											//remove or set to zero
-											connection.m_strength = 0.f;
+											connection.m_strength = (btScalar)0.f;
 											needsBreakingCheck = true;
 										}
 									}

@@ -2,7 +2,7 @@
 #define Landscape02IdxCount 11310
 #include "LinearMath/btScalar.h"
 
-btScalar Landscape02Vtx[] = {
+float Landscape02Vtx[] = {
 	-250.0f,
 	2.99192f,
 	113.281f,
@@ -5945,7 +5945,7 @@ btScalar Landscape02Vtx[] = {
 	3.90625f,
 };
 
-btScalar Landscape02Nml[] = {
+float Landscape02Nml[] = {
 	0.376889f,
 	0.897995f,
 	0.227068f,
@@ -11888,7 +11888,7 @@ btScalar Landscape02Nml[] = {
 	0.0742583f,
 };
 
-btScalar Landscape02Tex[] = {
+float Landscape02Tex[] = {
 	0.0f,
 	0.273438f,
 	0.0f,
@@ -27167,7 +27167,7 @@ unsigned short Landscape02Idx[] = {
 #define Landscape03VtxCount 2048
 #define Landscape03IdxCount 11718
 
-btScalar Landscape03Vtx[] = {
+float Landscape03Vtx[] = {
 	3.90625f,
 	50.3865f,
 	-2.20246e-006f,
@@ -33314,7 +33314,7 @@ btScalar Landscape03Vtx[] = {
 	-117.188f,
 };
 
-btScalar Landscape03Nml[] = {
+float Landscape03Nml[] = {
 	-0.0301669f,
 	0.913898f,
 	-0.404822f,
@@ -39461,7 +39461,7 @@ btScalar Landscape03Nml[] = {
 	-0.422351f,
 };
 
-btScalar Landscape03Tex[] = {
+float Landscape03Tex[] = {
 	0.507813f,
 	0.5f,
 	0.507813f,
@@ -55284,7 +55284,7 @@ unsigned short Landscape03Idx[] = {
 #define Landscape04VtxCount 2112
 #define Landscape04IdxCount 12096
 
-btScalar Landscape04Vtx[] = {
+float Landscape04Vtx[] = {
 	3.90625f,
 	18.9654f,
 	125.0f,
@@ -61623,7 +61623,7 @@ btScalar Landscape04Vtx[] = {
 	3.90625f,
 };
 
-btScalar Landscape04Nml[] = {
+float Landscape04Nml[] = {
 	-0.350125f,
 	0.914758f,
 	-0.201568f,
@@ -67962,7 +67962,7 @@ btScalar Landscape04Nml[] = {
 	-0.0411276f,
 };
 
-btScalar Landscape04Tex[] = {
+float Landscape04Tex[] = {
 	0.507813f,
 	0.25f,
 	0.507813f,
@@ -84291,7 +84291,7 @@ unsigned short Landscape04Idx[] = {
 #define Landscape05VtxCount 2244
 #define Landscape05IdxCount 12870
 
-btScalar Landscape05Vtx[] = {
+float Landscape05Vtx[] = {
 	-250.0f,
 	-0.990273f,
 	0.0f,
@@ -91026,7 +91026,7 @@ btScalar Landscape05Vtx[] = {
 	-125.0f,
 };
 
-btScalar Landscape05Nml[] = {
+float Landscape05Nml[] = {
 	-0.379368f,
 	0.918093f,
 	-0.114827f,
@@ -97761,7 +97761,7 @@ btScalar Landscape05Nml[] = {
 	0.202438f,
 };
 
-btScalar Landscape05Tex[] = {
+float Landscape05Tex[] = {
 	0.0f,
 	0.5f,
 	0.0f,
@@ -115128,7 +115128,7 @@ unsigned short Landscape05Idx[] = {
 #define Landscape06VtxCount 2310
 #define Landscape06IdxCount 13260
 
-btScalar Landscape06Vtx[] = {
+float Landscape06Vtx[] = {
 	-250.0f,
 	5.63631f,
 	246.094f,
@@ -122061,7 +122061,7 @@ btScalar Landscape06Vtx[] = {
 	117.188f,
 };
 
-btScalar Landscape06Nml[] = {
+float Landscape06Nml[] = {
 	-0.373915f,
 	0.891474f,
 	-0.255855f,
@@ -128994,7 +128994,7 @@ btScalar Landscape06Nml[] = {
 	0.0827968f,
 };
 
-btScalar Landscape06Tex[] = {
+float Landscape06Tex[] = {
 	0.0f,
 	0.0078125f,
 	0.0f,
@@ -146883,7 +146883,7 @@ unsigned short Landscape06Idx[] = {
 #define Landscape07VtxCount 2240
 #define Landscape07IdxCount 12852
 
-btScalar Landscape07Vtx[] = {
+float Landscape07Vtx[] = {
 	3.90625f,
 	49.6769f,
 	-121.094f,
@@ -153606,7 +153606,7 @@ btScalar Landscape07Vtx[] = {
 	-250.0f,
 };
 
-btScalar Landscape07Nml[] = {
+float Landscape07Nml[] = {
 	0.163295f,
 	0.951018f,
 	0.262487f,
@@ -160329,7 +160329,7 @@ btScalar Landscape07Nml[] = {
 	0.105701f,
 };
 
-btScalar Landscape07Tex[] = {
+float Landscape07Tex[] = {
 	0.507813f,
 	0.742188f,
 	0.507813f,
@@ -177670,7 +177670,7 @@ unsigned short Landscape07Idx[] = {
 #define Landscape08VtxCount 2178
 #define Landscape08IdxCount 12480
 
-btScalar Landscape08Vtx[] = {
+float Landscape08Vtx[] = {
 	-250.0f,
 	30.98f,
 	-128.906f,
@@ -184207,7 +184207,7 @@ btScalar Landscape08Vtx[] = {
 	-250.0f,
 };
 
-btScalar Landscape08Nml[] = {
+float Landscape08Nml[] = {
 	-0.193879f,
 	0.980285f,
 	-0.0381128f,
@@ -190744,7 +190744,7 @@ btScalar Landscape08Nml[] = {
 	0.108505f,
 };
 
-btScalar Landscape08Tex[] = {
+float Landscape08Tex[] = {
 	0.0f,
 	0.757813f,
 	0.0f,
@@ -207589,7 +207589,7 @@ unsigned short Landscape08Idx[] = {
 #define Landscape01VtxCount 2048
 #define Landscape01IdxCount 11718
 
-btScalar Landscape01Vtx[] = {
+float Landscape01Vtx[] = {
 	3.90626f,
 	0.452911f,
 	246.094f,
@@ -213736,7 +213736,7 @@ btScalar Landscape01Vtx[] = {
 	128.906f,
 };
 
-btScalar Landscape01Nml[] = {
+float Landscape01Nml[] = {
 	-0.145347f,
 	0.988603f,
 	0.0392193f,
@@ -219883,7 +219883,7 @@ btScalar Landscape01Nml[] = {
 	0.248757f,
 };
 
-btScalar Landscape01Tex[] = {
+float Landscape01Tex[] = {
 	0.507813f,
 	0.0078125f,
 	0.507813f,

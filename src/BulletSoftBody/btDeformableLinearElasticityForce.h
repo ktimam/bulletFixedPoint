@@ -32,7 +32,7 @@ public:
 		updateYoungsModulusAndPoissonRatio();
 	}
 
-	btDeformableLinearElasticityForce(btScalar mu, btScalar lambda, btScalar damping_alpha = 0.01, btScalar damping_beta = 0.01) : m_mu(mu), m_lambda(lambda), m_damping_alpha(damping_alpha), m_damping_beta(damping_beta)
+	btDeformableLinearElasticityForce(btScalar mu, btScalar lambda, btScalar damping_alpha = (btScalar)0.01, btScalar damping_beta = (btScalar)0.01) : m_mu(mu), m_lambda(lambda), m_damping_alpha(damping_alpha), m_damping_beta(damping_beta)
 	{
 		updateYoungsModulusAndPoissonRatio();
 	}
@@ -42,14 +42,14 @@ public:
 		// conversion from Lame Parameters to Young's modulus and Poisson ratio
 		// https://en.wikipedia.org/wiki/Lam%C3%A9_parameters
 		m_E = m_mu * (3 * m_lambda + 2 * m_mu) / (m_lambda + m_mu);
-		m_nu = m_lambda * 0.5 / (m_mu + m_lambda);
+		m_nu = m_lambda * (btScalar)0.5 / (m_mu + m_lambda);
 	}
 
 	void updateLameParameters()
 	{
 		// conversion from Young's modulus and Poisson ratio to Lame Parameters
 		// https://en.wikipedia.org/wiki/Lam%C3%A9_parameters
-		m_mu = m_E * 0.5 / (1 + m_nu);
+		m_mu = m_E * (btScalar)0.5 / (1 + m_nu);
 		m_lambda = m_E * m_nu / ((1 + m_nu) * (1 - 2 * m_nu));
 	}
 
@@ -92,7 +92,7 @@ public:
 	// The damping matrix is calculated using the time n state as described in https://www.math.ucla.edu/~jteran/papers/GSSJT15.pdf to allow line search
 	virtual void addScaledDampingForce(btScalar scale, TVStack& force)
 	{
-		if (m_damping_alpha == 0 && m_damping_beta == 0)
+		if (m_damping_alpha == (btScalar)0 && m_damping_beta == (btScalar)0)
 			return;
 		btScalar mu_damp = m_damping_beta * m_mu;
 		btScalar lambda_damp = m_damping_beta * m_lambda;
@@ -108,7 +108,7 @@ public:
 			}
 			for (int j = 0; j < psb->m_tetras.size(); ++j)
 			{
-				bool close_to_flat = (psb->m_tetraScratches[j].m_J < TETRA_FLAT_THRESHOLD);
+				bool close_to_flat = (psb->m_tetraScratches[j].m_J < (btScalar)TETRA_FLAT_THRESHOLD);
 				btSoftBody::Tetra& tetra = psb->m_tetras[j];
 				btSoftBody::Node* node0 = tetra.m_n[0];
 				btSoftBody::Node* node1 = tetra.m_n[1];
@@ -143,7 +143,7 @@ public:
 			{
 				const btSoftBody::Node& node = psb->m_nodes[j];
 				size_t id = node.index;
-				if (node.m_im > 0)
+				if (node.m_im > (btScalar)0)
 				{
 					force[id] -= scale * node.m_v / node.m_im * m_damping_alpha;
 				}
@@ -151,9 +151,9 @@ public:
 		}
 	}
 
-	virtual double totalElasticEnergy(btScalar dt)
+	virtual btScalar totalElasticEnergy(btScalar dt)
 	{
-		double energy = 0;
+		btScalar energy = (btScalar)0;
 		for (int i = 0; i < m_softBodies.size(); ++i)
 		{
 			btSoftBody* psb = m_softBodies[i];
@@ -172,9 +172,9 @@ public:
 	}
 
 	// The damping energy is formulated as in https://www.math.ucla.edu/~jteran/papers/GSSJT15.pdf to allow line search
-	virtual double totalDampingEnergy(btScalar dt)
+	virtual btScalar totalDampingEnergy(btScalar dt)
 	{
-		double energy = 0;
+		btScalar energy = (btScalar)0;
 		int sz = 0;
 		for (int i = 0; i < m_softBodies.size(); ++i)
 		{
@@ -192,7 +192,7 @@ public:
 		dampingForce.resize(sz + 1);
 		for (int i = 0; i < dampingForce.size(); ++i)
 			dampingForce[i].setZero();
-		addScaledDampingForce(0.5, dampingForce);
+		addScaledDampingForce((btScalar)0.5, dampingForce);
 		for (int i = 0; i < m_softBodies.size(); ++i)
 		{
 			btSoftBody* psb = m_softBodies[i];
@@ -205,13 +205,13 @@ public:
 		return energy;
 	}
 
-	double elasticEnergyDensity(const btSoftBody::TetraScratch& s)
+	btScalar elasticEnergyDensity(const btSoftBody::TetraScratch& s)
 	{
-		double density = 0;
-		btMatrix3x3 epsilon = (s.m_F + s.m_F.transpose()) * 0.5 - btMatrix3x3::getIdentity();
+		btScalar density = (btScalar)0;
+		btMatrix3x3 epsilon = (s.m_F + s.m_F.transpose()) * (btScalar)0.5 - btMatrix3x3::getIdentity();
 		btScalar trace = epsilon[0][0] + epsilon[1][1] + epsilon[2][2];
 		density += m_mu * (epsilon[0].length2() + epsilon[1].length2() + epsilon[2].length2());
-		density += m_lambda * trace * trace * 0.5;
+		density += m_lambda * trace * trace * (btScalar)0.5;
 		return density;
 	}
 
@@ -287,7 +287,7 @@ public:
 	// The damping matrix is calculated using the time n state as described in https://www.math.ucla.edu/~jteran/papers/GSSJT15.pdf to allow line search
 	virtual void addScaledDampingForceDifferential(btScalar scale, const TVStack& dv, TVStack& df)
 	{
-		if (m_damping_alpha == 0 && m_damping_beta == 0)
+		if (m_damping_alpha == (btScalar)0 && m_damping_beta == (btScalar)0)
 			return;
 		btScalar mu_damp = m_damping_beta * m_mu;
 		btScalar lambda_damp = m_damping_beta * m_lambda;
@@ -303,7 +303,7 @@ public:
 			}
 			for (int j = 0; j < psb->m_tetras.size(); ++j)
 			{
-				bool close_to_flat = (psb->m_tetraScratches[j].m_J < TETRA_FLAT_THRESHOLD);
+				bool close_to_flat = (psb->m_tetraScratches[j].m_J < (btScalar)TETRA_FLAT_THRESHOLD);
 				btSoftBody::Tetra& tetra = psb->m_tetras[j];
 				btSoftBody::Node* node0 = tetra.m_n[0];
 				btSoftBody::Node* node1 = tetra.m_n[1];
@@ -339,7 +339,7 @@ public:
 			{
 				const btSoftBody::Node& node = psb->m_nodes[j];
 				size_t id = node.index;
-				if (node.m_im > 0)
+				if (node.m_im > (btScalar)0)
 				{
 					df[id] -= scale * dv[id] / node.m_im * m_damping_alpha;
 				}
@@ -391,7 +391,7 @@ public:
 	{
 		btMatrix3x3 corotated_F = s.m_corotation.transpose() * s.m_F;
 
-		btMatrix3x3 epsilon = (corotated_F + corotated_F.transpose()) * 0.5 - btMatrix3x3::getIdentity();
+		btMatrix3x3 epsilon = (corotated_F + corotated_F.transpose()) * (btScalar)0.5 - btMatrix3x3::getIdentity();
 		btScalar trace = epsilon[0][0] + epsilon[1][1] + epsilon[2][2];
 		P = epsilon * btScalar(2) * m_mu + btMatrix3x3::getIdentity() * m_lambda * trace;
 	}
@@ -444,11 +444,11 @@ public:
 			for (int j = 0; j < psb->m_nodes.size(); ++j)
 			{
 				btSoftBody::Node& node = psb->m_nodes[j];
-				if (node.m_im > 0)
+				if (node.m_im > (btScalar)0)
 				{
 					btMatrix3x3 I;
 					I.setIdentity();
-					node.m_effectiveMass += I * (scale * (1.0 / node.m_im) * m_damping_alpha);
+					node.m_effectiveMass += I * (scale * ((btScalar)1.0 / node.m_im) * m_damping_alpha);
 				}
 			}
 		}

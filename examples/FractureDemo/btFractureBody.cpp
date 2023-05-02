@@ -27,7 +27,7 @@ void btFractureBody::recomputeConnectivity(btCollisionWorld* world)
 					{
 						if (cp.getDistance() <= m_margin)
 							m_connected = true;
-						return 1.f;
+						return (btScalar)1.f;
 					}
 				};
 
@@ -47,7 +47,7 @@ void btFractureBody::recomputeConnectivity(btCollisionWorld* world)
 					tmp.m_childIndex1 = j;
 					tmp.m_childShape0 = compound->getChildShape(i);
 					tmp.m_childShape1 = compound->getChildShape(j);
-					tmp.m_strength = 1.f;  //??
+					tmp.m_strength = (btScalar)1.f;  //??
 					m_connections.push_back(tmp);
 				}
 			}

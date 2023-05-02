@@ -59,7 +59,7 @@ void CompoundBoxesExample::initPhysics()
 	groundTransform.setOrigin(btVector3(0, -50, 0));
 	{
 		btScalar mass(0.);
-		createRigidBody(mass, groundTransform, groundShape, btVector4(0, 0, 1, 1));
+		createRigidBody(mass, groundTransform, groundShape, btVector4((btScalar)0, (btScalar)0, (btScalar)1, (btScalar)1));
 	}
 
 	{
@@ -86,7 +86,7 @@ void CompoundBoxesExample::initPhysics()
 		transform.setOrigin(btVector3(0, 0, 1));
 		compoundShape->addChildShape(transform, cube);
 
-		btScalar masses[3] = {1, 1, 1};
+		btScalar masses[3] = { (btScalar)1, (btScalar)1, (btScalar)1};
 		btTransform principal;
 		btVector3 inertia;
 		compoundShape->calculatePrincipalAxisTransform(masses, principal, inertia);
@@ -108,7 +108,7 @@ void CompoundBoxesExample::initPhysics()
 
 		transform.setIdentity();
 		transform.setOrigin(btVector3(0, 10, 0));
-		createRigidBody(1.0, transform, compound2);
+		createRigidBody((btScalar)1.0, transform, compound2);
 	}
 
 	m_guiHelper->autogenerateGraphicsObjects(m_dynamicsWorld);

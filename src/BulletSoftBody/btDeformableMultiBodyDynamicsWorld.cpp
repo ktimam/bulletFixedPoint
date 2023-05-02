@@ -51,15 +51,15 @@ btDeformableMultiBodyDynamicsWorld::btDeformableMultiBodyDynamicsWorld(btDispatc
 	m_sbi.m_broadphase = pairCache;
 	m_sbi.m_dispatcher = dispatcher;
 	m_sbi.m_sparsesdf.Initialize();
-	m_sbi.m_sparsesdf.setDefaultVoxelsz(0.005);
+	m_sbi.m_sparsesdf.setDefaultVoxelsz((btScalar)0.005);
 	m_sbi.m_sparsesdf.Reset();
 
 	m_sbi.air_density = (btScalar)1.2;
-	m_sbi.water_density = 0;
-	m_sbi.water_offset = 0;
+	m_sbi.water_density = (btScalar)0;
+	m_sbi.water_offset = (btScalar)0;
 	m_sbi.water_normal = btVector3(0, 0, 0);
 	m_sbi.m_gravity.setValue(0, -9.8, 0);
-	m_internalTime = 0.0;
+	m_internalTime = (btScalar)0.0;
 	m_implicit = false;
 	m_lineSearch = false;
 	m_useProjection = false;
@@ -283,7 +283,7 @@ void btDeformableMultiBodyDynamicsWorld::positionCorrection(btScalar timeStep)
 		btTransform newTransform;
 		btVector3 pushVelocity = rb->getPushVelocity();
 		btVector3 turnVelocity = rb->getTurnVelocity();
-		if (pushVelocity[0] != 0.f || pushVelocity[1] != 0 || pushVelocity[2] != 0 || turnVelocity[0] != 0.f || turnVelocity[1] != 0 || turnVelocity[2] != 0)
+		if (pushVelocity[0] != (btScalar)0.f || pushVelocity[1] != (btScalar)0 || pushVelocity[2] != (btScalar)0 || turnVelocity[0] != (btScalar)0.f || turnVelocity[1] != (btScalar)0 || turnVelocity[2] != (btScalar)0)
 		{
 			btTransformUtil::integrateTransform(rb->getWorldTransform(), pushVelocity, turnVelocity * infoGlobal.m_splitImpulseTurnErp, timeStep, newTransform);
 			rb->setWorldTransform(newTransform);
@@ -697,8 +697,8 @@ int btDeformableMultiBodyDynamicsWorld::stepSimulation(btScalar timeStep, int ma
 	{
 		//variable timestep
 		fixedTimeStep = timeStep;
-		m_localTime = m_latencyMotionStateInterpolation ? 0 : timeStep;
-		m_fixedTimeStep = 0;
+		m_localTime = m_latencyMotionStateInterpolation ? (btScalar)0 : timeStep;
+		m_fixedTimeStep = (btScalar)0;
 		if (btFuzzyZero(timeStep))
 		{
 			numSimulationSubSteps = 0;

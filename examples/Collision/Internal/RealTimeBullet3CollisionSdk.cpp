@@ -124,7 +124,7 @@ plCollisionShapeHandle RealTimeBullet3CollisionSdk::createSphereShape(plCollisio
 		b3GpuChildShape& shape = world->m_childShapes[world->m_nextFreeShapeIndex];
 		shape.m_childPosition.setZero();
 		shape.m_childOrientation.setValue(0, 0, 0, 1);
-		shape.m_radius = radius;
+		shape.m_radius = (float)radius;
 		shape.m_shapeType = RTB3_SHAPE_SPHERE;
 		world->m_nextFreeShapeIndex++;
 		return (plCollisionShapeHandle)world->m_nextFreeShapePtr;
@@ -146,7 +146,7 @@ plCollisionShapeHandle RealTimeBullet3CollisionSdk::createPlaneShape(plCollision
 		b3GpuChildShape& shape = world->m_childShapes[world->m_nextFreeShapeIndex];
 		shape.m_childPosition.setZero();
 		shape.m_childOrientation.setValue(0, 0, 0, 1);
-		world->m_planeFaces[world->m_nextFreePlaneFaceIndex].m_plane = b3MakeVector4(planeNormalX, planeNormalY, planeNormalZ, planeConstant);
+		world->m_planeFaces[world->m_nextFreePlaneFaceIndex].m_plane = b3MakeVector4((float)planeNormalX, (float)planeNormalY, (float)planeNormalZ, (float)planeConstant);
 		shape.m_shapeIndex = world->m_nextFreePlaneFaceIndex++;
 		shape.m_shapeType = RTB3_SHAPE_PLANE;
 		world->m_nextFreeShapeIndex++;
@@ -168,8 +168,8 @@ plCollisionShapeHandle RealTimeBullet3CollisionSdk::createCapsuleShape(plCollisi
 		b3GpuChildShape& shape = world->m_childShapes[world->m_nextFreeShapeIndex];
 		shape.m_childPosition.setZero();
 		shape.m_childOrientation.setValue(0, 0, 0, 1);
-		shape.m_radius = radius;
-		shape.m_height = height;
+		shape.m_radius = (float)radius;
+		shape.m_height = (float)height;
 		shape.m_shapeIndex = capsuleAxis;
 		shape.m_shapeType = RTB3_SHAPE_CAPSULE;
 		world->m_nextFreeShapeIndex++;
@@ -226,8 +226,8 @@ plCollisionObjectHandle RealTimeBullet3CollisionSdk::createCollisionObject(plCol
 	if (world->m_nextFreeCollidableIndex < world->m_collidables.size())
 	{
 		b3Collidable& collidable = world->m_collidables[world->m_nextFreeCollidableIndex];
-		world->m_collidablePositions[world->m_nextFreeCollidableIndex].setValue(startPosition[0], startPosition[1], startPosition[2]);
-		world->m_collidableOrientations[world->m_nextFreeCollidableIndex].setValue(startOrientation[0], startOrientation[1], startOrientation[2], startOrientation[3]);
+		world->m_collidablePositions[world->m_nextFreeCollidableIndex].setValue((float)startPosition[0], (float)startPosition[1], (float)startPosition[2]);
+		world->m_collidableOrientations[world->m_nextFreeCollidableIndex].setValue((float)startOrientation[0], (float)startOrientation[1], (float)startOrientation[2], (float)startOrientation[3]);
 		world->m_collidableTransforms[world->m_nextFreeCollidableIndex].setOrigin(world->m_collidablePositions[world->m_nextFreeCollidableIndex]);
 		world->m_collidableTransforms[world->m_nextFreeCollidableIndex].setRotation(world->m_collidableOrientations[world->m_nextFreeCollidableIndex]);
 		world->m_collidableUserPointers[world->m_nextFreeCollidableIndex] = userPointer;
@@ -314,6 +314,12 @@ void plVecCopy(double* dst, const b3Vector3& src)
 	dst[1] = src.y;
 	dst[2] = src.z;
 }
+void plVecCopy(btVector3& dst, const b3Vector3& src)
+{
+	dst[0] = (btScalar)src.x;
+	dst[1] = (btScalar)src.y;
+	dst[2] = (btScalar)src.z;
+}
 
 void ComputeClosestPointsPlaneSphere(const b3Vector3& planeNormalWorld, b3Scalar planeConstant, const b3Vector3& spherePosWorld, b3Scalar sphereRadius, plContactCache* contactCache)
 {
@@ -325,7 +331,7 @@ void ComputeClosestPointsPlaneSphere(const b3Vector3& planeNormalWorld, b3Scalar
 		b3Scalar distance = t - sphereRadius;
 		if (distance <= 0)
 		{
-			pointOut.m_distance = distance;
+			pointOut.m_distance = (btScalar)distance;
 			plVecCopy(pointOut.m_ptOnBWorld, intersectionPoint);
 			plVecCopy(pointOut.m_ptOnAWorld, spherePosWorld + sphereRadius * -planeNormalWorld);
 			plVecCopy(pointOut.m_normalOnB, planeNormalWorld);
@@ -342,8 +348,8 @@ void ComputeClosestPointsSphereSphere(b3Scalar sphereARadius, const b3Vector3& s
 		b3Vector3 diff = sphereAPosWorld - sphereBPosWorld;
 
 		b3Scalar len = diff.length();
-		pointOut.m_distance = len - (sphereARadius + sphereBRadius);
-		if (pointOut.m_distance <= 0)
+		pointOut.m_distance = (btScalar)len - ((btScalar)sphereARadius + (btScalar)sphereBRadius);
+		if (pointOut.m_distance <= (btScalar)0)
 		{
 			b3Vector3 normOnB = b3MakeVector3(1, 0, 0);
 			if (len > B3_EPSILON)
@@ -354,7 +360,7 @@ void ComputeClosestPointsSphereSphere(b3Scalar sphereARadius, const b3Vector3& s
 			plVecCopy(pointOut.m_normalOnB, normOnB);
 			b3Vector3 ptAWorld = sphereAPosWorld - sphereARadius * normOnB;
 			plVecCopy(pointOut.m_ptOnAWorld, ptAWorld);
-			plVecCopy(pointOut.m_ptOnBWorld, ptAWorld - normOnB * pointOut.m_distance);
+			plVecCopy(pointOut.m_ptOnBWorld, ptAWorld - normOnB * (float)pointOut.m_distance);
 
 			contactCache->numAddedPoints++;
 		}

@@ -59,7 +59,7 @@ void SimpleJointExample::initPhysics()
 	groundTransform.setOrigin(btVector3(0, -50, 0));
 	{
 		btScalar mass(0.);
-		createRigidBody(mass, groundTransform, groundShape, btVector4(0, 0, 1, 1));
+		createRigidBody(mass, groundTransform, groundShape, btVector4((btScalar)0, (btScalar)0, (btScalar)1, (btScalar)1));
 	}
 
 	{
@@ -76,7 +76,7 @@ void SimpleJointExample::initPhysics()
 		btScalar mass(1.f);
 
 		//rigidbody is dynamic if and only if mass is non zero, otherwise static
-		bool isDynamic = (mass != 0.f);
+		bool isDynamic = (mass != (btScalar)0.f);
 
 		btVector3 localInertia(0, 0, 0);
 		if (isDynamic)
@@ -89,7 +89,7 @@ void SimpleJointExample::initPhysics()
 		btRigidBody* dynamicBox = createRigidBody(mass, startTransform, colShape);
 
 		//create a static rigid body
-		mass = 0;
+		mass = (btScalar)0;
 		startTransform.setOrigin(btVector3(
 			btScalar(0),
 			btScalar(20),
@@ -99,8 +99,8 @@ void SimpleJointExample::initPhysics()
 
 		//create a simple p2pjoint constraint
 		btPoint2PointConstraint* p2p = new btPoint2PointConstraint(*dynamicBox, *staticBox, btVector3(0, 3, 0), btVector3(0, 0, 0));
-		p2p->m_setting.m_damping = 0.0625;
-		p2p->m_setting.m_impulseClamp = 0.95;
+		p2p->m_setting.m_damping = (btScalar)0.0625;
+		p2p->m_setting.m_impulseClamp = (btScalar)0.95;
 		m_dynamicsWorld->addConstraint(p2p);
 	}
 

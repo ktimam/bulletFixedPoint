@@ -44,7 +44,7 @@ struct Dof6ConstraintTutorial : public CommonRigidBodyBase
 	virtual ~Dof6ConstraintTutorial();
 	virtual void initPhysics();
 
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 
 	void animate();
 
@@ -156,7 +156,7 @@ void Dof6ConstraintTutorial::initPhysics()
 	CONSTRAINT_TYPE* constraint;
 
 	//static body centered in the origo
-	mass = 0.0;
+	mass = (btScalar)0.0;
 	shape = new btBoxShape(btVector3(0.5, 0.5, 0.5));
 	localInertia = btVector3(0, 0, 0);
 	bodyTransform.setIdentity();
@@ -167,7 +167,7 @@ void Dof6ConstraintTutorial::initPhysics()
 	/////////// box with undamped translate spring attached to static body
 	/////////// the box should oscillate left-to-right forever
 	{
-		mass = 1.0;
+		mass = (btScalar)1.0;
 		shape = new btBoxShape(btVector3(0.5, 0.5, 0.5));
 		shape->calculateLocalInertia(mass, localInertia);
 		bodyTransform.setIdentity();
@@ -180,20 +180,20 @@ void Dof6ConstraintTutorial::initPhysics()
 		localA.getOrigin() = btVector3(0, 0, -5);
 		localB.setIdentity();
 		constraint = new CONSTRAINT_TYPE(*staticBody, *m_data->m_TranslateSpringBody, localA, localB EXTRAPARAMS);
-		constraint->setLimit(0, 1, -1);
-		constraint->setLimit(1, 0, 0);
-		constraint->setLimit(2, 0, 0);
-		constraint->setLimit(3, 0, 0);
-		constraint->setLimit(4, 0, 0);
-		constraint->setLimit(5, 0, 0);
+		constraint->setLimit(0, (btScalar)1, (btScalar)-1);
+		constraint->setLimit(1, (btScalar)0, (btScalar)0);
+		constraint->setLimit(2, (btScalar)0, (btScalar)0);
+		constraint->setLimit(3, (btScalar)0, (btScalar)0);
+		constraint->setLimit(4, (btScalar)0, (btScalar)0);
+		constraint->setLimit(5, (btScalar)0, (btScalar)0);
 		constraint->enableSpring(0, true);
-		constraint->setStiffness(0, 100);
+		constraint->setStiffness(0, (btScalar)100);
 #ifdef USE_6DOF2
-		constraint->setDamping(0, 0);
+		constraint->setDamping(0, (btScalar)0);
 #else
 		constraint->setDamping(0, 1);
 #endif
-		constraint->setEquilibriumPoint(0, 0);
+		constraint->setEquilibriumPoint(0, (btScalar)0);
 		constraint->setDbgDrawSize(btScalar(2.f));
 		m_dynamicsWorld->addConstraint(constraint, true);
 	}
@@ -494,22 +494,22 @@ void Dof6ConstraintTutorial::animate()
 	m_data->frameID++;
 }
 
-void Dof6ConstraintTutorial::stepSimulation(float deltaTime)
+void Dof6ConstraintTutorial::stepSimulation(btScalar deltaTime)
 {
 	//animate();
 
 	//float time = m_data->m_timeSeriesCanvas->getCurrentTime();
 
-	float prevPos = m_data->m_TranslateSpringBody->getWorldTransform().getOrigin().x();
+	btScalar prevPos = m_data->m_TranslateSpringBody->getWorldTransform().getOrigin().x();
 	m_dynamicsWorld->stepSimulation(deltaTime);
-	float xPos = m_data->m_TranslateSpringBody->getWorldTransform().getOrigin().x();
+	btScalar xPos = m_data->m_TranslateSpringBody->getWorldTransform().getOrigin().x();
 
-	m_data->m_timeSeriesCanvas->insertDataAtCurrentTime(xPos, 0, true);
-	m_data->m_timeSeriesCanvas->insertDataAtCurrentTime(m_data->m_TranslateSpringBody->getLinearVelocity().x(), 1, true);
+	m_data->m_timeSeriesCanvas->insertDataAtCurrentTime((float)xPos, 0, true);
+	m_data->m_timeSeriesCanvas->insertDataAtCurrentTime((float)m_data->m_TranslateSpringBody->getLinearVelocity().x(), 1, true);
 
-	if (deltaTime > 0)
+	if (deltaTime > (btScalar)0)
 	{
-		m_data->m_timeSeriesCanvas->insertDataAtCurrentTime((xPos - prevPos) / deltaTime, 2, true);
+		m_data->m_timeSeriesCanvas->insertDataAtCurrentTime((float)((xPos - prevPos) / deltaTime), 2, true);
 	}
 	prevPos = xPos;
 	m_data->m_timeSeriesCanvas->nextTick();

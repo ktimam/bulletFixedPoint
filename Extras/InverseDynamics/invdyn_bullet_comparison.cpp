@@ -11,8 +11,8 @@
 namespace btInverseDynamics
 {
 int compareInverseAndForwardDynamics(vecx &q, vecx &u, vecx &dot_u, btVector3 &gravity, bool verbose,
-									 btMultiBody *btmb, MultiBodyTree *id_tree, double *pos_error,
-									 double *acc_error)
+									 btMultiBody *btmb, MultiBodyTree *id_tree, btScalar *pos_error,
+									 btScalar *acc_error)
 {
 // call function and return -1 if it does, printing an bt_id_error_message
 #define RETURN_ON_FAILURE(x)                         \
@@ -50,8 +50,8 @@ int compareInverseAndForwardDynamics(vecx &q, vecx &u, vecx &dot_u, btVector3 &g
 	btmb->setBaseWorldTransform(base_transform);
 	btmb->setBaseOmega(base_angular_velocity);
 	btmb->setBaseVel(base_velocity);
-	btmb->setLinearDamping(0);
-	btmb->setAngularDamping(0);
+	btmb->setLinearDamping((btScalar)0);
+	btmb->setAngularDamping((btScalar)0);
 
 	// remaining links
 	int q_index;
@@ -101,7 +101,7 @@ int compareInverseAndForwardDynamics(vecx &q, vecx &u, vecx &dot_u, btVector3 &g
 	}
 
 	// set up bullet forward dynamics model
-	btScalar dt = 0;
+	btScalar dt = (btScalar)0;
 	btAlignedObjectArray<btScalar> scratch_r;
 	btAlignedObjectArray<btVector3> scratch_v;
 	btAlignedObjectArray<btMatrix3x3> scratch_m;
@@ -183,7 +183,7 @@ int compareInverseAndForwardDynamics(vecx &q, vecx &u, vecx &dot_u, btVector3 &g
 	// of stepVelocitiesMultiDof
 	btScalar *base_accel = &scratch_r[btmb->getNumDofs()];
 	btScalar *joint_accel = base_accel + 6;
-	*acc_error = 0;
+	*acc_error = (btScalar)0;
 	int dot_u_offset = 0;
 	if (btmb->hasFixedBase())
 	{
@@ -203,7 +203,7 @@ int compareInverseAndForwardDynamics(vecx &q, vecx &u, vecx &dot_u, btVector3 &g
 				printf("bt:ddot_q[%d]= %f, id:ddot_q= %e, diff= %e\n", i, joint_accel[i],
 					   dot_u(i + dot_u_offset), joint_accel[i] - dot_u(i));
 			}
-			*acc_error += BT_ID_POW(joint_accel[i] - dot_u(i + dot_u_offset), 2);
+			*acc_error += BT_ID_POW(joint_accel[i] - dot_u(i + dot_u_offset), (btScalar)2);
 		}
 	}
 	else
@@ -231,7 +231,7 @@ int compareInverseAndForwardDynamics(vecx &q, vecx &u, vecx &dot_u, btVector3 &g
 				printf("bt::base_dot_omega(%d)= %e dot_u[%d]= %e, diff= %e\n", i, base_dot_omega(i),
 					   i, dot_u[i], base_dot_omega(i) - dot_u[i]);
 			}
-			*acc_error += BT_ID_POW(base_dot_omega(i) - dot_u(i), 2);
+			*acc_error += BT_ID_POW(base_dot_omega(i) - dot_u(i), (btScalar)2);
 		}
 		for (int i = 0; i < 3; i++)
 		{
@@ -240,7 +240,7 @@ int compareInverseAndForwardDynamics(vecx &q, vecx &u, vecx &dot_u, btVector3 &g
 				printf("bt::base_ddot_com(%d)= %e dot_u[%d]= %e, diff= %e\n", i, base_ddot_com(i),
 					   i, dot_u[i + 3], base_ddot_com(i) - dot_u[i + 3]);
 			}
-			*acc_error += BT_ID_POW(base_ddot_com(i) - dot_u(i + 3), 2);
+			*acc_error += BT_ID_POW(base_ddot_com(i) - dot_u(i + 3), (btScalar)2);
 		}
 
 		for (int i = 0; i < btmb->getNumDofs(); i++)
@@ -250,15 +250,15 @@ int compareInverseAndForwardDynamics(vecx &q, vecx &u, vecx &dot_u, btVector3 &g
 				printf("bt:ddot_q[%d]= %f, id:ddot_q= %e, diff= %e\n", i, joint_accel[i],
 					   dot_u(i + 6), joint_accel[i] - dot_u(i + 6));
 			}
-			*acc_error += BT_ID_POW(joint_accel[i] - dot_u(i + 6), 2);
+			*acc_error += BT_ID_POW(joint_accel[i] - dot_u(i + 6), (btScalar)2);
 		}
 	}
-	*acc_error = std::sqrt(*acc_error);
+	*acc_error = btSqrt(*acc_error);
 	if (verbose)
 	{
 		printf("======dynamics-err: %e\n", *acc_error);
 	}
-	*pos_error = 0.0;
+	*pos_error = (btScalar)0.0;
 
 	{
 		mat33 world_T_body;
@@ -339,13 +339,13 @@ int compareInverseAndForwardDynamics(vecx &q, vecx &u, vecx &dot_u, btVector3 &g
 				   diff_basis(0, 1), diff_basis(0, 2), diff_basis(1, 0), diff_basis(1, 1),
 				   diff_basis(1, 2), diff_basis(2, 0), diff_basis(2, 1), diff_basis(2, 2));
 		}
-		double total_pos_err =
-			BT_ID_SQRT(BT_ID_POW(diff_com(0), 2) + BT_ID_POW(diff_com(1), 2) +
-					   BT_ID_POW(diff_com(2), 2) + BT_ID_POW(diff_basis(0, 0), 2) +
-					   BT_ID_POW(diff_basis(0, 1), 2) + BT_ID_POW(diff_basis(0, 2), 2) +
-					   BT_ID_POW(diff_basis(1, 0), 2) + BT_ID_POW(diff_basis(1, 1), 2) +
-					   BT_ID_POW(diff_basis(1, 2), 2) + BT_ID_POW(diff_basis(2, 0), 2) +
-					   BT_ID_POW(diff_basis(2, 1), 2) + BT_ID_POW(diff_basis(2, 2), 2));
+		btScalar total_pos_err =
+			BT_ID_SQRT(BT_ID_POW(diff_com(0), (btScalar)2) + BT_ID_POW(diff_com(1), (btScalar)2) +
+					   BT_ID_POW(diff_com(2), (btScalar)2) + BT_ID_POW(diff_basis(0, 0), (btScalar)2) +
+					   BT_ID_POW(diff_basis(0, 1), (btScalar)2) + BT_ID_POW(diff_basis(0, 2), (btScalar)2) +
+					   BT_ID_POW(diff_basis(1, 0), (btScalar)2) + BT_ID_POW(diff_basis(1, 1), (btScalar)2) +
+					   BT_ID_POW(diff_basis(1, 2), (btScalar)2) + BT_ID_POW(diff_basis(2, 0), (btScalar)2) +
+					   BT_ID_POW(diff_basis(2, 1), (btScalar)2) + BT_ID_POW(diff_basis(2, 2), (btScalar)2));
 		if (verbose)
 		{
 			printf("======kin-pos-err: %e\n", total_pos_err);

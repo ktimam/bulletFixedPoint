@@ -368,7 +368,7 @@ public:
 
 	/**@brief Fill the rotational part of an OpenGL matrix and clear the shear/perspective
 	* @param m The array to be filled */
-	void getOpenGLSubMatrix(btScalar * m) const
+	void getOpenGLSubMatrix(float * m) const
 	{
 #if defined BT_USE_SIMD_VECTOR3 && defined(BT_USE_SSE_IN_API) && defined(BT_USE_SSE)
 		__m128 v0 = m_el[0].mVec128;
@@ -404,18 +404,18 @@ public:
 		vm[1] = v1;
 		vm[2] = v2;
 #else
-		m[0] = btScalar(m_el[0].x());
-		m[1] = btScalar(m_el[1].x());
-		m[2] = btScalar(m_el[2].x());
-		m[3] = btScalar(0.0);
-		m[4] = btScalar(m_el[0].y());
-		m[5] = btScalar(m_el[1].y());
-		m[6] = btScalar(m_el[2].y());
-		m[7] = btScalar(0.0);
-		m[8] = btScalar(m_el[0].z());
-		m[9] = btScalar(m_el[1].z());
-		m[10] = btScalar(m_el[2].z());
-		m[11] = btScalar(0.0);
+		m[0] = (float)(m_el[0].x());
+		m[1] = (float)(m_el[1].x());
+		m[2] = (float)(m_el[2].x());
+		m[3] = (float)(0.0);
+		m[4] = (float)(m_el[0].y());
+		m[5] = (float)(m_el[1].y());
+		m[6] = (float)(m_el[2].y());
+		m[7] = (float)(0.0);
+		m[8] = (float)(m_el[0].z());
+		m[9] = (float)(m_el[1].z());
+		m[10] = (float)(m_el[2].z());
+		m[11] = (float)(0.0);
 #endif
 	}
 

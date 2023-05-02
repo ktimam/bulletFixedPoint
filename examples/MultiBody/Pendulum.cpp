@@ -35,7 +35,7 @@ public:
 	Pendulum(struct GUIHelperInterface* helper);
 	virtual ~Pendulum();
 	virtual void initPhysics();
-	virtual void stepSimulation(float deltaTime);
+	virtual void stepSimulation(btScalar deltaTime);
 	virtual void resetCamera()
 	{
 		float dist = 5;
@@ -82,7 +82,7 @@ void Pendulum::initPhysics()
 		btVector3 baseInertiaDiag(0.f, 0.f, 0.f);
 		float baseMass = 0.f;
 
-		btMultiBody* pMultiBody = new btMultiBody(numLinks, baseMass, baseInertiaDiag, !floating, canSleep);
+		btMultiBody* pMultiBody = new btMultiBody(numLinks, (btScalar)baseMass, baseInertiaDiag, !floating, canSleep);
 		//pMultiBody->useRK4Integration(true);
 		m_multiBody = pMultiBody;
 		pMultiBody->setBaseWorldTransform(btTransform::getIdentity());
@@ -91,8 +91,8 @@ void Pendulum::initPhysics()
 		btVector3 hingeJointAxis(1, 0, 0);
 
 		//y-axis assumed up
-		btVector3 parentComToCurrentCom(0, -linkHalfExtents[1], 0);
-		btVector3 currentPivotToCurrentCom(0, -linkHalfExtents[1], 0);
+		btVector3 parentComToCurrentCom((btScalar)0, -linkHalfExtents[1], (btScalar)0);
+		btVector3 currentPivotToCurrentCom((btScalar)0, -linkHalfExtents[1], (btScalar)0);
 		btVector3 parentComToCurrentPivot = parentComToCurrentCom - currentPivotToCurrentCom;
 
 		for (int i = 0; i < numLinks; ++i)
@@ -103,11 +103,11 @@ void Pendulum::initPhysics()
 			{
 				shape = new btSphereShape(radius);
 			}
-			shape->calculateLocalInertia(linkMass, linkInertiaDiag);
+			shape->calculateLocalInertia((btScalar)linkMass, linkInertiaDiag);
 			delete shape;
 
-			pMultiBody->setupRevolute(i, linkMass, linkInertiaDiag, i - 1,
-									  btQuaternion(0.f, 0.f, 0.f, 1.f),
+			pMultiBody->setupRevolute(i, (btScalar)linkMass, linkInertiaDiag, i - 1,
+									  btQuaternion((btScalar)0.f, (btScalar)0.f, (btScalar)0.f, (btScalar)1.f),
 									  hingeJointAxis,
 									  parentComToCurrentPivot,
 									  currentPivotToCurrentCom, false);
@@ -125,13 +125,13 @@ void Pendulum::initPhysics()
 
 		if (!damping)
 		{
-			pMultiBody->setLinearDamping(0.f);
-			pMultiBody->setAngularDamping(0.f);
+			pMultiBody->setLinearDamping((btScalar)0.f);
+			pMultiBody->setAngularDamping((btScalar)0.f);
 		}
 		else
 		{
-			pMultiBody->setLinearDamping(0.1f);
-			pMultiBody->setAngularDamping(0.9f);
+			pMultiBody->setLinearDamping((btScalar)0.1f);
+			pMultiBody->setAngularDamping((btScalar)0.9f);
 		}
 		m_dynamicsWorld->setGravity(btVector3(0, -9.81, 0));
 
@@ -145,7 +145,7 @@ void Pendulum::initPhysics()
 			int collisionFilterGroup = isDynamic ? int(btBroadphaseProxy::DefaultFilter) : int(btBroadphaseProxy::StaticFilter);
 			int collisionFilterMask = isDynamic ? int(btBroadphaseProxy::AllFilter) : int(btBroadphaseProxy::AllFilter ^ btBroadphaseProxy::StaticFilter);
 			world->addCollisionObject(col, collisionFilterGroup, collisionFilterMask);  //,2,1+2);
-			btVector4 color(1, 0, 0, 1);
+			btVector4 color((btScalar)1, (btScalar)0, (btScalar)0, (btScalar)1);
 			m_guiHelper->createCollisionObjectGraphicsObject(col, color);
 			pMultiBody->getLink(i).m_collider = col;
 		}
@@ -159,9 +159,9 @@ void Pendulum::initPhysics()
 	}
 }
 
-void Pendulum::stepSimulation(float deltaTime)
+void Pendulum::stepSimulation(btScalar deltaTime)
 {
-	m_multiBody->addJointTorque(0, 20.0);
+	m_multiBody->addJointTorque(0, (btScalar)20.0);
 #ifdef USE_GTEST
 	m_dynamicsWorld->stepSimulation(1. / 1000.0, 0);
 #else
@@ -169,10 +169,10 @@ void Pendulum::stepSimulation(float deltaTime)
 #endif
 	btVector3 from = m_multiBody->getBaseWorldTransform().getOrigin();
 	btVector3 to = m_multiBody->getLink(0).m_collider->getWorldTransform().getOrigin();
-	btVector4 color(1, 0, 0, 1);
+	btVector4 color((btScalar)1, (btScalar)0, (btScalar)0, (btScalar)1);
 	if (m_guiHelper->getRenderInterface())
 	{
-		m_guiHelper->getRenderInterface()->drawLine(from, to, color, btScalar(1));
+		m_guiHelper->getRenderInterface()->drawLine(from, to, color, 1);
 	}
 }
 

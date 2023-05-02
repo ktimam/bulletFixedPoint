@@ -40,6 +40,7 @@ public:
 	virtual void writeSingleInstanceColorToCPU(const double* color, int srcIndex);
 	virtual void writeSingleInstanceScaleToCPU(const float* scale, int srcIndex);
 	virtual void writeSingleInstanceScaleToCPU(const double* scale, int srcIndex);
+	virtual void writeSingleInstanceTransformToCPU(const btVector3 position, const btQuaternion orientation, int srcIndex);
 	virtual void writeSingleInstanceSpecularColorToCPU(const double* specular, int srcIndex) {}
 	virtual void writeSingleInstanceSpecularColorToCPU(const float* specular, int srcIndex) {}
 	virtual void writeSingleInstanceFlagsToCPU(int flags, int srcIndex) {}
@@ -63,6 +64,7 @@ public:
 	virtual int registerGraphicsInstance(int shapeIndex, const float* position, const float* quaternion, const float* color, const float* scaling);
 
 	virtual void drawLines(const float* positions, const float color[4], int numPoints, int pointStrideInBytes, const unsigned int* indices, int numIndices, float pointDrawSize);
+	virtual void drawLines(const btScalar* positions, const btScalar color[4], int numPoints, int pointStrideInBytes, const unsigned int* indices, int numIndices, float pointDrawSize);
 
 	virtual void drawLine(const float from[4], const float to[4], const float color[4], float lineWidth);
 
@@ -77,6 +79,7 @@ public:
 	virtual void writeTransforms();
 
 	virtual void drawLine(const double from[4], const double to[4], const double color[4], double lineWidth);
+	virtual void drawLine(const btVector3 fromIn, const btVector3 toIn, const btVector3 colorIn, double lineWidthIn);
 
 	virtual void drawPoint(const float* position, const float color[4], float pointDrawSize);
 
@@ -88,7 +91,7 @@ public:
 
 	virtual void clearZBuffer();
 
-	virtual struct GLInstanceRendererInternalData* getInternalData()
+	virtual GLInstanceRendererInternalData* getInternalData()
 	{
 		return 0;
 	}

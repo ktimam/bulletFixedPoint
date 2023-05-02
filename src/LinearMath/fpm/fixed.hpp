@@ -44,11 +44,11 @@ public:
     {
         m_value = fxd.m_value;
     }
-    /*fixed& operator=(const fixed& fxd)
+    fixed& operator=(const fixed& fxd)
     {
         m_value = fxd.m_value;
         return *this;
-    }*/
+    }
 
     // Converts an integral 128 number to the fixed-point type.
     // Like static_cast, this truncates bits that don't fit.
@@ -79,7 +79,7 @@ public:
     // Like static_cast, this truncates bits that don't fit.
     template <typename T, typename std::enable_if<std::is_floating_point<T>::value>::type* = nullptr>
     constexpr inline explicit fixed(T val) noexcept
-        : m_value(static_cast<BaseType>((val >= 0.0) ? (val * FRACTION_MULT.template convert_to<bigfloat>() + T{ 0.5 }) : (val * FRACTION_MULT.template convert_to<bigfloat>() - T{ 0.5 })))
+        : m_value(static_cast<BaseType>((val >= 0.0) ? (val * FRACTION_MULT.convert_to<bigfloat>() + T{ 0.5 }) : (val * FRACTION_MULT.convert_to<bigfloat>() - T{ 0.5 })))
     {}
 
     // Constructs from another fixed-point type with possibly different underlying representation.
@@ -163,11 +163,6 @@ public:
     static constexpr fixed half_pi() { return from_fixed_point<62>(7244019458077122842ll); }
     static constexpr fixed two_pi() { return from_fixed_point<60>(7244019458077122842ll); }
 
-    /*inline bool operator==(const int256_t nr) noexcept
-    {        
-        return m_value == nr;
-    }*/
-
     //
     // Arithmetic member operators
     //
@@ -222,8 +217,6 @@ public:
 
     inline fixed& operator/=(const fixed& y) noexcept
     {
-        if (y.m_value == 0)
-            assert(false);
         assert(y.m_value != 0);
         // Normal fixed-point division is: x * 2**FractionBits / y.
         // To correctly round the last bit in the result, we need one more bit of information.

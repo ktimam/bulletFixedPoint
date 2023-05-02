@@ -209,7 +209,7 @@ enum TestExampleBrowserCommunicationEnums
 	eExampleBrowserHasTerminated
 };
 
-static double gMinUpdateTimeMicroSecs = 4000.;
+static btScalar gMinUpdateTimeMicroSecs = (btScalar)4000.;
 
 void ExampleBrowserThreadFunc(void* userPtr, void* lsMemory)
 {
@@ -223,7 +223,7 @@ void ExampleBrowserThreadFunc(void* userPtr, void* lsMemory)
 	int minUpdateMs = 4000;
 	if (args2.GetCmdLineArgument("minGraphicsUpdateTimeMs", minUpdateMs))
 	{
-		gMinUpdateTimeMicroSecs = minUpdateMs;
+		gMinUpdateTimeMicroSecs = (btScalar)minUpdateMs;
 	}
 	b3Clock clock;
 
@@ -246,13 +246,13 @@ void ExampleBrowserThreadFunc(void* userPtr, void* lsMemory)
 			clock.usleep(0);
 
 			//B3_PROFILE("ExampleBrowserThreadFunc");
-			float deltaTimeInSeconds = clock.getTimeMicroseconds() / 1000000.f;
+			btScalar deltaTimeInSeconds = clock.getTimeMicroseconds() / (btScalar)1000000.f;
 			{
-				if (deltaTimeInSeconds > 0.1)
+				if (deltaTimeInSeconds > (btScalar)0.1)
 				{
-					deltaTimeInSeconds = 0.1;
+					deltaTimeInSeconds = (btScalar)0.1;
 				}
-				if (deltaTimeInSeconds < (gMinUpdateTimeMicroSecs / 1e6))
+				if (deltaTimeInSeconds < (gMinUpdateTimeMicroSecs / (btScalar)1e6))
 				{
 					//B3_PROFILE("clock.usleep");
 					exampleBrowser->updateGraphics();
@@ -414,7 +414,7 @@ bool btIsExampleBrowserMainThreadTerminated(btInProcessExampleBrowserMainThreadI
 
 void btUpdateInProcessExampleBrowserMainThread(btInProcessExampleBrowserMainThreadInternalData* data)
 {
-	float deltaTimeInSeconds = data->m_clock.getTimeMicroseconds() / 1000000.f;
+	btScalar deltaTimeInSeconds = data->m_clock.getTimeMicroseconds() / (btScalar)1000000.f;
 	data->m_clock.reset();
 	data->m_exampleBrowser->updateGraphics();
 	data->m_exampleBrowser->update(deltaTimeInSeconds);
