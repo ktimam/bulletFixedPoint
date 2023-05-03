@@ -100,7 +100,7 @@ public:
     template <typename T, typename std::enable_if<std::is_floating_point<T>::value>::type* = nullptr>
     constexpr inline explicit operator T() const noexcept
     {
-        return (float)(static_cast<IntermediateType>(m_value) / FRACTION_MULT);
+        return (float)((float)static_cast<IntermediateType>(m_value) / (float)FRACTION_MULT);
     }
 
 

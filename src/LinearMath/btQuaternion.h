@@ -55,6 +55,15 @@ class btQuaternion : public btQuadWord
 public:
 	/**@brief No initialization constructor */
 	btQuaternion() {}
+	btQuaternion(const btQuaternion& vec)
+	{
+		memcpy(this, &vec, sizeof(btQuaternion));
+	}
+	btQuaternion& operator=(const btQuaternion& vec)
+	{
+		memcpy(this, &vec, sizeof(btQuaternion));
+		return *this;
+	}
 
 #if (defined(BT_USE_SSE_IN_API) && defined(BT_USE_SSE)) || defined(BT_USE_NEON)
 	// Set Vector

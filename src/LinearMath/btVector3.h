@@ -85,8 +85,15 @@ ATTRIBUTE_ALIGNED16(class)
 btVector3
 {
 public:
-	btVector3(const btVector3&) = default;
-	btVector3& operator=(const btVector3&) = default;
+	btVector3(const btVector3 & vec)
+	{
+		memcpy(this, &vec, sizeof(btVector3));
+	}
+	btVector3& operator=(const btVector3& vec)
+	{
+		memcpy(this, &vec, sizeof(btVector3));
+		return *this;
+	}
 
 	BT_DECLARE_ALIGNED_ALLOCATOR();
 
